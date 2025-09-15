@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false" %>
-<!DOCTYPE html>
+<%@ page isELIgnored="false" %>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
           crossorigin="anonymous">
     <link href="css/style.css" rel="stylesheet"/>
+    <link href="css/adminSuccess.css" rel="stylesheet"/>
 </head>
 <body>
 <div class="page-wrapper">
@@ -32,23 +33,29 @@
                         <li class="nav-item"><a class="nav-link" href="#">Products</a></li>
                         <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
                         <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="loginDropdown" role="button"
-                               data-bs-toggle="dropdown" aria-expanded="false">
-                                Login
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="loginDropdown">
-                                <li><a class="dropdown-item" href="AgentLogin.jsp">Agent Login</a></li>
-                                <li><a class="dropdown-item" href="CustomerLogin.jsp">Customer Login</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item d-flex align-items-center">
-                            <a href="viewProfile?email=${dto.email}">
-                                <img src="images/default.png"
-                                     alt="Profile"
-                                     class="rounded-circle me-2"
-                                     style="width:40px; height:40px; object-fit:cover;">
-                            </a>
+                        <li class="nav-item"><a class="nav-link"></a></li>
+                        <li class="nav-item d-flex align-items-center ms-2">
+                            <div style="position: absolute; top: 20px; right: 30px;">
+                                <div class="profile-dropdown" id="profileDropdown">
+                                    <div class="profile-icon" id="profileIcon"></div>
+                                    <div class="dropdown-content" id="dropdownContent">
+                                        <a href="viewProfile?email=${param.email}">Profile</a>
+                                        <a href="logout.jsp">Logout</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <script>
+                                const profileIcon = document.getElementById('profileIcon');
+                                const profileDropdown = document.getElementById('profileDropdown');
+                                document.addEventListener('click', function(event) {
+                                    if (profileDropdown.contains(event.target)) {
+                                        profileDropdown.classList.toggle('show');
+                                    } else {
+                                        profileDropdown.classList.remove('show');
+                                    }
+                                });
+                            </script>
                         </li>
                     </ul>
                 </div>
@@ -60,8 +67,8 @@
         <div class="container py-5">
             <div class="row justify-content-center">
                 <div class="col-12 col-md-8 col-lg-6">
-                    <div class="alert alert-success d-flex align-items-center mb-4" role="alert" style="font-size:1.1rem;">
-                        <img src="images/default.png" alt="Success" style="height:24px; width:24px; margin-right:8px;">
+                    <div class="alert alert-success d-flex align-items-center mb-4" role="alert"
+                         style="font-size:1.1rem;">
                         <div>
                             <strong>✅ Successfully Logged In!</strong>
                             <span class="d-block">Click your profile picture to view your details.</span>
@@ -73,22 +80,7 @@
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
             crossorigin="anonymous"></script>
-    <script>
-        // Simple bootstrap validation
-        (function () {
-          'use strict'
-          var forms = document.querySelectorAll('.needs-validation')
-          Array.prototype.slice.call(forms).forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-              if (!form.checkValidity()) {
-                event.preventDefault()
-                event.stopPropagation()
-              }
-              form.classList.add('was-validated')
-            }, false)
-          })
-        })()
-    </script>
+    <script src="js/adminSuccess.js"></script>
     <footer>
         <footer class="footer mt-auto bg-light pt-4">
             <div class="container">

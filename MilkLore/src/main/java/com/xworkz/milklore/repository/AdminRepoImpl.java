@@ -58,4 +58,50 @@ public class AdminRepoImpl implements AdminRepo{
         }
         return email;
     }
+
+    @Override
+    public AdminEntity viewAdminByEmail(String email) {
+        log.info("Admin viewAdminByEmail method in repo");
+        EntityManager em=null;
+        AdminEntity adminEntity=null;
+        try {
+            em = emf.createEntityManager();
+            em.getTransaction().begin();
+            adminEntity = em.createNamedQuery("viewAdminByEmail",AdminEntity.class).setParameter("email",email).getSingleResult();
+            System.out.println(adminEntity);
+        }catch(Exception e) {
+            log.error("Exception in Admin viewAdminByEmail method in repo",e.getMessage());
+            return null;
+        }finally {
+            if(em!=null) {
+                em.close();
+            }
+        }
+        return adminEntity;
+    }
+
+    @Override
+    public boolean updateAdminDetails(String email, String adminName, String mobileNumber, String password) {
+        log.info("Admin updateAdminDetails method in repo");
+        EntityManager em=null;
+        try {
+            em = emf.createEntityManager();
+            em.getTransaction().begin();
+           int update = em.createNamedQuery("updateAdminDetails",AdminEntity.class).setParameter("email",email)
+                   .setParameter("adminName",adminName).setParameter("mobileNumber",mobileNumber).setParameter("password",password).executeUpdate();
+           if (update > 0) {
+               em.getTransaction().commit();
+           }
+        }catch(Exception e) {
+            log.error("Exception in Admin updateAdminDetails method in repo",e.getMessage());
+            return false;
+        }finally {
+            if(em!=null) {
+                em.close();
+            }
+        }
+        return true;
+    }
+
+
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Service
 @Slf4j
@@ -37,5 +38,27 @@ public class AdminServiceImp implements AdminService{
         }
         return repo.getPasswordByEmail(email);
     }
+
+    @Override
+    public AdminDTO viewAdminByEmail(String email) {
+        System.out.println("View By email Service");
+        AdminEntity entity = repo.viewAdminByEmail(email);
+
+        if (entity == null) {
+            System.out.println("No AdminEntity found for email: " + email);
+            return null; // or throw a custom exception
+        }
+
+        AdminDTO dto = new AdminDTO();
+        BeanUtils.copyProperties(entity, dto);
+        return dto;
+    }
+
+    @Override
+    public boolean updateAdminDetails(String email, String adminName, String mobileNumber, String password) {
+        log.info("Admin updateAdminDetails method in service");
+        return repo.updateAdminDetails(email, adminName, mobileNumber, password);
+    }
+
 }
 

@@ -47,31 +47,35 @@
     </nav>
 </header>
 
-<main class="flex-grow-1 d-flex align-items-center justify-content-center">
-  <div class="container py-5">
-    <div class="row justify-content-center">
-      <div class="col-12 col-md-8 col-lg-6">
-        <h2 class="mb-4">Agent Login</h2>
-        <form action="agentLogin" method="post" class="needs-validation" novalidate>
-          <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username" name="username" required>
-            <div class="invalid-feedback">Please enter username.</div>
-          </div>
-          <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" id="password" name="password" required>
-            <div class="invalid-feedback">Please enter password.</div>
-          </div>
-          <input type="hidden" name="role" value="agent">
-          <button type="submit" class="btn btn-primary">Login</button>
-                <a href="index.jsp" class="btn btn-link">Cancel</a>
-                <a href="AgentRegister.jsp" class="btn btn-link">Register</a>
-        </form>
-      </div>
-    </div>
-  </div>
-</main>
+    <main class="flex-grow-1 d-flex align-items-center justify-content-center">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-8 col-lg-6">
+                    <div class="glass-card">
+                        <h2 class="mb-4 text-center" style="color:#1e3c72;">Agent Login</h2>
+                        <form action="agentLogin" method="post" class="needs-validation" novalidate>
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" required>
+                                <div class="invalid-feedback">Please enter username.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                                <div class="invalid-feedback">Please enter password.</div>
+                            </div>
+                            <input type="hidden" name="role" value="agent">
+                            <div class="d-flex justify-content-between align-items-center mt-4">
+                                <button type="submit" class="btn btn-theme px-4">Login</button>
+                                <a href="index.jsp" class="btn btn-link">Cancel</a>
+                                <a href="AgentRegister.jsp" class="btn btn-link">Register</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script>
 (function () {
