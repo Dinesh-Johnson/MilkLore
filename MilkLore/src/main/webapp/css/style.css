@@ -1,0 +1,188 @@
+/* Sticky footer layout for login and main pages */
+.page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+main.flex-grow-1 {
+  flex: 1 0 auto; /* allow main to expand with tall content */
+}
+}
+footer {
+  margin-top: auto;
+}
+/* Global Styles */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  line-height: 1.6;
+  /* Use project background image. Path is relative to this CSS file. */
+  background: url('../images/bg.png') center center / cover no-repeat fixed;
+  background-color: #eaf6fb; /* soft blue fallback */
+  color: #23405a; /* deep blue-gray for text */
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+/* Header & Navigation */
+header {
+  background: rgba(255,255,255,0.85);
+  color: #23405a;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 0;
+}
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #0b3b66;
+}
+nav {
+  margin-top: 0.5rem;
+}
+nav ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 1.2rem;
+}
+nav ul li:hover {
+  text-decoration: underline;
+  color: #0077b6;
+}
+/* Hero Section */
+.hero {
+  position: relative;
+  padding-top: 120px; /* adjust based on navbar height */
+  /* blend with the page background (bg.png). Use a translucent overlay for legibility. */
+  background: transparent;
+  min-height: 300px;
+  padding: 2rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0b3b66; /* darker blue for contrast */
+  text-align: center;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.45);
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+}
+
+.hero > * {
+  position: relative; /* bring content above overlay */
+  z-index: 1;
+}
+.hero h1 {
+  font-size: 2.5rem;
+  padding: 0 1rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+}
+/* Content Sections */
+.section {
+  padding: 2rem 1rem;
+}
+.section h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #0b3b66; /* deep blue for headings */
+  letter-spacing: 0.02em;
+}
+.products {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.about {
+  max-width: 700px;
+  margin: 2rem auto 0 auto;
+  background: rgba(255,255,255,0.85);
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  padding: 2rem 1.5rem;
+  color: #23405a;
+  border: 1px solid #e3eaf2;
+  text-align: center;
+}
+.card {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10), 0 1.5px 4px rgba(0,0,0,0.04);
+  border: 1px solid #e3eaf2;
+  margin-bottom: 2rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 260px;
+  overflow: hidden;
+  text-align: left;
+}
+.card:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.16), 0 2px 8px rgba(0,0,0,0.08);
+  transform: translateY(-4px) scale(1.02);
+}
+.card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  display: block;
+  background: #eaf6fb;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.card-body {
+  padding: 1.25rem 1.25rem 1.5rem 1.25rem;
+  background: #fff;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.03);
+}
+.card-title {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #0b3b66;
+  margin-bottom: 0.5rem;
+}
+.card-text {
+  color: #23405a;
+  font-size: 1.05rem;
+  margin-bottom: 0.5rem;
+}
+}
+.card h3 {
+  margin: 0.8rem 0 0.4rem;
+  color: #0b3b66;
+}
+/* Footer */
+footer {
+margin-top: auto;
+  padding: 2rem 1rem;
+  background: rgba(255,255,255,0.85);
+  color: #23405a;
+
+  text-align: center;
+  font-size: 0.95rem;
+  border-top: 1px solid #e3eaf2;
+}
+.footer-links a {
+  margin: 0 0.6rem;
+  color: #0b3b66;
+  transition: color 0.2s;
+}
+.footer-links a:hover {
+  color: #0077b6;
+}
