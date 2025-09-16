@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
@@ -39,7 +38,7 @@
         }
 
         .navbar-brand img {
-            filter: brightness(0) invert(1);
+            filter: none;
         }
 
         .nav-link {
@@ -73,30 +72,105 @@
 
         /* Hero Section */
         .hero {
-            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.95)),
-                        url('images/milk-splash.jpg') center/cover no-repeat;
-            padding: 8rem 0 6rem;
-            margin-top: 76px; /* Height of navbar */
-            text-align: center;
-        }
+    background: linear-gradient(
+                    rgba(0, 0, 0, 0.4),
+                    rgba(0, 0, 0, 0.4)
+                ),
+                url('images/milk-splash.jpg') center/cover no-repeat;
+    color: white;
+    padding: 10rem 0 8rem;
+    margin-top: 76px;
+    position: relative;
+    overflow: hidden;
+}
 
-        .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+.hero::after {
+    content: '';
+    position: absolute;
+    bottom: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120%;
+    height: 200px;
+    background: url('images/milk-wave.png') center/contain no-repeat;
+    opacity: 0.3;
+    pointer-events: none;
+}
 
-        .hero p {
-            font-size: 1.25rem;
-            color: #5a5c69;
-            max-width: 700px;
-            margin: 0 auto 2rem;
-            line-height: 1.6;
-        }
+.hero-title {
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    line-height: 1.2;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+    animation: fadeInDown 1s ease forwards;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    max-width: 650px;
+    margin: 0 auto 2rem;
+    opacity: 0.9;
+    animation: fadeInUp 1.5s ease forwards;
+}
+
+.hero-buttons .btn {
+    border-radius: 50px;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.hero-buttons .btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+}
+
+.hero-buttons .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.3);
+}
+
+.hero-buttons .btn-outline-light {
+    border: 2px solid white;
+    color: white;
+}
+
+.hero-buttons .btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+}
+
+@keyframes fadeInDown {
+    0% { opacity: 0; transform: translateY(-20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+        padding: 0 1rem;
+    }
+
+    .hero-buttons .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
 
         /* Products Section */
         .section {
@@ -270,8 +344,8 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="index.jsp">
-                <img src="images/milklore.png" alt="Milklore Logo" height="40" class="me-2"/>
+            <a class="navbar-brand d-flex align-items-center" href="toIndex">
+                <img src="images/milklore.png" alt="Milklore Logo" height="60" class="me-2"/>
                 <span class="d-flex flex-column">
                     <span style="font-weight: 700; font-size: 1.4rem; line-height: 1.2;">Milklore</span>
                     <span style="font-size: 0.8rem; opacity: 0.9; font-weight: 400;">Tales and Taste of Tradition</span>
@@ -284,7 +358,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link active" href="index.jsp"><i class="bi bi-house-door me-1"></i> Home</a>
+                        <a class="nav-link active" href="toIndex"><i class="bi bi-house-door me-1"></i> Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#"><i class="bi bi-box-seam me-1"></i> Products</a>
@@ -310,18 +384,25 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero">
+    <!-- Hero Section -->
+    <section class="hero d-flex align-items-center justify-content-center text-center">
         <div class="container">
-            <h1>Milklore – Pure Tales of Milk</h1>
-            <p class="lead">
-                Experience the freshness of farm-to-table dairy, delivered with care and tradition.
-                Discover our range of pure, wholesome milk products for your family's health and happiness.
+            <h1 class="hero-title">Milklore – Pure Tales of Milk</h1>
+            <p class="hero-subtitle">
+                Fresh, wholesome, and natural dairy products delivered straight from the farm to your table.
+                Experience purity, tradition, and taste in every sip and bite.
             </p>
-            <a href="#products" class="btn btn-primary btn-lg mt-3">
-                <i class="bi bi-cart3 me-2"></i>Shop Now
-            </a>
+            <div class="hero-buttons mt-4">
+                <a href="#products" class="btn btn-primary btn-lg me-3">
+                    <i class="bi bi-cart3 me-2"></i>Shop Now
+                </a>
+                <a href="#about" class="btn btn-outline-light btn-lg">
+                    <i class="bi bi-info-circle me-2"></i>Learn More
+                </a>
+            </div>
         </div>
     </section>
+
 
     <!-- Products Section -->
     <section id="products" class="section bg-light">
@@ -394,7 +475,7 @@
                 <div class="col-lg-2 col-md-6">
                     <h5>Quick Links</h5>
                     <ul>
-                        <li><a href="index.jsp">Home</a></li>
+                        <li><a href="toIndex">Home</a></li>
                         <li><a href="#products">Products</a></li>
                         <li><a href="#">About Us</a></li>
                         <li><a href="#">Contact</a></li>

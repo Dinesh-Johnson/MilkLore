@@ -13,7 +13,7 @@ public class AppController {
         System.out.println("AppController constructor");
     }
 
-    @GetMapping("index")
+    @GetMapping("toIndex")
     public String index() {
         System.out.println("index method in controller");
         return "index";

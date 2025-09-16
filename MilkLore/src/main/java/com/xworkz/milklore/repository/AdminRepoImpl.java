@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import java.util.HashMap;
+import java.util.Map;
 
 @Repository
 @Slf4j
@@ -15,6 +17,7 @@ public class AdminRepoImpl implements AdminRepo{
     @Autowired
     EntityManagerFactory emf;
 
+    private final Map<String,Integer> map=new HashMap<>();
 
 
     @Override
@@ -29,7 +32,7 @@ public class AdminRepoImpl implements AdminRepo{
             em.getTransaction().commit();
             return true;
         }catch(Exception e) {
-            log.error("Exception in Admin save method in repo",e.getMessage());
+            log.error("Exception in Admin save method in repo:{}",e.getMessage());
         }finally {
             if(em!=null) {
                 em.close();
@@ -49,7 +52,7 @@ public class AdminRepoImpl implements AdminRepo{
             System.out.println("Password: "+password);
             em.getTransaction().commit();
         }catch(Exception e) {
-            log.error("Exception in Admin getPasswordByEmail method in repo",e.getMessage());
+            log.error("Exception in Admin getPasswordByEmail method in repo:{}",e.getMessage());
             return null;
         }finally {
             if(em!=null) {
@@ -70,7 +73,7 @@ public class AdminRepoImpl implements AdminRepo{
             adminEntity = em.createNamedQuery("viewAdminByEmail",AdminEntity.class).setParameter("email",email).getSingleResult();
             System.out.println(adminEntity);
         }catch(Exception e) {
-            log.error("Exception in Admin viewAdminByEmail method in repo",e.getMessage());
+            log.error("Exception in Admin viewAdminByEmail method in repo:{}",e.getMessage());
             return null;
         }finally {
             if(em!=null) {
@@ -81,27 +84,36 @@ public class AdminRepoImpl implements AdminRepo{
     }
 
     @Override
-    public boolean updateAdminDetails(String email, String adminName, String mobileNumber, String password) {
+    public boolean updateAdminDetails(String email, String adminName, String mobileNumber, String profilePath) {
         log.info("Admin updateAdminDetails method in repo");
-        EntityManager em=null;
+        EntityManager em = null;
+        AdminEntity adminEntity=null;
         try {
             em = emf.createEntityManager();
             em.getTransaction().begin();
-           int update = em.createNamedQuery("updateAdminDetails",AdminEntity.class).setParameter("email",email)
-                   .setParameter("adminName",adminName).setParameter("mobileNumber",mobileNumber).setParameter("password",password).executeUpdate();
-           if (update > 0) {
-               em.getTransaction().commit();
-           }
+            adminEntity = em.createNamedQuery("viewAdminByEmail",AdminEntity.class).setParameter("email",email).getSingleResult();
+            if (adminName==null){
+                return false;
+            }
+            adminEntity.setAdminName(adminName);
+            adminEntity.setMobileNumber(mobileNumber);
+            if(profilePath!=null && !profilePath.isEmpty()){
+                adminEntity.setProfilePath(profilePath);
+            }
+            em.merge(adminEntity);
+            em.getTransaction().commit();
+            return true;
+
         }catch(Exception e) {
-            log.error("Exception in Admin updateAdminDetails method in repo",e.getMessage());
+            log.error("Exception in Admin updateAdminDetails method in repo:{}",e.getMessage());
             return false;
         }finally {
             if(em!=null) {
                 em.close();
             }
         }
-        return true;
     }
+
 
 
 }

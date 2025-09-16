@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false" %>
-<!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<html lang="en" data-bs-theme="light" xmlns:c="http://www.w3.org/1999/XSL/Transform">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,7 +40,7 @@
         }
 
         .navbar-brand img {
-            filter: brightness(0) invert(1);
+            filter: none;
         }
 
         .nav-link {
@@ -268,7 +268,18 @@
                             <h2><i class="bi bi-person-fill-gear me-2"></i> Admin Login</h2>
                         </div>
                         <div class="login-body">
-                            <form action="adminLogin" method="post" class="needs-validation" novalidate>
+                            <div id="loginMessage" class="d-none"></div>
+                            <c:if test="${not empty message}">
+                                <div class="alert alert-warning text-center" role="alert">
+                                    ${message}
+                                    <c:if test="${message eq 'Account blocked. Please reset your password using \'Forgot Password\'.'}">
+                                        <br/>
+                                    </c:if>
+                                </div>
+                            </c:if>
+
+                            <form id="loginForm" class="needs-validation" novalidate>
+                                <!-- Email input -->
                                 <div class="mb-4">
                                     <label for="email" class="form-label">Username or Email</label>
                                     <div class="input-group">
@@ -276,8 +287,10 @@
                                         <input type="text" class="form-control" id="email" name="email" required
                                                placeholder="Enter your username or email">
                                     </div>
-                                    <div class="invalid-feedback">Please enter your username or email.</div>
+                                    <div class="invalid-feedback">Please enter your email.</div>
                                 </div>
+
+                                <!-- Password input -->
                                 <div class="mb-4">
                                     <label for="password" class="form-label">Password</label>
                                     <div class="input-group">
@@ -287,6 +300,7 @@
                                     </div>
                                     <div class="invalid-feedback">Please enter your password.</div>
                                 </div>
+
                                 <input type="hidden" name="role" value="admin">
                                 <div class="d-grid gap-2 mb-3">
                                     <button type="submit" class="btn btn-login">
@@ -294,12 +308,15 @@
                                     </button>
                                 </div>
                                 <div class="text-center">
-                                    <a href="index.jsp" class="btn-link">
+                                    <a href="toIndex" class="btn-link">
                                         <i class="bi bi-arrow-left me-1"></i> Back to Home
                                     </a>
+                                    <a href="forgotPassword.jsp" class="btn btn-link">Click here to reset password</a>
+
                                 </div>
                             </form>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -377,6 +394,8 @@
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- Custom Scripts -->
     <script>
@@ -398,25 +417,124 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
-        // Form validation
+        // Form validation and AJAX submission
         (function () {
             'use strict'
 
-            // Fetch all the forms we want to apply custom Bootstrap validation styles to
-            var forms = document.querySelectorAll('.needs-validation')
+            // Fetch the form element
+            const form = document.getElementById('loginForm');
+            const loginMessage = document.getElementById('loginMessage');
 
-            // Loop over them and prevent submission
-            Array.prototype.slice.call(forms).forEach(function (form) {
-                form.addEventListener('submit', function (event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
+            // Add submit event listener
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                // Reset previous messages and validation
+                loginMessage.className = 'd-none';
+                loginMessage.innerHTML = '';
+
+                // Remove previous validation classes
+                document.getElementById('email').classList.remove('is-invalid');
+                document.getElementById('password').classList.remove('is-invalid');
+
+                // Get form fields
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value.trim();
+                let isValid = true;
+
+                // Validate fields
+                if (!email) {
+                    showError('email', 'Please enter your email or username');
+                    isValid = false;
+                }
+
+                if (!password) {
+                    showError('password', 'Please enter your password');
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    return false;
+                }
+
+                // Show loading state
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Logging in...';
+
+                // Prepare form data
+                const formData = {
+                    email: email,
+                    password: password,
+                    role: 'admin'
+                };
+
+                // Make AJAX request
+                $.ajax({
+                    type: 'POST',
+                    url: 'adminLogin',
+                    data: JSON.stringify(formData),
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.redirect) {
+                            // Redirect on successful login
+                            window.location.href = response.redirect;
+                        } else if (response.message) {
+                            // Show success message
+                            showMessage(response.message, 'success');
+                        }
+                    },
+                    error: function(xhr) {
+                        let errorMessage = 'An error occurred during login. Please try again.';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        }
+                        showMessage(errorMessage, 'danger');
+                    },
+                    complete: function() {
+                        // Reset button state
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
                     }
+                });
 
-                    form.classList.add('was-validated')
-                }, false)
-            })
-        })()
+                return false;
+            });
+
+            // Function to show error message
+            function showError(fieldId, message) {
+                const field = document.getElementById(fieldId);
+                const formGroup = field.closest('.mb-4');
+                let errorDiv = formGroup.querySelector('.invalid-feedback');
+
+                if (!errorDiv) {
+                    errorDiv = document.createElement('div');
+                    errorDiv.className = 'invalid-feedback d-block';
+                    formGroup.appendChild(errorDiv);
+                }
+
+                errorDiv.textContent = message;
+                field.classList.add('is-invalid');
+            }
+
+            // Function to show message
+            function showMessage(message, type) {
+                loginMessage.className = `alert alert-${type} text-center`;
+                loginMessage.innerHTML = message;
+                loginMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            // Clear validation on input
+            document.getElementById('email').addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+            });
+
+            document.getElementById('password').addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+            });
+        })();
     </script>
 </body>
 </html>

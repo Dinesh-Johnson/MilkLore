@@ -8,7 +8,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @Service
 @Slf4j
@@ -55,9 +54,10 @@ public class AdminServiceImp implements AdminService{
     }
 
     @Override
-    public boolean updateAdminDetails(String email, String adminName, String mobileNumber, String password) {
+    public boolean updateAdminDetails(String email, String adminName, String mobileNumber,String profilePath) {
         log.info("Admin updateAdminDetails method in service");
-        return repo.updateAdminDetails(email, adminName, mobileNumber, password);
+        System.out.println(email+"-"+adminName+"-"+mobileNumber+"-"+profilePath);
+        return repo.updateAdminDetails(email, adminName, mobileNumber,profilePath);
     }
 
 }

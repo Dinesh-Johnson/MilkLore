@@ -16,10 +16,6 @@
 }
 
 .navbar-brand img {
-  height: 40px;
-  width: auto;
-  margin-right: 0.75rem;
-  transition: var(--transition-base);
   /* Remove the white filter to show original logo colors */
   filter: none;
 }

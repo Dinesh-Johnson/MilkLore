@@ -15,7 +15,7 @@
 <header>
   <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
       <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" href="index.jsp">
+        <a class="navbar-brand d-flex align-items-center" href="toIndex">
           <img src="images/milklore.png" alt="Milklore Logo" height="50" class="me-2"/>
           <span class="d-flex flex-column align-items-start">
             <span style="font-weight:bold; font-size:1.3rem; line-height:1;">Milklore</span>
@@ -27,7 +27,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link" href="index.jsp">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="toIndex">Home</a></li>
             <li class="nav-item"><a class="nav-link" href="#">Products</a></li>
             <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
             <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>

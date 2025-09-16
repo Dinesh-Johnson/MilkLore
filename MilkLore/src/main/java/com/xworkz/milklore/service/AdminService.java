@@ -10,5 +10,6 @@ public interface AdminService {
     String getPasswordByEmail(String email,String password);
 
     AdminDTO viewAdminByEmail(String email);
-    boolean updateAdminDetails(String email, String adminName, String mobileNumber, String password);
+    boolean updateAdminDetails(String email, String adminName, String mobileNumber,String profilePath);
+
 }

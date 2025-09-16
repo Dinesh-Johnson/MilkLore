@@ -33,4 +33,10 @@ public class AdminDTO {
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$")
     private String confirmPassword;
 
+    private String profilePath;
+
+    private boolean blockedStatus;
+
+    private Integer loginAttempts;
+
 }

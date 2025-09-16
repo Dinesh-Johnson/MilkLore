@@ -9,8 +9,6 @@ import javax.persistence.*;
 @Table(name = "admin_info")
 @NamedQuery(name = "getPasswordByEmail",query = "select e.password from AdminEntity e where e.email =:email")
 @NamedQuery(name = "viewAdminByEmail",query = "select e from AdminEntity e where e.email =:email")
-@NamedQuery(name = "updateAdminDetails",query = "update AdminEntity e set e.adminName = :adminName, e.mobileNumber = :mobileNumber, " +
-        "e.password = :password where e.email = :email")
 public class AdminEntity {
 
     @Id
@@ -32,4 +30,13 @@ public class AdminEntity {
 
     @Column(name = "confirm_password")
     private String confirmPassword;
+
+    @Column(name = "profile_path")
+    private String profilePath;
+
+    @Column(name = "blocked_status")
+    private boolean blockedStatus;
+
+    @Column(name = "login_attempts")
+    private Integer loginAttempts;
 }
