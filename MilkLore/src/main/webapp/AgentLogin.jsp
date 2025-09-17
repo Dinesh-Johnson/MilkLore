@@ -61,13 +61,16 @@
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
+                                <input type="password" class="form-control" id="password" name="password"
+                                       minlength="5"
+                                       pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{5,}$"
+                                       required />
                                 <div class="invalid-feedback">Please enter password.</div>
                             </div>
                             <input type="hidden" name="role" value="agent">
                             <div class="d-flex justify-content-between align-items-center mt-4">
                                 <button type="submit" class="btn btn-theme px-4">Login</button>
-                                <a href="toIndex" class="btn btn-link">Cancel</a>
+                                <a href="toIndex    " class="btn btn-link">Cancel</a>
                                 <a href="AgentRegister.jsp" class="btn btn-link">Register</a>
                             </div>
                         </form>
@@ -130,5 +133,6 @@
   </footer>
 </footer>
 </div>
+<script src="js/login-vaidation.js"></script>
 </body>
 </html>

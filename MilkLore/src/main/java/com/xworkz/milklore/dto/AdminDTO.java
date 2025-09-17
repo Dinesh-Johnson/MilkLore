@@ -37,6 +37,5 @@ public class AdminDTO {
 
     private boolean blockedStatus;
 
-    private Integer loginAttempts;
 
 }

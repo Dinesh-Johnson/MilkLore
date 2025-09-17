@@ -19,9 +19,9 @@ public class AppController {
         return "index";
     }
 
-    @GetMapping("AdminLogin")
+    @GetMapping("redirectToAdminLogin")
     public String adminLogin() {
-        System.out.println("adminLogin method in controller");
+        System.out.println("adminLogin method in APP controller");
         return "AdminLogin";
     }
 

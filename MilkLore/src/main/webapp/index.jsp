@@ -373,7 +373,7 @@
                             <span>Login</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="loginDropdown">
-                            <li><a class="dropdown-item" href="AdminLogin"><i class="bi bi-person-fill-gear me-2"></i>Admin Login</a></li>
+                            <li><a class="dropdown-item" href="redirectToAdminLogin"><i class="bi bi-person-fill-gear me-2"></i>Admin Login</a></li>
                             <li><a class="dropdown-item" href="AgentLogin.jsp"><i class="bi bi-person-fill me-2"></i>Agent Login</a></li>
                             <li><a class="dropdown-item" href="CustomerLogin.jsp"><i class="bi bi-person-fill me-2"></i>Customer Login</a></li>
                         </ul>

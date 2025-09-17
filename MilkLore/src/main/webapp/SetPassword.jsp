@@ -237,6 +237,7 @@
                     </div>
                     <div class="login-body">
                         <form action="setPassword" method="post" class="needs-validation" novalidate>
+                            <input type="hidden" name="email" value="${email}">
                             <div class="mb-4">
                                 <label for="password" class="form-label">New Password</label>
                                 <input type="password" class="form-control" id="password" name="password" required

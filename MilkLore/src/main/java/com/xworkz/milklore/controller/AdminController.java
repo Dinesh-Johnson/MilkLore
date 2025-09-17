@@ -30,23 +30,39 @@ public class AdminController {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
+    @Autowired
+    AppController controller;
+
     public AdminController() {
         System.out.println("Admin controller constructor");
 
     }
 
     @PostMapping("adminLogin")
-    public  String adiminLogin(@RequestParam String email, @RequestParam String password, Model model) {
-        System.out.println("adminLogin method in controller");
-        if (service.getPasswordByEmail(email,password) != null){
-            AdminDTO dto = service.viewAdminByEmail(email);
-            model.addAttribute("dto", dto);
-            return "AdminLoginSuccess";
-        }else {
-            model.addAttribute("message","Login Failed");
-            return "AdminLogin";
+    public String adiminLogin(@RequestParam String email,
+                              @RequestParam String password,
+                              Model model) {
+        System.out.println("adminLogin method in Admin controller");
+        AdminDTO adminDTO = null;
+        try {
+            adminDTO = service.getPasswordByEmail(email, password);
+            if (adminDTO != null) {
+                log.info("If Block COntrolelr");
+                model.addAttribute("dto", adminDTO);
+                return "AdminLoginSuccess";
+            } else {
+                log.info("Else Bock");
+                model.addAttribute("errorMessage", "Account not present");
+                return "AdminLogin";
+            }
+        } catch (RuntimeException e) {
+            log.info("Catch block");
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("accountBlockedMsg", "Account blocked. Please reset your password using 'Forgot Password'.");
         }
+        return "AdminLogin";
     }
+
 
     @GetMapping("viewProfile")
     public String onView(@RequestParam("email")String email,Model model){
@@ -76,7 +92,7 @@ public class AdminController {
                          @RequestParam(value = "profileImage", required = false) MultipartFile profilePicture,
                          @RequestParam("email") String email,
                          Model model) {
-        System.out.println("AdminEdit method in controller");
+        System.out.println("AdminEdit method in Admin controller");
         String filePath = null;
 
         if (profilePicture != null && !profilePicture.isEmpty()) {
@@ -101,6 +117,45 @@ public class AdminController {
         } else {
             model.addAttribute("errorMessage", "Check The Details");
             return onEdit(email, model);
+        }
+    }
+    @PostMapping("/forgotPassword")
+    public String sendEmailForSetPassword(@RequestParam("email")String email,Model model){
+        log.info("sendEmailForSetPassword method in admin Admin controller");
+        if(service.sendMailToSetPassword(email))
+        {
+            log.info("Email send");
+            model.addAttribute("errorMessage","Email send to your mail");
+        }else{
+            log.error("Email not send");
+            model.addAttribute("errorMessage","Email not send to your mail");
+        }
+        return "AdminLogin";
+    }
+
+    @GetMapping("/setPassword")
+    public String redirectToSetPassword(@RequestParam("email")String email, Model model)
+    {
+        log.info("redirectToSetPassword method in admin Admin controller");
+        model.addAttribute("email",email);
+        return "SetPassword";
+    }
+
+    @PostMapping("/setPassword")
+    public String resetPassword(@RequestParam String email,@RequestParam String password,
+                                @RequestParam String confirmPassword,Model model)
+    {
+        log.info("resetPassword method in admin Admin controller");
+        if(service.setPasswordByEmail(email,password,confirmPassword))
+        {
+            log.info("password changed");
+            model.addAttribute("email",email);
+            model.addAttribute("errorMessage","Account unblocked");
+            return controller.adminLogin();
+        }else {
+            log.error("password not changed");
+            model.addAttribute("errorMessage","Password incorrect");
+            return redirectToSetPassword(email,model);
         }
     }
 

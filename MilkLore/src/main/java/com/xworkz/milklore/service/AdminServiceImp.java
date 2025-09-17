@@ -9,15 +9,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 @Slf4j
 public class AdminServiceImp implements AdminService{
 
     @Autowired
-    AdminRepo repo;
+    private AdminRepo repo;
 
     @Autowired
-    BCryptPasswordEncoder encoder;
+    private BCryptPasswordEncoder encoder;
+
+    @Autowired
+    private EmailSenderService emailService;
+
+    private final Map<String,Integer> attempts = new HashMap<>();
 
     @Override
     public boolean save(AdminDTO dto) {
@@ -25,17 +33,44 @@ public class AdminServiceImp implements AdminService{
         AdminEntity entity=new AdminEntity();
         BeanUtils.copyProperties(dto,entity);
         entity.setPassword(encoder.encode(entity.getPassword()));
+        entity.setBlockedStatus(false);
         return repo.save(entity);
     }
 
     @Override
-    public String getPasswordByEmail(String email,String password) {
+    public AdminDTO getPasswordByEmail(String email,String password) {
         System.out.println("Admin getPasswordByEmail method in service");
-        String dbPassword=repo.getPasswordByEmail(email);
-        if (encoder.matches(dbPassword,password)){
-            return "Login Success";
+        AdminEntity entity = repo.viewAdminByEmail(email);
+        System.out.println(entity);
+        if (entity == null)
+            return null;
+        if (entity.getBlockedStatus()) {
+            log.info("Blocked Status: " + entity.getBlockedStatus());
+            throw new RuntimeException("Account is blocked have to reset password. Click forgot Password");
         }
-        return repo.getPasswordByEmail(email);
+        if (encoder.matches(password, entity.getPassword())) {
+            attempts.remove(email);
+            System.out.println("PASSWORD MATACHED");
+            AdminDTO adminDTO = new AdminDTO();
+            BeanUtils.copyProperties(entity, adminDTO);
+            log.info("AdminDTO: " + adminDTO);
+
+            return adminDTO;
+        }else {
+            System.out.println("PASSWORD NOT MATACHED");
+            int count = attempts.getOrDefault(email, 0)+1;
+            attempts.put(email,count);
+            if (count >= 3) {
+                if(repo.loginAttemptBlockedEmail(email,true)){
+                    log.info("Blocked Status is True");
+
+                }
+                throw new RuntimeException("Account is blocked have to reset password. Click forgot Password");
+            }else {
+                log.warn("Attempts is not reached {} its limit {}",email,count);
+                throw new RuntimeException("Password mismatch for "+email+" Attempt "+attempts+"/3");
+            }
+        }
     }
 
     @Override
@@ -58,6 +93,34 @@ public class AdminServiceImp implements AdminService{
         log.info("Admin updateAdminDetails method in service");
         System.out.println(email+"-"+adminName+"-"+mobileNumber+"-"+profilePath);
         return repo.updateAdminDetails(email, adminName, mobileNumber,profilePath);
+    }
+
+    @Override
+    public boolean checkEmailByEmail(String email) {
+        log.info("Admin checkEmailByEmail method in service");
+        AdminEntity entity = repo.viewAdminByEmail(email);
+        return entity!=null;
+    }
+
+    @Override
+    public boolean sendMailToSetPassword(String email) {
+        log.info("Admin sendMailToSetPassword method in service");
+        return emailService.mailSend(email);
+    }
+
+    @Override
+    public boolean setPasswordByEmail(String email, String password, String confirmPassword) {
+        if (!password.equals(confirmPassword)) {
+            return false;
+        }
+
+        String pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).{5,}$";
+        if (!password.matches(pattern)) {
+            return false;
+        }
+
+        String encodedPassword = encoder.encode(password);
+        return repo.setPasswordByEmail(email, encodedPassword, confirmPassword);
     }
 
 }

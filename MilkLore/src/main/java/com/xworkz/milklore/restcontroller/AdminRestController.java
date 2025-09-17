@@ -4,20 +4,19 @@ import com.xworkz.milklore.dto.AdminDTO;
 import com.xworkz.milklore.service.AdminService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/")
 @Api(value = "Admin management")
+@Slf4j
 public class AdminRestController {
 
     @Autowired
@@ -25,14 +24,14 @@ public class AdminRestController {
 
     public AdminRestController()
     {
-        System.out.println("AdminRestController constructor");
+        log.info("AdminRestController constructor");
     }
 
     @PostMapping("/adminDetails")
     @ApiOperation(value = "Save admin data")
     public ResponseEntity<String> saveAdminDetails(@Valid @RequestBody AdminDTO adminDTO,
                                                    BindingResult bindingResult) {
-        System.out.println("saveAdminDetails method in rest controller");
+        log.info("Admin saveAdminDetails method in rest controller");
 
         if(bindingResult.hasErrors()) {
             System.out.println("Error in fields");
@@ -45,6 +44,18 @@ public class AdminRestController {
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Invalid details");
         }
+    }
+
+    @GetMapping("/viewAdminByEmail")
+    public boolean viewAdminByEmail(@RequestParam("email") String email) {
+        log.info("Admin viewAdminByEmail method in rest controller");
+        return true;
+    }
+
+    @GetMapping("/checkEmail")
+    public boolean checkEmailByEmail(@RequestParam("email") String email) {
+        log.info("Checking if email exists: {}", email);
+        return adminService.viewAdminByEmail(email) != null;
     }
 
 }

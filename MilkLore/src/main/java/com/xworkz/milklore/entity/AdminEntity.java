@@ -7,7 +7,6 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "admin_info")
-@NamedQuery(name = "getPasswordByEmail",query = "select e.password from AdminEntity e where e.email =:email")
 @NamedQuery(name = "viewAdminByEmail",query = "select e from AdminEntity e where e.email =:email")
 public class AdminEntity {
 
@@ -35,8 +34,6 @@ public class AdminEntity {
     private String profilePath;
 
     @Column(name = "blocked_status")
-    private boolean blockedStatus;
+    private Boolean blockedStatus;
 
-    @Column(name = "login_attempts")
-    private Integer loginAttempts;
 }

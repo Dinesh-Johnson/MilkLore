@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,26 +42,6 @@ public class AdminRepoImpl implements AdminRepo{
         return false;
     }
 
-    @Override
-    public String getPasswordByEmail(String email) {
-        log.info("Admin getPasswordByEmail method in repo");
-        EntityManager em=null;
-        try {
-            em = emf.createEntityManager();
-            em.getTransaction().begin();
-            String password = em.createNamedQuery("getPasswordByEmail",String.class).setParameter("email",email).getSingleResult();
-            System.out.println("Password: "+password);
-            em.getTransaction().commit();
-        }catch(Exception e) {
-            log.error("Exception in Admin getPasswordByEmail method in repo:{}",e.getMessage());
-            return null;
-        }finally {
-            if(em!=null) {
-                em.close();
-            }
-        }
-        return email;
-    }
 
     @Override
     public AdminEntity viewAdminByEmail(String email) {
@@ -114,6 +95,66 @@ public class AdminRepoImpl implements AdminRepo{
         }
     }
 
+    @Override
+    public boolean loginAttemptBlockedEmail(String email, boolean isBlocked) {
+        log.info("Admin loginAttemptBlockedEmail method in repo");
+        EntityManager em=null;
+        AdminEntity adminEntity=null;
+        try {
+            em = emf.createEntityManager();
+            em.getTransaction().begin();
+            adminEntity = em.createNamedQuery("viewAdminByEmail",AdminEntity.class).setParameter("email",email).getSingleResult();
+            if(adminEntity==null)
+                return false;
+            adminEntity.setBlockedStatus(isBlocked);
+            em.merge(adminEntity);
+            em.getTransaction().commit();
+            return true;
+        }catch(PersistenceException e) {
+            log.error("Exception in Admin loginAttemptBlockedEmail method in repo:{}",e.getMessage());
+            if(em.getTransaction()!=null) {
+                em.getTransaction().rollback();
+                log.info("Transaction rolled back");
+            }
+        }finally {
+            if(em!=null) {
+                em.close();
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean setPasswordByEmail(String email, String password, String confirmPassword) {
+        log.info("Admin setPasswordByEmail method in repo");
+        EntityManager em=null;
+        AdminEntity adminEntity=null;
+        try {
+            em = emf.createEntityManager();
+            em.getTransaction().begin();
+            adminEntity = em.createNamedQuery("viewAdminByEmail",AdminEntity.class).setParameter("email",email).getSingleResult();
+            if(adminEntity==null)
+                return false;
+            adminEntity.setPassword(password);
+            adminEntity.setConfirmPassword(confirmPassword);
+            adminEntity.setBlockedStatus(false);
+            em.merge(adminEntity);
+            em.getTransaction().commit();
+            return true;
+        }catch (PersistenceException e){
+            log.error("Exception in Admin setPasswordByEmail method in repo:{}",e.getMessage());
+            if(em.getTransaction()!=null) {
+                em.getTransaction().rollback();
+                log.info("Transaction rolled back");
+            }
+        }finally {
+            if(em!=null && em.isOpen()) {
+                em.close();
+                log.info("EntityManager closed");
+            }
+        }
+        return false;
+    }
 
 
 }
