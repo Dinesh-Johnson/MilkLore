@@ -1,112 +1,167 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false" %>
-<html lang="en">
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light" xmlns:c="http://www.w3.org/1999/XSL/Transform">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Admin Login - Milklore</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Products – Milklore</title>
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet" />
-    <link href="css/common-styles.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 </head>
-<body class="with-fixed-header">
-<div class="page-wrapper">
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-            <div class="container-fluid">
-                <a class="navbar-brand d-flex align-items-center" href="toIndex">
-                    <img src="images/milklore.png" alt="Milklore Logo" height="50" class="me-2"/>
-                    <span class="d-flex flex-column align-items-start">
-                        <span class="brand-name">Milklore</span>
-                        <span class="brand-tagline">Tales and Taste of Tradition</span>
-                    </span>
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="toIndex">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Products</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="loginDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Login
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="loginDropdown">
-                                <li><a class="dropdown-item" href="AgentLogin.jsp">Agent Login</a></li>
-                                <li><a class="dropdown-item" href="CustomerLogin.jsp">Customer Login</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
+<body class="bg-light">
 
-    <main class="flex-grow-1 d-flex align-items-center justify-content-center">
-        <div class="container py-5">
-            <div class="row justify-content-center">
-                <div class="col-12 col-md-8 col-lg-6">
-                    <h2 class="mb-4">Admin Details</h2>
-                </div>
-            </div>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="toIndex">
+            <i class="bi bi-bucket me-2"></i> Milklore Admin
+        </a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a href="toIndex" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="manageProducts" class="nav-link active">Manage Products</a>
+                </li>
+                <li class="nav-item">
+                    <a href="logout" class="nav-link text-warning">Logout</a>
+                </li>
+            </ul>
         </div>
-    </main>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script>
-        // Simple bootstrap validation
-        (function () {
-          'use strict'
-          var forms = document.querySelectorAll('.needs-validation')
-          Array.prototype.slice.call(forms).forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-              if (!form.checkValidity()) {
-                event.preventDefault()
-                event.stopPropagation()
-              }
-              form.classList.add('was-validated')
-            }, false)
-          })
-        })()
-    </script>
-    <footer>
-        <footer class="footer mt-auto bg-light pt-4">
-            <div class="container">
-                <div class="row text-center text-md-start">
-                    <div class="col-12 mb-3">
-                        <h2 class="section-header">Follow us:
-                            <a href="#" class="ms-2 me-1"><i class="bi bi-facebook"></i></a>
-                            <a href="#" class="me-1"><i class="bi bi-instagram"></i></a>
-                            <a href="#" class="me-1"><i class="bi bi-youtube"></i></a>
-                            <a href="#" class="me-1"><i class="bi bi-envelope"></i></a>
-                            <a href="#" class="me-1"><i class="bi bi-twitter-x"></i></a>
-                        </h2>
+    </div>
+</nav>
+
+<div class="container my-5">
+    <!-- Add / Edit Product Form -->
+    <div class="card shadow-lg rounded-3">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">
+                <c:choose>
+                    <c:when test="${not empty editProduct}">
+                        <i class="bi bi-pencil-square me-2"></i>Edit Product
+                    </c:when>
+                    <c:otherwise>
+                        <i class="bi bi-plus-circle me-2"></i>Add New Product
+                    </c:otherwise>
+                </c:choose>
+            </h4>
+        </div>
+        <div class="card-body">
+            <!-- Success / Error Message -->
+            <c:if test="${not empty message}">
+                <div class="alert alert-info">${message}</div>
+            </c:if>
+
+            <form action="<c:choose>
+                            <c:when test='${not empty editProduct}'>updateProduct</c:when>
+                            <c:otherwise>saveProduct</c:otherwise>
+                          </c:choose>"
+                  method="post" enctype="multipart/form-data">
+                <c:if test="${not empty editProduct}">
+                    <input type="hidden" name="id" value="${editProduct.id}">
+                </c:if>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Product Title</label>
+                        <input type="text" name="title" class="form-control" required
+                               value="<c:out value='${editProduct.title}'/>"
+                               placeholder="e.g. Paneer">
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <h5>Address</h5>
-                        <hr class="hr-custom">
-                        <p class="mb-1"><i class="bi bi-geo-alt-fill text-danger"></i> 123, Milklore Dairy Road, Chennai, Tamil Nadu, India</p>
+                    <div class="col-md-6">
+                        <label class="form-label">Price (₹)</label>
+                        <input type="number" step="0.01" name="price" class="form-control" required
+                               value="<c:out value='${editProduct.price}'/>" placeholder="e.g. 150">
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <h5>Telephone</h5>
-                        <hr class="hr-custom">
-                        <p class="mb-1"><i class="bi bi-telephone-fill text-primary"></i> 044-12345678 (10:00AM - 5:45PM, Mon-Sat)</p>
+                    <div class="col-12">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" rows="3" required
+                                  placeholder="Enter product details"><c:out value='${editProduct.description}'/></textarea>
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <h5>Email</h5>
-                        <hr class="hr-custom">
-                        <p class="mb-1"><i class="bi bi-envelope-fill text-danger"></i> customercare@milklore.coop</p>
+                    <div class="col-12">
+                        <label class="form-label">Product Image</label>
+                        <input type="file" name="imageFile" class="form-control" accept="image/*">
+                        <small class="text-muted">Upload JPG/PNG product image. Leave blank to keep existing image.</small>
+
+                        <c:if test="${not empty editProduct}">
+                            <div class="mt-2">
+                                <p class="mb-1 small text-muted">Current Image:</p>
+                                <img src="uploads/${editProduct.imagePath}" alt="${editProduct.title}"
+                                     style="height:100px; object-fit:cover; border-radius:5px;">
+                            </div>
+                        </c:if>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-12 text-center">
-                        <p class="mb-0"> 2025 Milklore • Created with passion.</p>
-                    </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="reset" class="btn btn-outline-secondary me-2">Reset</button>
+                    <button type="submit" class="btn btn-primary">
+                        <c:choose>
+                            <c:when test="${not empty editProduct}">
+                                <i class="bi bi-save me-2"></i>Update Product
+                            </c:when>
+                            <c:otherwise>
+                                <i class="bi bi-save me-2"></i>Save Product
+                            </c:otherwise>
+                        </c:choose>
+                    </button>
                 </div>
-            </div>
-        </footer>
-    </footer>
+            </form>
+        </div>
+    </div>
+
+    <!-- Existing Products List -->
+    <div class="card mt-5 shadow-lg rounded-3">
+        <div class="card-header bg-secondary text-white">
+            <h4 class="mb-0"><i class="bi bi-box-seam me-2"></i>Existing Products</h4>
+        </div>
+        <div class="card-body">
+            <c:if test="${empty productList}">
+                <p class="text-muted">No products available. Add your first product above!</p>
+            </c:if>
+
+            <c:if test="${not empty productList}">
+                <div class="row g-3">
+                    <c:forEach var="p" items="${productList}">
+                        <div class="col-md-4">
+                            <div class="card h-100 shadow-sm">
+                                <img src="uploads/${p.imagePath}" class="card-img-top" alt="${p.title}" style="height:200px; object-fit:cover;">
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">${p.title}</h5>
+                                    <p class="card-text small text-muted">${p.description}</p>
+                                    <p class="fw-bold">₹${p.price}</p>
+
+                                    <div class="mt-auto d-flex justify-content-between">
+                                        <!-- Edit Button -->
+                                        <form action="editProduct" method="get">
+                                            <input type="hidden" name="id" value="${p.id}">
+                                            <button type="submit" class="btn btn-warning btn-sm">
+                                                <i class="bi bi-pencil-square"></i> Edit
+                                            </button>
+                                        </form>
+
+                                        <!-- Delete Button -->
+                                        <form action="deleteProduct" method="post"
+                                              onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                            <input type="hidden" name="id" value="${p.id}">
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </c:forEach>
+                </div>
+            </c:if>
+        </div>
+    </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

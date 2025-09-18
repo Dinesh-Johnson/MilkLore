@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,13 +42,14 @@ public class AdminController {
     @PostMapping("adminLogin")
     public String adiminLogin(@RequestParam String email,
                               @RequestParam String password,
-                              Model model) {
+                              Model model, HttpSession session) {
         System.out.println("adminLogin method in Admin controller");
         AdminDTO adminDTO = null;
         try {
             adminDTO = service.getPasswordByEmail(email, password);
             if (adminDTO != null) {
                 log.info("If Block COntrolelr");
+                session.setAttribute("dto", adminDTO);
                 model.addAttribute("dto", adminDTO);
                 return "AdminLoginSuccess";
             } else {
@@ -65,8 +67,12 @@ public class AdminController {
 
 
     @GetMapping("viewProfile")
-    public String onView(@RequestParam("email")String email,Model model){
+    public String onView(@RequestParam("email")String email,Model model,HttpSession session){
         System.out.println("Opening View In Page..");
+        AdminDTO userlogin = (AdminDTO) session.getAttribute("dto");
+        if(userlogin == null){
+            return "AdminLogin";
+        }
         AdminDTO dto = service.viewAdminByEmail(email);
 
         if (dto == null) {
@@ -79,7 +85,11 @@ public class AdminController {
     }
 
     @GetMapping("editProfile")
-    public String onEdit(@RequestParam("email") String email, Model model) {
+    public String onEdit(@RequestParam("email") String email, Model model,HttpSession session) {
+        AdminDTO userlogin = (AdminDTO) session.getAttribute("dto");
+        if(userlogin == null){
+            return "AdminLogin";
+        }
         System.out.println("Opening Edit In Page..");
         AdminDTO dto = service.viewAdminByEmail(email);
         model.addAttribute("dto", dto);
@@ -91,7 +101,7 @@ public class AdminController {
                          @RequestParam("mobileNumber") String mobileNumber,
                          @RequestParam(value = "profileImage", required = false) MultipartFile profilePicture,
                          @RequestParam("email") String email,
-                         Model model) {
+                         Model model,HttpSession session) {
         System.out.println("AdminEdit method in Admin controller");
         String filePath = null;
 
@@ -112,11 +122,12 @@ public class AdminController {
 
         if (service.updateAdminDetails(email, adminName, mobileNumber, filePath)) {
             AdminDTO dto = service.viewAdminByEmail(email);
+            AdminDTO userlogin = (AdminDTO) session.getAttribute("dto");
             model.addAttribute("dto", dto);
             return "AdminLoginSuccess";
         } else {
             model.addAttribute("errorMessage", "Check The Details");
-            return onEdit(email, model);
+            return onEdit(email, model,session);
         }
     }
     @PostMapping("/forgotPassword")
@@ -159,4 +170,11 @@ public class AdminController {
         }
     }
 
+    @GetMapping("logout")
+    public String logout(HttpSession session,Model model){
+        log.info("logout method in admin Admin controller");
+        session.invalidate();
+        model.addAttribute("errorMessage","Logged out successfully");
+        return "AdminLogin";
+    }
 }

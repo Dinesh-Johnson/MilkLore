@@ -2,12 +2,14 @@
   {
     "image": "images/milk.png",
     "title": "Pure Milk",
-    "description": "Fresh, pasteurized milk straight from trusted farms."
+    "description": "Fresh, pasteurized milk straight from trusted farms.",
+    "price": "20/litre"
   },
   {
     "image": "images/curd.png",
     "title": "Curd",
-    "description": "Creamy, probiotic-rich curd for daily nourishment."
+    "description": "Creamy, probiotic-rich curd for daily nourishment.",
+    "price": "75/Kg"
   },
   {
     "image": "images/butter.png",

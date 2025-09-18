@@ -28,11 +28,11 @@ public class EmailSenderServiceImpl implements EmailSenderService{
             message.setSubject("Reset Password");
 
             String messageBody = "Hello,\n\n"
-                    + "It looks like you requested to reset your Farm Fresh account password. "
+                    + "It looks like you requested to reset your Milk Lore account password. "
                     + "You can reset it by clicking the link below:\n\n"
                     + passwordLink + "\n\n"
                     + "If you didn’t make this request, no worries — just ignore this email and your account will stay safe.\n\n"
-                    + "Warm regards,\nThe Farm Fresh Team";
+                    + "Warm regards,\nMilk Lore Team";
             message.setText(messageBody);
 
             emailConfig.mailSender().send(message);

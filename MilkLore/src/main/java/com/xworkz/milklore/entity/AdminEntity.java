@@ -1,6 +1,8 @@
 package com.xworkz.milklore.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 
@@ -35,5 +37,11 @@ public class AdminEntity {
 
     @Column(name = "blocked_status")
     private Boolean blockedStatus;
+
+
+    @OneToOne(cascade = CascadeType.ALL,mappedBy = "adminEntity")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private AdminAuditEntity audit;
 
 }

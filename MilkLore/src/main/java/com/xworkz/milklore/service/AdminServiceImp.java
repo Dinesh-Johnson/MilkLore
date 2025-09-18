@@ -2,6 +2,8 @@ package com.xworkz.milklore.service;
 
 import com.xworkz.milklore.dto.AdminDTO;
 import com.xworkz.milklore.entity.AdminEntity;
+import com.xworkz.milklore.entity.AdminAuditEntity;
+import com.xworkz.milklore.repository.AdminAuditRepo;
 import com.xworkz.milklore.repository.AdminRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +27,9 @@ public class AdminServiceImp implements AdminService{
 
     @Autowired
     private EmailSenderService emailService;
+
+    @Autowired
+    private AdminAuditRepo auditRepo;
 
     private final Map<String,Integer> attempts = new HashMap<>();
 
@@ -50,6 +56,16 @@ public class AdminServiceImp implements AdminService{
         }
         if (encoder.matches(password, entity.getPassword())) {
             attempts.remove(email);
+            AdminAuditEntity audit = entity.getAudit();
+            if (audit == null) {
+                audit = new AdminAuditEntity();
+                audit.setAdminEntity(entity);
+            }
+            audit.setLoggedInTime(LocalDateTime.now());
+            audit.setAuditName(entity.getAdminName());
+            if(auditRepo.save(audit))
+                log.info("Admin audit details updated/created");
+            else log.error("Admin audit details not updated/created");
             System.out.println("PASSWORD MATACHED");
             AdminDTO adminDTO = new AdminDTO();
             BeanUtils.copyProperties(entity, adminDTO);
@@ -124,4 +140,3 @@ public class AdminServiceImp implements AdminService{
     }
 
 }
-
