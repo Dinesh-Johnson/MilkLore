@@ -1,39 +1,43 @@
-[
-  {
-    "image": "images/milk.png",
-    "title": "Pure Milk",
-    "description": "Fresh, pasteurized milk straight from trusted farms.",
-    "price": "20/litre"
-  },
-  {
-    "image": "images/curd.png",
-    "title": "Curd",
-    "description": "Creamy, probiotic-rich curd for daily nourishment.",
-    "price": "75/Kg"
-  },
-  {
-    "image": "images/butter.png",
-    "title": "Butter",
-    "description": "Rich and smooth butter to enhance your meals."
-  },
-  {
-    "image": "images/ghee.jpg",
-    "title": "Ghee",
-    "description": "Golden, aromatic ghee for traditional flavor and nutrition."
-  },
-  {
-    "image": "images/paneer.jpg",
-    "title": "Paneer",
-    "description": "Soft, fresh paneer perfect for curries and snacks."
-  },
-  {
-    "image": "images/cheese.jpg",
-    "title": "Cheese",
-    "description": "Delicious, creamy cheese for sandwiches and more."
-  },
-  {
-    "image": "images/flavored-milk.jpg",
-    "title": "Flavored Milk",
-    "description": "Refreshing, tasty milk in a variety of natural flavors."
-  }
-]
+[ {
+  "id" : 0,
+  "title" : "Pure Milk",
+  "description" : "Fresh, pasteurized milk straight from trusted farms.",
+  "price" : "20/litre",
+  "imagePath" : "images/milk.png"
+}, {
+  "id" : 0,
+  "title" : "Curd",
+  "description" : "Creamy, probiotic-rich curd for daily nourishment.",
+  "price" : "75/Kg",
+  "imagePath" : "images/curd.png"
+}, {
+  "id" : 0,
+  "title" : "Butter",
+  "description" : "Rich and smooth butter to enhance your meals.",
+  "price" : null,
+  "imagePath" : "images/butter.png"
+}, {
+  "id" : 0,
+  "title" : "Ghee",
+  "description" : "Golden, aromatic ghee for traditional flavor and nutrition.",
+  "price" : null,
+  "imagePath" : "images/ghee.jpg"
+}, {
+  "id" : 0,
+  "title" : "Paneer",
+  "description" : "Soft, fresh paneer perfect for curries and snacks.",
+  "price" : null,
+  "imagePath" : "images/paneer.jpg"
+}, {
+  "id" : 0,
+  "title" : "Cheese",
+  "description" : "Delicious, creamy cheese for sandwiches and more.",
+  "price" : null,
+  "imagePath" : "images/cheese.jpg"
+}, {
+  "id" : 0,
+  "title" : "Flavored Milk",
+  "description" : "Refreshing, tasty milk in a variety of natural flavors.",
+  "price" : null,
+  "imagePath" : "images/flavored-milk.jpg"
+} ]

@@ -25,6 +25,18 @@ public class AppController {
         return "AdminLogin";
     }
 
+    @GetMapping("manageSuppliers")
+    public String manageSuppliers() {
+        System.out.println("manageSuppliers method in APP controller");
+        return "SuppliersList";
+    }
+
+    @GetMapping("reDirecttoSupplier")
+    public String reDirecttoSupplier() {
+        System.out.println("reDirecttoSupplier method in APP controller");
+
+        return "SupplierRegister";
+    }
 
 
 }

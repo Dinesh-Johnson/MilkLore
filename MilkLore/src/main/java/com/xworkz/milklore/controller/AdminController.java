@@ -69,10 +69,6 @@ public class AdminController {
     @GetMapping("viewProfile")
     public String onView(@RequestParam("email")String email,Model model,HttpSession session){
         System.out.println("Opening View In Page..");
-        AdminDTO userlogin = (AdminDTO) session.getAttribute("dto");
-        if(userlogin == null){
-            return "AdminLogin";
-        }
         AdminDTO dto = service.viewAdminByEmail(email);
 
         if (dto == null) {
@@ -170,6 +166,14 @@ public class AdminController {
         }
     }
 
+    @GetMapping("redirectToAdminSuccess")
+    public String redirectToAdminSuccess(@RequestParam String email,Model model){
+        log.info("redirectToAdminSuccess method in admin Admin controller");
+        AdminDTO dto = service.viewAdminByEmail(email);
+        model.addAttribute("dto", dto);
+        return "AdminLoginSuccess";
+    }
+
     @GetMapping("logout")
     public String logout(HttpSession session,Model model){
         log.info("logout method in admin Admin controller");
@@ -177,4 +181,6 @@ public class AdminController {
         model.addAttribute("errorMessage","Logged out successfully");
         return "AdminLogin";
     }
+
+
 }

@@ -1,15 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<html lang="en" data-bs-theme="light">
+<html lang="en" data-bs-theme="light" xmlns:c="http://www.w3.org/1999/XSL/Transform">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Milklore</title>
-    <!-- Bootstrap 5.3 CSS -->
+    <link rel="icon" type="image/png" href="images/icon.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <!-- Custom CSS -->
+    <link href="css/_variables.css" rel="stylesheet"/>
     <link href="css/style.css" rel="stylesheet"/>
     <style>
         body { background-color: #f8f9fc; color: #333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
@@ -112,14 +113,16 @@
             </div>
 
             <!-- Reports Card -->
+            <!-- Suppliers Card -->
             <div class="col-md-3 col-sm-6">
                 <div class="card shadow-sm text-center p-3 h-100">
-                    <i class="bi bi-bar-chart-fill text-danger" style="font-size:2rem;"></i>
-                    <h5 class="mt-3">Reports</h5>
-                    <p class="text-muted">View analytics</p>
-                    <a href="viewReports" class="btn btn-danger btn-sm">View</a>
+                    <i class="bi bi-truck text-info" style="font-size:2rem;"></i>
+                    <h5 class="mt-3">Suppliers</h5>
+                    <p class="text-muted">Manage milk suppliers</p>
+                    <a href="redirectToMilkSuppliersList?email=${dto.email}" class="btn btn-info btn-sm">View</a>
                 </div>
             </div>
+
         </div>
 
         <!-- Notifications & Quick Stats -->

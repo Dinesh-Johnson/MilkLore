@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Customer Registration - Milklore</title>
+    <link rel="icon" type="image/png" href="images/icon.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet" />
 </head>
@@ -37,7 +38,7 @@
               </a>
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="loginDropdown">
                 <li><a class="dropdown-item" href="AdminLogin.jsp">Admin Login</a></li>
-                <li><a class="dropdown-item" href="AgentLogin.jsp">Agent Login</a></li>
+                <li><a class="dropdown-item" href="SupplierLogin.jsp">Agent Login</a></li>
                 <li><a class="dropdown-item" href="CustomerLogin.jsp">Customer Login</a></li>
               </ul>
             </li>

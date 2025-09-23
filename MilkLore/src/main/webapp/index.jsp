@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Milklore – Pure Tales of Milk</title>
+    <link rel="icon" type="image/png" href="images/icon.png">
     <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -374,7 +375,6 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="loginDropdown">
                             <li><a class="dropdown-item" href="redirectToAdminLogin"><i class="bi bi-person-fill-gear me-2"></i>Admin Login</a></li>
-                            <li><a class="dropdown-item" href="AgentLogin.jsp"><i class="bi bi-person-fill me-2"></i>Agent Login</a></li>
                             <li><a class="dropdown-item" href="CustomerLogin.jsp"><i class="bi bi-person-fill me-2"></i>Customer Login</a></li>
                         </ul>
                     </li>

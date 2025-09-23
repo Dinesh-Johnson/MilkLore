@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <div class="d-flex justify-content-center gap-2 flex-wrap">`;
         chunk.forEach(product => {
           html += `
-            <img src="${product.image}" alt="${product.name}"
+            <img src="${product.imagePath}" alt="${product.name}"
                  style="height:80px; object-fit:cover; border-radius:0.5rem; width: calc(100% / ${itemsPerSlide} - 8px);">
           `;
         });

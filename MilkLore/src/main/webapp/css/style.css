@@ -1,5 +1,5 @@
 /* Import variables */
-@import 'variables.css';
+@import '_variables.css';
 
 /* Base styles */
 body {

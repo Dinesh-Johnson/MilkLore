@@ -52,17 +52,19 @@ public class AdminRepoImpl implements AdminRepo{
             em = emf.createEntityManager();
             em.getTransaction().begin();
             adminEntity = em.createNamedQuery("viewAdminByEmail",AdminEntity.class).setParameter("email",email).getSingleResult();
-            System.out.println(adminEntity);
+            return adminEntity;
         }catch(Exception e) {
             log.error("Exception in Admin viewAdminByEmail method in repo:{}",e.getMessage());
-            return null;
         }finally {
-            if(em!=null) {
+            if(em!=null && em.isOpen())
+            {
                 em.close();
+                log.info("EntityManager is closed");
             }
         }
         return adminEntity;
     }
+
 
     @Override
     public boolean updateAdminDetails(String email, String adminName, String mobileNumber, String profilePath) {
