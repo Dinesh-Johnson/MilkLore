@@ -10,9 +10,10 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "supplier_d")
-@NamedQuery(name = "getAllSuppliers",query = "select e from SupplierEntity e where e.isActive=true")
 @NamedQuery(name = "checkEmail",query = "select e from SupplierEntity e where e.email=:email and e.isActive=true")
 @NamedQuery(name = "checkPhoneNumber",query = "select e from SupplierEntity e where e.phoneNumber=:phoneNumber and e.isActive=true")
+@NamedQuery(name="getSuppliersCount",query = "select count(a) from SupplierEntity a where a.isActive=true")
+@NamedQuery(name = "getAllSuppliers",query = "select a from SupplierEntity a where a.isActive=true order by a.supplierId DESC")
 public class SupplierEntity {
 
     @Id

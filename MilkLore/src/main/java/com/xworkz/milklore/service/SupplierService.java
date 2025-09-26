@@ -8,7 +8,7 @@ public interface SupplierService {
 
     boolean addSupplier(SupplierDTO supplierDTO,String adminEmail);
 
-    List<SupplierDTO> getAllSuppliers();
+    List<SupplierDTO> getAllSuppliers(int pageNumber,int pageSize);
 
     boolean checkEmail(String email);
 

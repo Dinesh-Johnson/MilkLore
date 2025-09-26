@@ -8,7 +8,7 @@ public interface SupplierRepo {
 
     boolean addSupplier(SupplierEntity supplierEntity);
 
-    List<SupplierEntity> getAllSuppliers();
+    List<SupplierEntity> getAllSuppliers(int pageNumber,int pageSize);
 
     boolean checkEmail(String email);
 
@@ -16,6 +16,10 @@ public interface SupplierRepo {
 
     boolean updateSupplierDetails(SupplierEntity supplierEntity,Boolean isDelete);
 
+    Integer getSuppliersCount();
+
     SupplierEntity getSupplierByEmail(String email);
+
+
 
 }

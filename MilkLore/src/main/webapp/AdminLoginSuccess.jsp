@@ -119,7 +119,7 @@
                     <i class="bi bi-truck text-info" style="font-size:2rem;"></i>
                     <h5 class="mt-3">Suppliers</h5>
                     <p class="text-muted">Manage milk suppliers</p>
-                    <a href="redirectToMilkSuppliersList?email=${dto.email}" class="btn btn-info btn-sm">View</a>
+                    <a href="redirectToMilkSuppliersList?email=${dto.email}&page=1&size=10" class="btn btn-info btn-sm">View</a>
                 </div>
             </div>
 

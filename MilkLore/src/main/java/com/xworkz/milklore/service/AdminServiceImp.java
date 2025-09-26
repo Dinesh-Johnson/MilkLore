@@ -5,6 +5,7 @@ import com.xworkz.milklore.entity.AdminEntity;
 import com.xworkz.milklore.entity.AdminAuditEntity;
 import com.xworkz.milklore.repository.AdminAuditRepo;
 import com.xworkz.milklore.repository.AdminRepo;
+import com.xworkz.milklore.repository.SupplierRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class AdminServiceImp implements AdminService{
 
     @Autowired
     private AdminAuditRepo auditRepo;
+
+    @Autowired
+    private SupplierRepo supplierRepo;
 
     private final Map<String,Integer> attempts = new HashMap<>();
 
@@ -137,6 +141,12 @@ public class AdminServiceImp implements AdminService{
 
         String encodedPassword = encoder.encode(password);
         return repo.setPasswordByEmail(email, encodedPassword, confirmPassword);
+    }
+
+    @Override
+    public int getSupplierCount() {
+        log.info("getSupplierCount method in service");
+        return supplierRepo.getSuppliersCount();
     }
 
 }

@@ -44,13 +44,14 @@ public class SupplierRepoImpl implements SupplierRepo{
     }
 
     @Override
-    public List<SupplierEntity> getAllSuppliers() {
+    public List<SupplierEntity> getAllSuppliers(int pageNumber,int pageSize) {
         log.info("Supplier getAllSuppliers method in repo");
         EntityManager em=null;
         List<SupplierEntity> list=null;
         try {
             em=emf.createEntityManager();
-            list = em.createNamedQuery("getAllSuppliers",SupplierEntity.class).getResultList();
+            list = em.createNamedQuery("getAllSuppliers")
+                    .setFirstResult((pageNumber-1)*pageSize).setMaxResults(pageSize).getResultList();
         }catch(PersistenceException e){
             log.error("Exception in Supplier getAllSuppliers method in repo:{}",e.getMessage());
         }finally {
@@ -166,4 +167,28 @@ public class SupplierRepoImpl implements SupplierRepo{
         }
         return supplierEntity;
     }
+
+    @Override
+    public Integer getSuppliersCount() {
+        log.info("getSuppliersCount method in supplier repository");
+        EntityManager entityManager=null;
+        int count=0;
+        try {
+            entityManager=emf.createEntityManager();
+            Long count1=(Long) entityManager.createNamedQuery("getSuppliersCount").getSingleResult();
+            count=count1.intValue();
+        }catch (PersistenceException e)
+        {
+            log.error(e.getMessage());
+        }finally {
+            if(entityManager!=null && entityManager.isOpen())
+            {
+                entityManager.close();
+                log.info("EntityManager is closed");
+            }
+        }
+        return count;
+    }
+
+
 }

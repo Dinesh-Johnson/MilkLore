@@ -80,9 +80,9 @@ public class SupplierServiceImpl implements SupplierService{
 
 
     @Override
-    public List<SupplierDTO> getAllSuppliers() {
+    public List<SupplierDTO> getAllSuppliers(int pageNumber,int pageSize) {
         log.info("getAllSuppliers method in supplier service");
-        List<SupplierEntity> supplierEntities=supplierRepo.getAllSuppliers();
+        List<SupplierEntity> supplierEntities=supplierRepo.getAllSuppliers(pageNumber,pageSize);
         List<SupplierDTO> supplierDTOS=new ArrayList<>();
         supplierEntities.forEach(supplierEntity -> {
             SupplierDTO supplierDTO=new SupplierDTO();
