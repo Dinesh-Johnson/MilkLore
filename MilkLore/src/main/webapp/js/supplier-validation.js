@@ -185,4 +185,23 @@ document.querySelectorAll(".editSupplierBtn").forEach(button => {
         document.getElementById("editMilk").value = this.dataset.milk;
     });
 });
+   $(document).ready(function () {
+        let deleteUrl = "";
+
+        $(".delete-btn").on("click", function () {
+            const email = $(this).data("email");
+            const adminEmail = $(this).data("admin");
+
+            // Build delete URL dynamically
+            deleteUrl = "deleteMilkSupplier?email=" + email + "&adminEmail=" + adminEmail;
+
+            // Show modal
+            $("#deleteConfirmModal").modal("show");
+        });
+
+        // On confirm delete, redirect
+        $("#confirmDeleteBtn").on("click", function () {
+            window.location.href = deleteUrl;
+        });
+    });
 

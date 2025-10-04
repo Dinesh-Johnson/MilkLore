@@ -1,6 +1,7 @@
 package com.xworkz.milklore.service;
 
 import com.xworkz.milklore.dto.SupplierDTO;
+import com.xworkz.milklore.entity.SupplierEntity;
 
 import java.util.List;
 
@@ -17,5 +18,7 @@ public interface SupplierService {
     boolean editSupplierDetails(SupplierDTO supplierDTO,String adminEmail);
 
     boolean deleteSupplierDetails(String email,String adminEmail);
+
+    List<SupplierDTO> searchSuppliers(String keyword);
 
 }

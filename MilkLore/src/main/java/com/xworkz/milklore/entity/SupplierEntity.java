@@ -14,6 +14,14 @@ import javax.persistence.*;
 @NamedQuery(name = "checkPhoneNumber",query = "select e from SupplierEntity e where e.phoneNumber=:phoneNumber and e.isActive=true")
 @NamedQuery(name="getSuppliersCount",query = "select count(a) from SupplierEntity a where a.isActive=true")
 @NamedQuery(name = "getAllSuppliers",query = "select a from SupplierEntity a where a.isActive=true order by a.supplierId DESC")
+@NamedQuery(name = "searchSupplierEmailNameMobile",
+        query = "SELECT a FROM SupplierEntity a " +
+                "WHERE (LOWER(a.firstName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
+                "OR LOWER(a.lastName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
+                "OR LOWER(a.email) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
+                "OR a.phoneNumber LIKE CONCAT('%', :searchTerm, '%')) " +
+                "AND a.isActive = true")
+
 public class SupplierEntity {
 
     @Id

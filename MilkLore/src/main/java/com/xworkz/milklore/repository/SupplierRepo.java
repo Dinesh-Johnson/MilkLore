@@ -20,6 +20,7 @@ public interface SupplierRepo {
 
     SupplierEntity getSupplierByEmail(String email);
 
+    List<SupplierEntity> getSearchSuppliers(String searchTerm);
 
 
 }

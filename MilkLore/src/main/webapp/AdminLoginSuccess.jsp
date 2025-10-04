@@ -44,6 +44,9 @@
                 aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="redirectToProductsPrice?email=${dto.email}"><i class="fa-solid fa-tag me-2"></i> Products Price</a>
+                </li>
                 <li class="nav-item dropdown ms-3">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <c:choose>

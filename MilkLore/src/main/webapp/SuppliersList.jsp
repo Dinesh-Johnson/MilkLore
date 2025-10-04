@@ -130,6 +130,12 @@
         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
             <i class="fas fa-plus me-1"></i> Add Supplier
         </button>
+
+        <form action="searchSuppliers" method="get" class="d-flex">
+            <input type="hidden" name="email" value="${dto.email}">
+            <input type="text" name="keyword" class="form-control me-2" placeholder="Search suppliers...">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
     </div>
 
     <!-- Toast Notifications -->
@@ -183,6 +189,13 @@
                         <td><span class="badge bg-info text-dark">${supplier.typeOfMilk}</span></td>
                         <td>${supplier.address}</td>
                         <td class="action-btns">
+                            <button type="button" class="btn btn-primary btn-sm me-2 viewSupplierBtn"
+                                    data-bs-toggle="modal" data-bs-target="#viewSupplierModal"
+                                    data-firstname="${supplier.firstName}" data-lastname="${supplier.lastName}"
+                                    data-email="${supplier.email}" data-phone="${supplier.phoneNumber}"
+                                    data-address="${supplier.address}" data-milk="${supplier.typeOfMilk}">
+                                <i class="fa-solid fa-eye"></i> View
+                            </button>
                             <button class="btn btn-warning btn-sm edit-btn"
                                     data-id="${supplier.supplierId}"
                                     data-firstname="${supplier.firstName}"
@@ -193,11 +206,13 @@
                                     data-address="${supplier.address}">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <a href="deleteMilkSupplier?email=${supplier.email}&adminEmail=${dto.email}"
-                               class="btn btn-danger btn-sm"
-                               onclick="return confirm('Are you sure you want to delete this supplier?')">
+                            <button type="button"
+                                    class="btn btn-danger btn-sm delete-btn"
+                                    data-email="${supplier.email}"
+                                    data-admin="${dto.email}">
                                 <i class="fas fa-trash"></i>
-                            </a>
+                            </button>
+
                         </td>
                     </tr>
                 </c:forEach>
@@ -287,7 +302,66 @@
         </div>
     </div>
 </div>
-
+<!--view supplier-->
+<div class="modal fade" id="viewSupplierModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <h5 class="modal-title fw-bold">
+                    <i class="fas fa-user-circle me-2"></i>Supplier Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="bg-light p-3 rounded-3 mb-3">
+                            <p class="mb-2 text-muted small">First Name</p>
+                            <h6 class="mb-0" id="modalFirstName"></h6>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="bg-light p-3 rounded-3 mb-3">
+                            <p class="mb-2 text-muted small">Last Name</p>
+                            <h6 class="mb-0" id="modalLastName"></h6>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="bg-light p-3 rounded-3 mb-3">
+                            <p class="mb-2 text-muted small">Email Address</p>
+                            <h6 class="mb-0" id="modalEmail"></h6>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="bg-light p-3 rounded-3 mb-3">
+                            <p class="mb-2 text-muted small">Phone Number</p>
+                            <h6 class="mb-0" id="modalPhone"></h6>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="bg-light p-3 rounded-3 mb-3">
+                            <p class="mb-2 text-muted small">Address</p>
+                            <h6 class="mb-0" id="modalAddress"></h6>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="bg-light p-3 rounded-3">
+                            <p class="mb-2 text-muted small">Type of Milk</p>
+                            <h6 class="mb-0">
+                                <span class="badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;" id="modalMilk"></span>
+                            </h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Edit Modal (similar styling as Add) -->
 <div class="modal fade" id="editSupplierModal" tabindex="-1">
     <div class="modal-dialog">
@@ -337,6 +411,24 @@
                     <button class="btn btn-primary">Update Supplier</button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">Are you sure you want to delete this supplier?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <a id="confirmDeleteBtn" class="btn btn-danger">Delete</a>
+            </div>
         </div>
     </div>
 </div>

@@ -2,8 +2,12 @@ package com.xworkz.milklore.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xworkz.milklore.dto.AdminDTO;
 import com.xworkz.milklore.dto.ProductDTO;
+import com.xworkz.milklore.dto.SupplierDTO;
 import com.xworkz.milklore.service.AdminService;
+import com.xworkz.milklore.service.SupplierService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -22,11 +26,15 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/")
+@Slf4j
 @PropertySource("classpath:application.properties")
 public class ProductController {
 
     @Autowired
     AdminService adminService;
+
+    @Autowired
+    SupplierService supplierService;
 
     @Value("${app.json-file-path}")
     private String jsonFilePath;

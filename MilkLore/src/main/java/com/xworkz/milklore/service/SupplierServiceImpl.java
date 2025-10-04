@@ -145,4 +145,17 @@ public class SupplierServiceImpl implements SupplierService{
         supplierEntity.setSupplierAuditEntity(supplierAuditEntity);
         return supplierRepo.updateSupplierDetails(supplierEntity, true);
     }
+
+
+    @Override
+    public List<SupplierDTO> searchSuppliers(String keyword) {
+        List<SupplierEntity> supplierEntities=supplierRepo.getSearchSuppliers(keyword);
+        List<SupplierDTO> supplierDTOS=new ArrayList<>();
+        supplierEntities.forEach(supplierEntity -> {
+            SupplierDTO supplierDTO=new SupplierDTO();
+            BeanUtils.copyProperties(supplierEntity,supplierDTO);
+            supplierDTOS.add(supplierDTO);
+        });
+        return supplierDTOS;
+    }
 }
