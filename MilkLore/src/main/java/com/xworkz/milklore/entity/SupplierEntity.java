@@ -5,6 +5,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Slf4j
 @Data
@@ -54,4 +55,9 @@ public class SupplierEntity {
 
     @Column(name = "is_active")
     private Boolean isActive;
+
+    @OneToMany(mappedBy = "supplier")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<MilkProductReceiveEntity> milkProductReceiveList;
 }

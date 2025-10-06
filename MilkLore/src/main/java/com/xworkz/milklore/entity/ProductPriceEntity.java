@@ -34,6 +34,9 @@ public class ProductPriceEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name="product_type")
+    private String productType;
+
     @Column(name = "is_active")
     private Boolean isActive;
 

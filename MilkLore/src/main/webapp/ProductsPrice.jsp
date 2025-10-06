@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %><%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<html lang="en">
+<html lang="en" xmlns:c="">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -142,6 +142,7 @@
                             <tr>
                                 <th>Product Name</th>
                                 <th>Price (₹)</th>
+                                <th>Product Type</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -150,11 +151,12 @@
                                 <tr>
                                     <td>${product.productName}</td>
                                     <td>₹${product.price}</td>
+                                    <td>${product.productType}</td>
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-outline-primary me-2 editProductBtn"
-                                                data-bs-toggle="modal" data-bs-target="#editProductModal"
-                                                data-id="${product.productId}" data-name="${product.productName}"
-                                                data-price="${product.price}">
+                    <button type="button" class="btn btn-sm btn-outline-primary me-2 editProductBtn"
+                        data-bs-toggle="modal" data-bs-target="#editProductModal"
+                        data-id="${product.productId}" data-name="${product.productName}"
+                        data-price="${product.price}" data-type="${product.productType}">
                                             <i class="fa-solid fa-pen-to-square me-1"></i> Edit
                                         </button>
                                         <a href="#" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
@@ -199,6 +201,20 @@
                             <input type="number" step="0.01" min="0" class="form-control" id="price" name="price" required>
                             <div id="priceError" class="error-msg text-danger small"></div>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label d-block">Product Type</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="productType" id="buyType" value="BUY"
+                                       required>
+                                <label class="form-check-label" for="buyType">Buy</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="productType" id="sellType"
+                                       value="SELL" required>
+                                <label class="form-check-label" for="sellType">Sell</label>
+                            </div>
+                            <div id="productTypeError" class="error-msg text-danger small"></div>
+                        </div>
                         <div class="modal-footer px-0 pb-0">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             <button type="submit" class="btn btn-primary">
@@ -229,6 +245,13 @@
                         <div class="mb-3">
                             <label class="form-label">Price (₹)</label>
                             <input type="number" step="0.01" min="0" class="form-control" name="price" id="editProductPrice" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editProductType">Product Type</label>
+                            <select class="form-select" id="editProductType" name="productType" required>
+                                <option value="BUY">Buy</option>
+                                <option value="SELL">Sell</option>
+                            </select>
                         </div>
                         <div class="modal-footer px-0 pb-0">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -283,66 +306,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Edit product modal handler
-        document.addEventListener('DOMContentLoaded', function() {
-            // Handle edit modal
-            const editButtons = document.querySelectorAll('.editProductBtn');
-            editButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const productId = this.getAttribute('data-id');
-                    const productName = this.getAttribute('data-name');
-                    const price = this.getAttribute('data-price');
-
-                    document.getElementById('editProductId').value = productId;
-                    document.getElementById('editProductName').value = productName;
-                    document.getElementById('editProductPrice').value = price;
-                });
-            });
-
-            // Handle delete confirmation
-            const deleteModal = document.getElementById('deleteConfirmModal');
-            if (deleteModal) {
-                deleteModal.addEventListener('show.bs.modal', function(event) {
-                    const button = event.relatedTarget;
-                    const deleteUrl = button.getAttribute('data-delete-url');
-                    const confirmBtn = deleteModal.querySelector('#confirmDeleteBtn');
-                    confirmBtn.href = deleteUrl;
-                });
-            }
-
-            // Form validation
-            const form = document.getElementById('productPriceForm');
-            if (form) {
-                form.addEventListener('submit', function(event) {
-                    const productName = document.getElementById('productName').value.trim();
-                    const price = document.getElementById('price').value.trim();
-                    let isValid = true;
-
-                    // Reset error messages
-                    document.querySelectorAll('.error-msg').forEach(el => el.textContent = '');
-
-                    // Validate product name
-                    if (!productName) {
-                        document.getElementById('productNameError').textContent = 'Product name is required';
-                        isValid = false;
-                    }
-
-                    // Validate price
-                    if (!price) {
-                        document.getElementById('priceError').textContent = 'Price is required';
-                        isValid = false;
-                    } else if (isNaN(price) || parseFloat(price) <= 0) {
-                        document.getElementById('priceError').textContent = 'Please enter a valid price';
-                        isValid = false;
-                    }
-
-                    if (!isValid) {
-                        event.preventDefault();
-                    }
-                });
-            }
-        });
-    </script>
+    <script src="js/supplier-validation.js"></script>
+    <script src="js/product-price.js"></script>
 </body>
 </html>

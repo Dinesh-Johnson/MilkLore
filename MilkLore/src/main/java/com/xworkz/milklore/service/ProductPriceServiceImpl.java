@@ -73,4 +73,37 @@ public class ProductPriceServiceImpl implements ProductPriceService{
 
         return productPriceRepository.deleteProduct(productId);
     }
+
+    @Override
+    public List<String> productListForBuy() {
+        log.info("productList method in product price service");
+        List<ProductPriceEntity> productPriceEntities=productPriceRepository.getAllDetails();
+        List<String> products=new ArrayList<>();
+        productPriceEntities.forEach(entity -> {
+            ProductPriceDTO productPriceDTO=new ProductPriceDTO();
+            BeanUtils.copyProperties(entity,productPriceDTO);
+            if(productPriceDTO.getProductType().equalsIgnoreCase("Buy")) {
+                products.add(productPriceDTO.getProductName());
+            }
+        });
+        return products;
+    }
+    @Override
+    public boolean checkProductName(String product) {
+        log.info("checkProductName method in product price service");
+        List<ProductPriceEntity> productPriceEntities=productPriceRepository.getAllDetails();
+        return productPriceEntities.stream()
+                .anyMatch(entity -> entity.getProductName().equalsIgnoreCase(product));
+    }
+    @Override
+    public Double getPriceForType(String type) {
+        log.info("getPriceForType method in product price service");
+        List<ProductPriceEntity> productPriceEntities=productPriceRepository.getAllDetails();
+        Double price = productPriceEntities.stream()
+                .filter(e -> e.getProductName().equalsIgnoreCase(type))
+                .map(ProductPriceEntity::getPrice)
+                .findFirst()
+                .orElse(0.0D); //
+        return price;
+    }
 }

@@ -10,4 +10,7 @@ public interface ProductPriceService {
     List<ProductPriceDTO> getAllDetails();
     boolean updateProduct(ProductPriceDTO productPriceDTO,String adminEmail);
     boolean deleteProduct(Integer productId);
+    List<String> productListForBuy();
+    boolean checkProductName(String product);
+    Double getPriceForType(String type);
 }

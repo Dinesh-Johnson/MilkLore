@@ -22,5 +22,7 @@ public interface SupplierRepo {
 
     List<SupplierEntity> getSearchSuppliers(String searchTerm);
 
+    SupplierEntity getSupplierByPhone(String phone);
+
 
 }

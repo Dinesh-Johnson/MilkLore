@@ -60,7 +60,7 @@ emailInput.addEventListener("input", function() {
         return;
     }
 
-    fetch('http://localhost:8081/farm-fresh/checkSupplierEmail?email=' + encodeURIComponent(email))
+    fetch('/MilkLore/checkSupplierEmail?email=' + encodeURIComponent(email))
         .then(response => response.json())
         .then(isTaken => {
             const taken = (typeof isTaken === "string") ? (isTaken === "true") : isTaken;
@@ -100,7 +100,7 @@ phoneInput.addEventListener("input", function() {
         return;
     }
 
-    fetch('http://localhost:8081/farm-fresh/checkPhone?phoneNumber=' + encodeURIComponent(phone))
+    fetch('/MilkLore/checkPhone?phoneNumber=' + encodeURIComponent(phone))
         .then(response => response.json())
         .then(isTaken => {
             const taken = (typeof isTaken === "string") ? (isTaken === "true") : isTaken;
@@ -135,29 +135,60 @@ phoneInput.addEventListener("input", function() {
         updateSubmitButton();
     });
 
-    // Validate milk type
-    milkSelect.addEventListener("input", function() {
-        if (milkSelect.value === "Select milk type" || milkSelect.value === "") {
-            milkError.innerText = "Please select milk type.";
-            milkError.style.color = "red";
-        } else {
+    // Load milk types dynamically from backend
+fetch('/MilkLore/productList')
+    .then(response => response.json())
+    .then(data => {
+        milkSelect.innerHTML = '<option value="">Select milk type</option>';
+        data.forEach(type => {
+            const option = document.createElement("option");
+            option.value = type;
+            option.textContent = type;
+
+            // Preselect supplier’s milk type if editing
+            if (type === "${supplier.typeOfMilk}") {
+                option.selected = true;
+            }
+
+            milkSelect.appendChild(option);
+        });
+    })
+    .catch(() => {
+        milkError.innerText = "Unable to load milk types";
+        milkError.style.color = "orange";
+    });
+
+// Validate milk type after fetch
+// Validate milk type after fetch
+if (milkSelect) {
+    milkSelect.addEventListener("change", function() {
+        if (milkSelect.value === "") {
+            if (milkError) {
+                milkError.innerText = "Please select milk type.";
+                milkError.style.color = "red";
+            }
+        } else if (milkError) {
             milkError.innerText = "";
         }
         updateSubmitButton();
     });
+}
+
 
     // Enable/disable submit button based on all checks
-    function updateSubmitButton() {
-        const isValid =
-            firstNameInput.value.trim().length >= 3 &&
-            lastNameInput.value.trim().length >= 1 &&
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim()) && emailAvailable &&
-            /^[6-9]\d{9}$/.test(phoneInput.value.trim()) && phoneAvailable &&
-            addressInput.value.trim().length >= 5 &&
-            milkSelect.value !== "Select milk type" && milkSelect.value !== "";
+   function updateSubmitButton() {
+       if (!submitButton) return; // Add this line to prevent errors
 
-        submitButton.disabled = !isValid;
-    }
+       const isValid =
+           firstNameInput && firstNameInput.value.trim().length >= 3 &&
+           lastNameInput && lastNameInput.value.trim().length >= 1 &&
+           emailInput && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim()) && emailAvailable &&
+           phoneInput && /^[6-9]\d{9}$/.test(phoneInput.value.trim()) && phoneAvailable &&
+           addressInput && addressInput.value.trim().length >= 5 &&
+           milkSelect && milkSelect.value !== "Select milk type" && milkSelect.value !== "";
+
+       submitButton.disabled = !isValid;
+   }
 
     // Initial check
     updateSubmitButton();
@@ -174,6 +205,57 @@ document.querySelectorAll(".viewSupplierBtn").forEach(button => {
     });
 });
 
+
+const deleteModal = document.getElementById('deleteConfirmModal');
+  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+  deleteModal.addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget; // Button/link that opened the modal
+    const deleteUrl = button.getAttribute('data-delete-url');
+    confirmDeleteBtn.setAttribute('href', deleteUrl);
+  });
+
+
+function loadMilkTypes(selectElement, selectedValue = "") {
+ if (!selectElement) {
+        console.error("Select element not found");
+        return;
+    }
+    fetch('/MilkLore/productList')
+        .then(response => response.json())
+        .then(data => {
+            selectElement.innerHTML = '<option value="">Select milk type</option>';
+            data.forEach(type => {
+                const option = document.createElement("option");
+                option.value = type;
+                option.textContent = type;
+
+                // Preselect if matches existing value
+                if (type === selectedValue) {
+                    option.selected = true;
+                }
+
+                selectElement.appendChild(option);
+            });
+        })
+        .catch(() => {
+            if (selectElement) {
+                const errorDivId = selectElement.id === "typeOfMilk" ? "typeOfMilkError" : "editMilkError";
+                const errorDiv = document.getElementById(errorDivId);
+                if (errorDiv) {
+                    errorDiv.innerText = "Unable to load milk types";
+                    errorDiv.style.color = "orange";
+                }
+            }
+        });
+}
+
+// For Add form (preselect from supplier if available)
+const typeOfMilkSelect = document.getElementById("typeOfMilk");
+if (typeOfMilkSelect) {
+    loadMilkTypes(typeOfMilkSelect, "${supplier.typeOfMilk}");
+}
+// For Edit form when modal opens
 document.querySelectorAll(".editSupplierBtn").forEach(button => {
     button.addEventListener("click", function () {
         document.getElementById("editSupplierId").value = this.dataset.id;
@@ -182,26 +264,8 @@ document.querySelectorAll(".editSupplierBtn").forEach(button => {
         document.getElementById("editEmail").value = this.dataset.email;
         document.getElementById("editPhone").value = this.dataset.phone;
         document.getElementById("editAddress").value = this.dataset.address;
-        document.getElementById("editMilk").value = this.dataset.milk;
+
+        // Load milk types & preselect supplier’s existing type
+        loadMilkTypes(document.getElementById("editMilk"), this.dataset.milk);
     });
 });
-   $(document).ready(function () {
-        let deleteUrl = "";
-
-        $(".delete-btn").on("click", function () {
-            const email = $(this).data("email");
-            const adminEmail = $(this).data("admin");
-
-            // Build delete URL dynamically
-            deleteUrl = "deleteMilkSupplier?email=" + email + "&adminEmail=" + adminEmail;
-
-            // Show modal
-            $("#deleteConfirmModal").modal("show");
-        });
-
-        // On confirm delete, redirect
-        $("#confirmDeleteBtn").on("click", function () {
-            window.location.href = deleteUrl;
-        });
-    });
-

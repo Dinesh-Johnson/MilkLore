@@ -21,4 +21,6 @@ public interface SupplierService {
 
     List<SupplierDTO> searchSuppliers(String keyword);
 
+    SupplierDTO getSupplierDetails(String phone);
+
 }

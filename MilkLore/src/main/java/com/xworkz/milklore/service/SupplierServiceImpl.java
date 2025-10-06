@@ -158,4 +158,13 @@ public class SupplierServiceImpl implements SupplierService{
         });
         return supplierDTOS;
     }
+
+    @Override
+    public SupplierDTO getSupplierDetails(String phone) {
+        log.info("getSupplierDetails method in supplier service");
+        SupplierEntity supplierEntity=supplierRepo.getSupplierByPhone(phone);
+        SupplierDTO supplierDTO=new SupplierDTO();
+        BeanUtils.copyProperties(supplierEntity,supplierDTO);
+        return supplierDTO;
+    }
 }

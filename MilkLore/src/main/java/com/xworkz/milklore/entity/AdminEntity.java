@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Entity
@@ -43,5 +44,10 @@ public class AdminEntity {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private AdminAuditEntity audit;
+
+    @OneToMany(mappedBy = "admin")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<MilkProductReceiveEntity> milkProductReceiveList;
 
 }

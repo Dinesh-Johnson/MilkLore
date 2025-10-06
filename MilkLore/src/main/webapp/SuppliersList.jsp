@@ -97,6 +97,10 @@
                         <i class="fa-solid fa-bottle-droplet me-1"></i> Milk Suppliers
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="redirectToProductsPrice?email=${dto.email}"><i
+                            class="fa-solid fa-tag me-2"></i> Products Price</a>
+                </li>
                 <li class="nav-item dropdown ms-3">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown"
                        data-bs-toggle="dropdown" aria-expanded="false">
@@ -277,15 +281,11 @@
                             <small id="phoneNumberError"></small>
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Type of Milk</label>
+                            <label for="typeOfMilk" class="form-label">Type of Milk</label>
                             <select class="form-select" id="typeOfMilk" name="typeOfMilk" required>
-                                <option value="">Select</option>
-                                <option>Cow Milk</option>
-                                <option>Buffalo Milk</option>
-                                <option>Goat Milk</option>
-                                <option>A2 Milk</option>
+                                <option value="">Select milk type</option>
                             </select>
-                            <small id="typeOfMilkError"></small>
+                            <div id="typeOfMilkError" class="error-msg text-danger small"></div>
                         </div>
                         <div class="col-12">
                             <label class="form-label">Address</label>
@@ -310,7 +310,8 @@
                 <h5 class="modal-title fw-bold">
                     <i class="fas fa-user-circle me-2"></i>Supplier Details
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
                 <div class="row g-3">
@@ -348,7 +349,9 @@
                         <div class="bg-light p-3 rounded-3">
                             <p class="mb-2 text-muted small">Type of Milk</p>
                             <h6 class="mb-0">
-                                <span class="badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;" id="modalMilk"></span>
+                                <span class="badge"
+                                      style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;"
+                                      id="modalMilk"></span>
                             </h6>
                         </div>
                     </div>
@@ -468,7 +471,8 @@
                 <h5>Newsletter</h5>
                 <p>Subscribe to our newsletter for the latest updates.</p>
                 <div class="input-group mb-3">
-                    <input type="email" class="form-control" placeholder="Your email" aria-label="Your email" aria-describedby="button-addon2">
+                    <input type="email" class="form-control" placeholder="Your email" aria-label="Your email"
+                           aria-describedby="button-addon2">
                     <button class="btn btn-outline-light" type="button" id="button-addon2">Subscribe</button>
                 </div>
             </div>
@@ -485,6 +489,5 @@
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="js/supplier-validation.js"></script>
-
 </body>
 </html>

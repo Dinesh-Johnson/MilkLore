@@ -211,5 +211,26 @@ public class SupplierRepoImpl implements SupplierRepo{
         return list;
     }
 
+    @Override
+    public SupplierEntity getSupplierByPhone(String phone) {
+        log.info("getSupplierByPhone method in SupplierRepository");
+        EntityManager entityManager=null;
+        SupplierEntity supplierEntity=null;
+        try {
+            entityManager=emf.createEntityManager();
+            supplierEntity=(SupplierEntity) entityManager.createNamedQuery("checkPhoneNumber").setParameter("phoneNumber",phone).getSingleResult();
+            return supplierEntity;
+        }catch (PersistenceException e)
+        {
+            log.error(e.getMessage());
+        }finally {
+            if(entityManager!=null && entityManager.isOpen())
+            {
+                entityManager.close();
+                log.info("EntityManager is closed");
+            }
+        }
+        return supplierEntity;
+    }
 
 }
