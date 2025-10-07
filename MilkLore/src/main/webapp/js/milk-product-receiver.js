@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Load milk types from backend
   function loadMilkTypes() {
-    fetch("/farm-fresh/productList")
+    fetch("/MilkLore/productList")
       .then((response) => response.json())
       .then((data) => {
         typeSelect.innerHTML = '<option value="">Select milk type</option>';
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function () {
   typeSelect.addEventListener("change", function () {
     const milkType = typeSelect.value;
     if (milkType) {
-      fetch(`/farm-fresh/getMilkPrice?type=${encodeURIComponent(milkType)}`)
+      fetch(`/MilkLore/getMilkPrice?type=${encodeURIComponent(milkType)}`)
         .then((response) => response.json())
         .then((data) => {
           if (data !== null) {
@@ -166,3 +166,47 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
+//Floating Confirm Bar
+document.getElementById('collectMilkForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Get form data
+        const formData = new FormData(this);
+
+        // Show loading state
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Saving...';
+
+        // Simulate form submission (replace with actual AJAX call)
+        setTimeout(() => {
+            // Update confirmation details
+            document.getElementById('confirmName').textContent = document.getElementById('name').value || 'N/A';
+            document.getElementById('confirmPhone').textContent = document.getElementById('phone').value;
+            document.getElementById('confirmMilkType').textContent = document.getElementById('typeOfMilk').value || 'N/A';
+            document.getElementById('confirmQuantity').textContent = document.getElementById('quantity').value;
+            document.getElementById('confirmTotal').textContent = document.getElementById('totalAmount').value;
+
+            // Hide form and show confirmation
+            document.getElementById('collectMilkForm').classList.add('d-none');
+            document.getElementById('confirmationView').classList.remove('d-none');
+
+            // Reset form
+            this.reset();
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        }, 1000);
+    });
+
+    function resetForm() {
+        // Hide confirmation and show form
+        document.getElementById('confirmationView').classList.add('d-none');
+        document.getElementById('collectMilkForm').reset();
+        document.getElementById('collectMilkForm').classList.remove('d-none');
+    }
+
+    function printConfirmation() {
+        // You can implement print functionality here
+        window.print();
+    }

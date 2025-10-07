@@ -42,7 +42,7 @@ public class MilkProductReceiveEntity {
     @Column(name = "collected_date")
     private LocalDate collectedDate;
 
-    @OneToOne(cascade = CascadeType.ALL,mappedBy = "collectMilkEntity")
+    @OneToOne(cascade = CascadeType.ALL,mappedBy = "milkProductReceiveEntity")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private MilkProductReceiveAuditEntity milkProductReceiveAuditEntity;

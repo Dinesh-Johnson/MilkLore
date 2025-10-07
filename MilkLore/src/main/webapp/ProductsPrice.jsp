@@ -70,8 +70,8 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="redirectToAdminDashboard?email=${dto.email}">
-                            <i class="fa-solid fa-gauge me-2"></i> Dashboard
+                        <a class="nav-link" href="redirectToAdminSuccess?email=${dto.email}">
+                            <i class="fas fa-tachometer-alt me-1"></i> Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
