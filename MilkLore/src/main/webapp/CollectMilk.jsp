@@ -10,7 +10,7 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <!-- Custom CSS -->
     <link href="css/_variables.css" rel="stylesheet"/>
     <link href="css/style.css" rel="stylesheet"/>
@@ -22,23 +22,6 @@
         .nav-link:hover { color: white !important; transform: translateY(-1px); }
         .nav-link.active { font-weight: 600; color: white !important; }
         .footer { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2.5rem 0 1.5rem; margin-top: auto; }
-        @media print {
-        body * {
-            visibility: hidden;
-        }
-        #confirmationView, #confirmationView * {
-            visibility: visible;
-        }
-        #confirmationView {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-        }
-        .no-print {
-            display: none !important;
-        }
-    }
     </style>
 </head>
 <body>
@@ -66,7 +49,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="redirectToManageProducts?email=${dto.email}">
+                    <a class="nav-link" href="redirectToCollectMilk?email=${dto.email}">
                         <i class="fa-solid fa-box me-2"></i> Manage Products
                     </a>
                 </li>
@@ -82,32 +65,24 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="redirectToCollectMilk?email=${dto.email}">
-                        <i class="fa-solid fa-glass-water-droplet me-2"></i> Milk Product Receiver
+                        <i class="fa-solid fa-glass-water-droplet me-2"></i> Milk Receiver Details
                     </a>
                 </li>
                 <li class="nav-item dropdown ms-3">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown"
-                       data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <c:choose>
                             <c:when test="${not empty dto.profilePath}">
-                                <img src="<c:url value='/uploads/${dto.profilePath}'/>" class="rounded-circle me-2"
-                                     style="width: 40px; height: 40px; object-fit: cover;">
+                                <img src="<c:url value='/uploads/${dto.profilePath}'/>" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
                             </c:when>
                             <c:otherwise>
-                                <img src="images/default.png" alt="Profile" class="rounded-circle me-2"
-                                     style="width: 40px; height: 40px; object-fit: cover;">
+                                <img src="images/default.png" alt="Profile" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
                             </c:otherwise>
                         </c:choose>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="profileDropdown">
-                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
-                               data-bs-target="#adminProfileModal"><i class="bi bi-person-circle me-2"></i> View Profile</a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item text-danger" href="adminLogout?email=${dto.email}"><i
-                                class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#adminProfileModal"><i class="bi bi-person-circle me-2"></i> View Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="adminLogout?email=${dto.email}"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
                     </ul>
                 </li>
             </ul>
@@ -121,8 +96,7 @@
             <div class="card-body p-4">
                 <h2 class="mb-4"><i class="fa-solid fa-glass-water-droplet me-2"></i>Milk Product Receiver</h2>
                 <div class="alert alert-info mb-4" role="alert">
-                    <strong>Tip:</strong> Please <b>enter the supplier's phone number first</b>. If the phone is
-                    registered, the Name, Email, and Type of Milk fields will be filled automatically.
+                    <strong>Tip:</strong> Please <b>enter the supplier's phone number first</b>. If the phone is registered, the Name, Email, and Type of Milk fields will be filled automatically.
                 </div>
 
                 <c:if test="${not empty success}">
@@ -143,8 +117,7 @@
                     <input type="email" name="email" hidden value="${dto.email}">
                     <div class="col-lg-4 col-md-6">
                         <label for="phone" class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" id="phone" placeholder="Enter phone number"
-                               name="phoneNumber" value="${milk.phoneNumber}" required>
+                        <input type="tel" class="form-control" id="phone" placeholder="Enter phone number" name="phoneNumber" value="${milk.phoneNumber}" required>
                         <span id="phoneError" class="text-danger small"></span>
                     </div>
                     <div class="col-lg-4 col-md-6">
@@ -165,18 +138,15 @@
                     </div>
                     <div class="col-lg-4 col-md-6">
                         <label for="quantity" class="form-label">Quantity (litres)</label>
-                        <input type="number" class="form-control" id="quantity" placeholder="Enter quantity"
-                               name="quantity" value="${milk.quantity}" min="0.01" step="0.01" required>
+                        <input type="number" class="form-control" id="quantity" placeholder="Enter quantity" name="quantity" value="${milk.quantity}" min="0.01" step="0.01" required>
                     </div>
                     <div class="col-lg-4 col-md-6">
                         <label for="price" class="form-label">Price (per litre)</label>
-                        <input type="number" class="form-control" id="price" placeholder="Enter price" name="price"
-                               value="${milk.price}" min="1" readonly>
+                        <input type="number" class="form-control" id="price" placeholder="Enter price" name="price" value="${milk.price}" min="1" readonly>
                     </div>
                     <div class="col-lg-4 col-md-6">
                         <label for="totalAmount" class="form-label">Total Amount</label>
-                        <input type="number" class="form-control" id="totalAmount" placeholder="Total amount"
-                               name="totalAmount" value="${milk.totalAmount}" readonly>
+                        <input type="number" class="form-control" id="totalAmount" placeholder="Total amount" name="totalAmount" value="${milk.totalAmount}" readonly>
                     </div>
                     <div class="col-12 text-end mt-3">
                         <button class="btn btn-primary px-4" type="submit">
@@ -184,59 +154,13 @@
                         </button>
                     </div>
                 </form>
-                <div id="confirmationView" class="card shadow-sm mt-4 d-none">
-                    <div class="card-body p-4">
-                        <div class="text-center">
-                            <div class="mb-4">
-                                <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
-                            </div>
-                            <h3 class="mb-3">Milk Collection Recorded Successfully!</h3>
-                            <div class="row justify-content-center mb-4">
-                                <div class="col-md-8">
-                                    <div class="card bg-light">
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-md-6 mb-2">
-                                                    <strong>Supplier:</strong> <span id="confirmName"></span>
-                                                </div>
-                                                <div class="col-md-6 mb-2">
-                                                    <strong>Phone:</strong> <span id="confirmPhone"></span>
-                                                </div>
-                                                <div class="col-md-6 mb-2">
-                                                    <strong>Milk Type:</strong> <span id="confirmMilkType"></span>
-                                                </div>
-                                                <div class="col-md-6 mb-2">
-                                                    <strong>Quantity:</strong> <span id="confirmQuantity"></span> litres
-                                                </div>
-                                                <div class="col-12">
-                                                    <hr>
-                                                    <h5 class="mb-0">Total Amount: ₹<span id="confirmTotal"></span></h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-center gap-3">
-                                <button type="button" class="btn btn-primary" onclick="printConfirmation()">
-                                    <i class="fas fa-print me-2"></i>Print Receipt
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary" onclick="resetForm()">
-                                    <i class="fas fa-plus-circle me-2"></i>New Entry
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
     </div>
 </main>
 
 <!-- Profile Modal -->
-<div class="modal fade" id="adminProfileModal" tabindex="-1" aria-labelledby="adminProfileModalLabel"
-     aria-hidden="true">
+<div class="modal fade" id="adminProfileModal" tabindex="-1" aria-labelledby="adminProfileModalLabel" aria-hidden="true">
     <!-- Your existing modal content here -->
     ${your_existing_modal_content}
 </div>

@@ -45,25 +45,37 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item">
-                    <a class="nav-link" href="redirectToProductsPrice?email=${dto.email}"><i class="fa-solid fa-tag me-2"></i> Products Price</a>
+                    <a class="nav-link" href="redirectToProductsPrice?email=${dto.email}"><i
+                            class="fa-solid fa-tag me-2"></i> Products Price</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="redirectToCollectMilk?email=${dto.email}"><i class="fa-solid fa-glass-water-droplet me-2"></i> Collect Milk</a>
+                    <a class="nav-link" href="redirectToCollectMilk?email=${dto.email}"><i
+                            class="fa-solid fa-glass-water-droplet me-2"></i> Collect Milk</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="redirectToCollectMilk?email=${dto.email}">
+                        <i class="fa-solid fa-glass-water-droplet me-2"></i> Milk Receiver Details
+                    </a>
                 </li>
                 <li class="nav-item dropdown ms-3">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown"
+                       data-bs-toggle="dropdown" aria-expanded="false">
                         <c:choose>
                             <c:when test="${not empty dto.profilePath}">
-                                <img src="<c:url value='/uploads/${dto.profilePath}'/>" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                <img src="<c:url value='/uploads/${dto.profilePath}'/>" class="rounded-circle me-2"
+                                     style="width: 40px; height: 40px; object-fit: cover;">
                             </c:when>
                             <c:otherwise>
-                                <img src="images/default.png" alt="Profile" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                <img src="images/default.png" alt="Profile" class="rounded-circle me-2"
+                                     style="width: 40px; height: 40px; object-fit: cover;">
                             </c:otherwise>
                         </c:choose>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="profileDropdown">
-                        <li><a class="dropdown-item" href="viewProfile?email=${dto.email}"><i class="bi bi-person-circle me-2"></i> Profile</a></li>
-                        <li><a class="dropdown-item" href="logout"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                        <li><a class="dropdown-item" href="viewProfile?email=${dto.email}"><i
+                                class="bi bi-person-circle me-2"></i> Profile</a></li>
+                        <li><a class="dropdown-item" href="logout"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
+                        </li>
                     </ul>
                 </li>
             </ul>
@@ -79,7 +91,8 @@
             <div class="col-12">
                 <div class="welcome-card">
                     <h2 class="text-primary">✅ ${dto.adminName} Logged In!</h2>
-                    <p class="lead mt-2">Hello <strong>${dto.adminName}</strong>! Manage <strong>users, products, orders & reports</strong> here.</p>
+                    <p class="lead mt-2">Hello <strong>${dto.adminName}</strong>! Manage <strong>users, products, orders
+                        & reports</strong> here.</p>
                 </div>
             </div>
         </div>

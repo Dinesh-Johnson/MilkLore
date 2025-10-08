@@ -6,6 +6,7 @@ import com.xworkz.milklore.service.AdminService;
 import com.xworkz.milklore.service.MilkProductReceiveService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Slf4j
@@ -45,7 +49,7 @@ public class MilkProductReceiveController {
     @PostMapping("addCollectMilk")
     public String getCollectedMilk(@Valid MilkProductReceiveDTO collectMilkDTO, BindingResult bindingResult, @RequestParam String email, Model model)
     {
-        log.info("getCollectedMilk method in CollectMilkController");
+        log.info("===== Inside addCollectMilk POST method =====");
         if(bindingResult.hasErrors())
         {
             log.error("Fields has error");
@@ -64,6 +68,26 @@ public class MilkProductReceiveController {
             model.addAttribute("error","Details not saved");
             model.addAttribute("milk",collectMilkDTO);
         }
-        return getCollectMilkPage(email,model);
+        return "ProductReceive";
     }
+
+    @GetMapping("/getCollectMilkList")
+    public String getCollectMilkList(
+            @RequestParam(value = "collectedDate", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate collectedDate,
+            Model model) {
+
+        log.info("getCollectMilkList called with collectedDate={}", collectedDate);
+
+        List<MilkProductReceiveDTO> collectMilkList = new ArrayList<>();
+
+        if (collectedDate != null) {
+            // Fetch records for the given date
+            collectMilkList = collectMilkService.getAllDetailsByDate(collectedDate);
+        }
+
+        model.addAttribute("collectMilkList", collectMilkList);
+        return "ProductReceive";
+    }
+
 }

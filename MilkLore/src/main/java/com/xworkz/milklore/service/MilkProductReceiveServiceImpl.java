@@ -2,6 +2,7 @@ package com.xworkz.milklore.service;
 
 import com.xworkz.milklore.dto.AdminDTO;
 import com.xworkz.milklore.dto.MilkProductReceiveDTO;
+import com.xworkz.milklore.dto.SupplierDTO;
 import com.xworkz.milklore.entity.AdminEntity;
 import com.xworkz.milklore.entity.MilkProductReceiveAuditEntity;
 import com.xworkz.milklore.entity.MilkProductReceiveEntity;
@@ -12,11 +13,14 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
-public class MilkProductReceiveServiceImpl implements MilkProductReceiveService{
+public class MilkProductReceiveServiceImpl implements MilkProductReceiveService {
 
     @Autowired
     private MilkProductReceiveRepo collectMilkRepository;
@@ -27,22 +31,24 @@ public class MilkProductReceiveServiceImpl implements MilkProductReceiveService{
     @Autowired
     private SupplierRepo supplierRepo;
 
-    public MilkProductReceiveServiceImpl()
-    {
+    public MilkProductReceiveServiceImpl() {
         log.info("CollectMilkServiceImpl constructor");
     }
 
     @Override
     public boolean save(MilkProductReceiveDTO milkProductReceiveDTO, String email) {
         log.info("save method in CollectMilkServiceImpl");
-        AdminDTO adminDTO=adminService.viewAdminByEmail(email);
+        AdminDTO adminDTO = adminService.viewAdminByEmail(email);
 
-        AdminEntity adminEntity=new AdminEntity();
-        BeanUtils.copyProperties(adminDTO,adminEntity);
+        log.info(">>> Inside MilkProductReceiveService.save() with: " + adminDTO);
 
-        MilkProductReceiveEntity collectMilkEntity=new MilkProductReceiveEntity();
-        BeanUtils.copyProperties(milkProductReceiveDTO,collectMilkEntity);
-        MilkProductReceiveAuditEntity milkProductReceiveAuditEntity=new MilkProductReceiveAuditEntity();
+        AdminEntity adminEntity = new AdminEntity();
+        BeanUtils.copyProperties(adminDTO, adminEntity);
+        System.out.println(adminEntity);
+
+        MilkProductReceiveEntity collectMilkEntity = new MilkProductReceiveEntity();
+        BeanUtils.copyProperties(milkProductReceiveDTO, collectMilkEntity);
+        MilkProductReceiveAuditEntity milkProductReceiveAuditEntity = new MilkProductReceiveAuditEntity();
         milkProductReceiveAuditEntity.setCreatedAt(LocalDateTime.now());
         milkProductReceiveAuditEntity.setCreatedBy(adminDTO.getAdminName());
         milkProductReceiveAuditEntity.setMilkProductReceiveEntity(collectMilkEntity);
@@ -54,4 +60,21 @@ public class MilkProductReceiveServiceImpl implements MilkProductReceiveService{
         return collectMilkRepository.save(collectMilkEntity);
     }
 
+    @Override
+    public List<MilkProductReceiveDTO> getAllDetailsByDate(LocalDate collectedDate) {
+        log.info("getAllDetailsByDate method in CollectMilkServiceImpl");
+        List<MilkProductReceiveEntity> collectMilkEntities = collectMilkRepository.getAllDetailsByDate(collectedDate);
+        List<MilkProductReceiveDTO> collectMilkDTOS = new ArrayList<>();
+        collectMilkEntities.forEach(collectMilkEntity -> {
+            MilkProductReceiveDTO collectMilkDTO = new MilkProductReceiveDTO();
+            BeanUtils.copyProperties(collectMilkEntity, collectMilkDTO);
+            if (collectMilkEntity.getSupplier()!=null){
+                SupplierDTO supplierDTO = new SupplierDTO();
+                BeanUtils.copyProperties(collectMilkEntity.getSupplier(), supplierDTO);
+                collectMilkDTO.setSupplier(supplierDTO);
+            }
+            collectMilkDTOS.add(collectMilkDTO);
+        });
+        return collectMilkDTOS;
+    }
 }

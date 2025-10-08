@@ -9,6 +9,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
+import java.time.LocalDate;
+import java.util.List;
 
 @Slf4j
 @Repository
@@ -25,6 +27,7 @@ public class MilkProductReceiveRepoImpl implements MilkProductReceiveRepo{
     @Override
     public boolean save(MilkProductReceiveEntity milkProductReceiveEntity) {
         log.info("save method in CollectMilkRepositoryImpl");
+        System.out.println(milkProductReceiveEntity);
         EntityManager entityManager=null;
         EntityTransaction entityTransaction=null;
         try {
@@ -50,5 +53,34 @@ public class MilkProductReceiveRepoImpl implements MilkProductReceiveRepo{
             }
         }
         return false;
+    }
+
+    @Override
+    public List<MilkProductReceiveEntity> getAllDetailsByDate(LocalDate collectedDate) {
+        log.info("getAllDetailsByDate method in CollectMilkRepositoryImpl");
+        EntityManager entityManager = null;
+        EntityTransaction entityTransaction = null;
+        try {
+            entityManager = entityManagerFactory.createEntityManager();
+            entityTransaction = entityManager.getTransaction();
+            entityTransaction.begin();
+            List<MilkProductReceiveEntity> milkProductReceiveEntityList = entityManager.createNamedQuery("getAllDetailsByDate", MilkProductReceiveEntity.class)
+                    .setParameter("collectedDate", collectedDate)
+                    .getResultList();
+            entityTransaction.commit();
+            return milkProductReceiveEntityList;
+        } catch (PersistenceException e) {
+            log.error(e.getMessage());
+            if (entityTransaction != null) {
+                entityTransaction.rollback();
+                log.error("Insert rollback");
+            }
+        } finally {
+            if (entityManager != null && entityManager.isOpen()) {
+                entityManager.close();
+                log.info("EntityManager is closed");
+            }
+        }
+        return null;
     }
 }
