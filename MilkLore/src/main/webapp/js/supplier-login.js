@@ -1,61 +1,44 @@
-$(document).ready(function () {
-    const emailForm = $('#emailForm');
-    const otpModal = $('#otpModal');
-    const modalEmailInput = $('#modalOtpEmail');
-    const loginButton = $('#otpModalForm button[type="submit"]');
+document.addEventListener("DOMContentLoaded", function () {
+    // Auto-open OTP modal if JSP set showOtpModal = true
+    var otpModalEl = document.getElementById("otpModal");
+    if (otpModalEl) {
+        var otpModal = new bootstrap.Modal(otpModalEl);
 
-    // Add timer element inside modal
-    if ($('#otpTimer').length === 0) {
-        $('<div id="otpTimer" class="text-center my-2 fw-bold"></div>')
-            .insertBefore(loginButton);
-    }
-    const otpTimer = $('#otpTimer');
+        // If modal is already present in JSP, open it automatically
+        if (otpModalEl.dataset.show === "true") {
+            otpModal.show();
+            startOtpCountdown();
+        }
 
-    let timerInterval;
-    const OTP_DURATION_SECONDS = 5 * 60; // 5 minutes
+        // Countdown timer element inside modal
+        var otpTimer = document.getElementById("otpTimer");
+        var countdown;
 
-    function startOtpCountdown() {
-        let remaining = OTP_DURATION_SECONDS;
-        loginButton.prop('disabled', false);
-        otpTimer.css('color', 'green');
-
-        timerInterval = setInterval(function () {
-            const minutes = Math.floor(remaining / 60);
-            const seconds = remaining % 60;
-            otpTimer.text(`OTP expires in ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`);
-
-            // Color change
-            if (remaining <= 60) otpTimer.css('color', 'red');
-            else if (remaining <= 120) otpTimer.css('color', 'orange');
-
-            remaining--;
-
-            if (remaining < 0) {
-                clearInterval(timerInterval);
-                otpTimer.text('OTP expired! Please resend OTP.');
-                loginButton.prop('disabled', true);
-
-                if ($('#resendOtpBtn').length === 0) {
-                    $('<button id="resendOtpBtn" class="btn btn-secondary mt-2 w-100">Resend OTP</button>')
-                        .insertAfter(loginButton)
-                        .on('click', function () {
-                            otpModal.modal('hide');
-                            location.reload();
-                        });
-                }
+        function startOtpCountdown() {
+            if (!otpTimer) {
+                otpTimer = document.createElement("div");
+                otpTimer.id = "otpTimer";
+                otpTimer.className = "text-muted mt-2 text-center";
+                otpModalEl.querySelector(".modal-body").appendChild(otpTimer);
             }
-        }, 1000);
+
+            var timeLeft = 60; // 60 seconds countdown
+            otpTimer.textContent = `You can resend OTP in ${timeLeft}s`;
+
+            countdown = setInterval(function () {
+                timeLeft--;
+                if (timeLeft > 0) {
+                    otpTimer.textContent = `You can resend OTP in ${timeLeft}s`;
+                } else {
+                    clearInterval(countdown);
+                    otpTimer.textContent = "You can now resend OTP.";
+                }
+            }, 1000);
+        }
+
+        // Optional: restart countdown when modal is shown manually
+        otpModalEl.addEventListener("shown.bs.modal", function () {
+            startOtpCountdown();
+        });
     }
-
-    // Email form submit — now let it actually submit to backend
-    emailForm.on('submit', function () {
-        const email = $('#supplierEmail').val();
-        if (!email) return false;
-
-        // Set hidden email in modal
-        modalEmailInput.val(email);
-
-        // The form will submit normally to /supplierLogin
-        // After Spring controller responds, the modal can be triggered on page load if needed
-    });
 });

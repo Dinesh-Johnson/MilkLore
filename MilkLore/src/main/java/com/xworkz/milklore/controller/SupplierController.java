@@ -147,32 +147,49 @@ public class SupplierController {
         return "SupplierLogin";
     }
 
-    @PostMapping("/supplierLogin")
-    public String handleSupplierLogin(@RequestParam String email,
-                                      @RequestParam(required = false) String otp,
-                                      Model model) {
+    // ---------------- SEND OTP ----------------
+    @PostMapping("/sendOtp")
+    public String sendOtp(@RequestParam String email, Model model) {
+        // Trim email just in case
+        email = email.trim();
 
-        System.out.println(email);
-        if (otp == null || otp.isEmpty()) {
-            // Send OTP
-            boolean sent = supplierService.generateAndSendOtp(email);
-            if (sent) {
-                model.addAttribute("message", "OTP sent to your email. Please enter it below.");
-            } else {
-                model.addAttribute("message", "Failed to send OTP. Check your email.");
-            }
-            model.addAttribute("email", email);
-            return "supplierLogin";
+        boolean sent = supplierService.generateAndSendOtp(email);
+
+        // Add attributes to show modal on JSP
+        model.addAttribute("email", email);           // preserve email in form
+        model.addAttribute("otpSent", sent);          // used for styling message
+        model.addAttribute("showOtpModal", sent);     // triggers modal to open
+        model.addAttribute("message", sent
+                ? "OTP sent successfully to your email."
+                : "Failed to send OTP. Check your email.");
+
+        return "SupplierLogin"; // JSP page
+    }
+
+    // ---------------- VERIFY OTP ----------------
+    @PostMapping("/verifyOtp")
+    public String verifyOtp(@RequestParam String email,
+                            @RequestParam String otp,
+                            Model model) {
+        email = email.trim();
+        otp = otp.trim();
+
+        boolean verified = supplierService.verifyOtp(email, otp);
+
+        if (verified) {
+            // OTP correct → redirect to supplier dashboard
+            return "SupplierDashboard"; // JSP page for dashboard
         } else {
-            // Verify OTP
-            boolean verified = supplierService.verifyOtp(email, otp);
-            if (verified) {
-                return "SupplierDashboard"; // success page
-            } else {
-                model.addAttribute("message", "Invalid or expired OTP. Try again.");
-                model.addAttribute("email", email);
-                return "supplierLogin";
-            }
+            // OTP wrong → reopen modal with error
+            model.addAttribute("email", email);
+            model.addAttribute("otpSent", true);           // keep modal styling
+            model.addAttribute("showOtpModal", true);      // show modal again
+            model.addAttribute("message", "Invalid or expired OTP. Try again.");
+
+            return "SupplierLogin"; // JSP page
         }
     }
+
+
+
 }

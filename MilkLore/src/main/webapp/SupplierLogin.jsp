@@ -55,7 +55,6 @@
             transform: translateY(-1px);
         }
 
-        /* Login Section */
         .login-section {
             flex: 1;
             display: flex;
@@ -259,62 +258,78 @@
 </nav>
 
 <!-- Login Section -->
-<<section class="login-section">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
-                <div class="login-card">
-                    <div class="login-header">
-                        <h2><i class="bi bi-person-fill-gear me-2"></i> Supplier Login</h2>
-                    </div>
-                    <div class="login-body">
-                        <div id="loginMessage" class="text-danger mb-2">${errorMessage}</div>
+<section class="login-section d-flex justify-content-center align-items-center" style="min-height:100vh;">
+    <div class="card login-card p-4" style="max-width:400px; width:100%;">
+        <div class="card-header bg-primary text-white text-center">
+            <h4><i class="bi bi-person-fill-gear me-2"></i>Supplier Login</h4>
+        </div>
+        <div class="card-body">
+            <!-- Show general error -->
+            <c:if test="${not empty errorMessage}">
+                <p class="text-danger text-center">${errorMessage}</p>
+            </c:if>
 
-                        <!-- Email Form -->
-                        <form id="emailForm" action="supplierLogin" method="post">
-                            <div class="mb-3">
-                                <label for="supplierEmail" class="form-label">Email</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
-                                    <input type="email" class="form-control" id="supplierEmail" name="email" required>
-                                </div>
-                            </div>
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-login">Send OTP</button>
-                            </div>
-                        </form>
-                    </div>
+            <!-- Send OTP Form -->
+            <form action="sendOtp" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" value="${email}" class="form-control" placeholder="Enter your email" required>
                 </div>
-            </div>
+                <button type="submit" class="btn btn-primary w-100">Send OTP</button>
+            </form>
+
+            <!-- Optional message -->
+            <c:if test="${not empty message}">
+                <p class="text-center mt-3
+                    <c:choose>
+                        <c:when test="${otpSent}">text-success</c:when>
+                <c:otherwise>text-danger</c:otherwise>
+                </c:choose>">
+                ${message}
+                </p>
+            </c:if>
         </div>
     </div>
 </section>
+
 <!-- OTP Modal -->
-<div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+<div class="modal fade" id="otpModal" tabindex="-1" aria-hidden="true" data-show="${showOtpModal}">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="otpModalLabel"><i class="bi bi-key-fill me-2"></i> Enter OTP</h5>
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Verify OTP</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <form id="otpModalForm" action="supplierLogin" method="post">
+            <form action="verifyOtp" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="email" value="${email}">
                     <div class="mb-3">
-                        <label for="modalOtp" class="form-label">OTP</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
-                            <input type="text" class="form-control" id="modalOtp" name="otp" required>
-                            <input type="hidden" id="modalOtpEmail" name="email">
-                        </div>
+                        <label class="form-label">Enter OTP</label>
+                        <input type="text" name="otp" class="form-control" placeholder="Enter 6-digit OTP" required>
                     </div>
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Login</button>
-                    </div>
-                </form>
-            </div>
+                    <!-- Countdown Timer Placeholder -->
+                    <div id="otpTimer" class="text-center text-muted mt-2"></div>
+
+                    <!-- Optional message -->
+                    <c:if test="${not empty message}">
+                        <p class="text-center
+                            <c:choose>
+                                <c:when test="${otpSent}">text-success</c:when>
+                        <c:otherwise>text-danger</c:otherwise>
+                        </c:choose>">
+                        ${message}
+                        </p>
+                    </c:if>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success w-100">Verify OTP</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
+
 <!-- Footer -->
 <footer class="footer">
     <div class="container">

@@ -177,37 +177,77 @@ public class SupplierServiceImpl implements SupplierService{
 
     @Override
     public boolean generateAndSendOtp(String email) {
-        SupplierEntity supplier = supplierRepo.getSupplierByEmail(email);
-        if (supplier == null) return false;
+        if (email == null || email.trim().isEmpty()) {
+            log.warn("generateAndSendOtp: empty email");
+            return false;
+        }
 
+        email = email.trim();
+        SupplierEntity supplier = supplierRepo.getSupplierByEmail(email);
+        if (supplier == null) {
+            log.warn("generateAndSendOtp: supplier not found for email {}", email);
+            return false;
+        }
+
+        // Generate 6-digit numeric OTP
         String otp = OTPUtill.generateNumericOtp(6);
         supplier.setOtp(otp);
         supplier.setOtpExpiryTime(LocalDateTime.now().plusMinutes(OTP_EXPIRY_MINUTES));
 
-        boolean updated = supplierRepo.updateSupplierLogin(supplier); // make sure this updates existing entity
-        if (updated) {
-            return emailSender.supplierMailOtp(email, otp);
+        // Persist changes
+        boolean updated = supplierRepo.updateSupplierLogin(supplier); // should update existing entity
+        if (!updated) {
+            log.error("generateAndSendOtp: failed to update supplier OTP for email {}", email);
+            return false;
         }
-        return false;
+
+        // Send OTP email
+        boolean emailSent = emailSender.supplierMailOtp(email, otp);
+        if (!emailSent) {
+            log.error("generateAndSendOtp: failed to send OTP email to {}", email);
+            return false;
+        }
+
+        log.info("generateAndSendOtp: OTP {} sent successfully to {}", otp, email);
+        return true;
     }
 
     @Override
     public boolean verifyOtp(String email, String otp) {
-        SupplierEntity supplier = supplierRepo.getSupplierByEmail(email);
-        if (supplier == null) return false;
+        if (email == null || email.trim().isEmpty() || otp == null || otp.trim().isEmpty()) {
+            log.warn("verifyOtp: email or OTP is empty");
+            return false;
+        }
 
+        email = email.trim();
+        otp = otp.trim();
+        SupplierEntity supplier = supplierRepo.getSupplierByEmail(email);
+        if (supplier == null) {
+            log.warn("verifyOtp: supplier not found for email {}", email);
+            return false;
+        }
+
+        LocalDateTime now = LocalDateTime.now();
         if (supplier.getOtp() != null &&
                 supplier.getOtp().equals(otp) &&
                 supplier.getOtpExpiryTime() != null &&
-                supplier.getOtpExpiryTime().isAfter(LocalDateTime.now())) {
+                supplier.getOtpExpiryTime().isAfter(now)) {
 
-            // OTP is valid
+            // OTP is valid -> clear it
             supplier.setOtp(null);
             supplier.setOtpExpiryTime(null);
-            supplierRepo.updateSupplierLogin(supplier); // update entity
+            boolean updated = supplierRepo.updateSupplierLogin(supplier);
+            if (!updated) {
+                log.error("verifyOtp: failed to clear OTP for email {}", email);
+                return false;
+            }
+
+            log.info("verifyOtp: OTP verified successfully for {}", email);
             return true;
         }
-        return false; // OTP invalid or expired
+
+        log.warn("verifyOtp: invalid or expired OTP for {}", email);
+        return false;
     }
 
 
