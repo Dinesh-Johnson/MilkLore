@@ -35,12 +35,12 @@ public class SupplierController {
 
     // List Suppliers
     @GetMapping("/redirectToMilkSuppliersList")
-    public String getMilkSupplierList(@RequestParam String email,@RequestParam(defaultValue = "1") int page,
-                                      @RequestParam(defaultValue = "10") int size, Model model,HttpSession session){
+    public String getMilkSupplierList(@RequestParam String email, @RequestParam(defaultValue = "1") int page,
+                                      @RequestParam(defaultValue = "10") int size, Model model, HttpSession session) {
         log.info("getMilkSupplierList method in supplier controller");
 
 
-        List<SupplierDTO> list = supplierService.getAllSuppliers(page,size);
+        List<SupplierDTO> list = supplierService.getAllSuppliers(page, size);
         long totalSuppliers = adminService.getSupplierCount();
         int totalPages = (int) Math.ceil((double) totalSuppliers / size);
         model.addAttribute("milkSuppliers", list);
@@ -60,7 +60,7 @@ public class SupplierController {
                                   HttpSession session) {
         log.info("addMilkSupplier in supplierController");
         System.out.println(supplierDTO);
-        System.out.println("Admin Email :"+adminEmail);
+        System.out.println("Admin Email :" + adminEmail);
         if (bindingResult.hasErrors()) {
             log.warn("fields has error");
             bindingResult.getFieldErrors()
@@ -68,7 +68,7 @@ public class SupplierController {
                     .forEach(System.out::println);
             model.addAttribute("supplier", supplierDTO);
             model.addAttribute("error", "Details not saved");
-            return getMilkSupplierList(adminEmail, 1,10,model,session);
+            return getMilkSupplierList(adminEmail, 1, 10, model, session);
         }
         if (supplierService.addSupplier(supplierDTO, adminEmail)) {
             log.info("supplier added");
@@ -77,7 +77,7 @@ public class SupplierController {
             log.warn("supplier not added");
             model.addAttribute("error", "Supplier details not saved");
         }
-        return getMilkSupplierList(adminEmail, 1,10,model,session);
+        return getMilkSupplierList(adminEmail, 1, 10, model, session);
     }
 
     // Edit Supplier
@@ -89,7 +89,7 @@ public class SupplierController {
                                HttpSession session) {
         log.info("editSupplier method in supplierController");
         System.out.println(supplierDTO);
-        System.out.println("Admin EMail Update :"+adminEmail);
+        System.out.println("Admin EMail Update :" + adminEmail);
         if (bindingResult.hasErrors()) {
             log.warn("fields has error");
             bindingResult.getFieldErrors()
@@ -97,7 +97,7 @@ public class SupplierController {
                     .forEach(System.out::println);
             model.addAttribute("supplier", supplierDTO);
             model.addAttribute("error", "Details not saved");
-            return getMilkSupplierList(adminEmail, 1,10,model,session);
+            return getMilkSupplierList(adminEmail, 1, 10, model, session);
         }
         if (supplierService.editSupplierDetails(supplierDTO, adminEmail)) {
             log.info("supplier updated");
@@ -106,7 +106,7 @@ public class SupplierController {
             log.warn("supplier not updated");
             model.addAttribute("error", "Supplier details not updated");
         }
-        return getMilkSupplierList(adminEmail, 1,10,model,session);
+        return getMilkSupplierList(adminEmail, 1, 10, model, session);
     }
 
     // Delete Supplier
@@ -123,20 +123,56 @@ public class SupplierController {
             log.warn("supplier not deleted");
             model.addAttribute("error", "Supplier details deleted");
         }
-        return getMilkSupplierList(adminEmail, 1,10,model,session);
+        return getMilkSupplierList(adminEmail, 1, 10, model, session);
     }
+
     @GetMapping("/searchSuppliers")
-    public String getSearchSuppliers(@RequestParam String keyword,@RequestParam String email, Model model){
+    public String getSearchSuppliers(@RequestParam String keyword, @RequestParam String email, Model model) {
         log.info("getSearchSuppliers method in supplier controller");
         AdminDTO adminDTO = adminService.viewAdminByEmail(email);
         model.addAttribute("dto", adminDTO);
         List<SupplierDTO> list = supplierService.searchSuppliers(keyword);
-        if(list.isEmpty())
-            model.addAttribute("error","Data not found");
+        if (list.isEmpty())
+            model.addAttribute("error", "Data not found");
         model.addAttribute("milkSuppliers", list);
         model.addAttribute("currentPage", 1);
         model.addAttribute("totalPages", 1);
         return "SuppliersList";
 
+    }
+
+    @GetMapping("/redirectToSupplierLogin")
+    public String supplierLoginPage() {
+        log.info("Supplier Log IN Page");
+        return "SupplierLogin";
+    }
+
+    @PostMapping("/supplierLogin")
+    public String handleSupplierLogin(@RequestParam String email,
+                                      @RequestParam(required = false) String otp,
+                                      Model model) {
+
+        System.out.println(email);
+        if (otp == null || otp.isEmpty()) {
+            // Send OTP
+            boolean sent = supplierService.generateAndSendOtp(email);
+            if (sent) {
+                model.addAttribute("message", "OTP sent to your email. Please enter it below.");
+            } else {
+                model.addAttribute("message", "Failed to send OTP. Check your email.");
+            }
+            model.addAttribute("email", email);
+            return "supplierLogin";
+        } else {
+            // Verify OTP
+            boolean verified = supplierService.verifyOtp(email, otp);
+            if (verified) {
+                return "SupplierDashboard"; // success page
+            } else {
+                model.addAttribute("message", "Invalid or expired OTP. Try again.");
+                model.addAttribute("email", email);
+                return "supplierLogin";
+            }
+        }
     }
 }

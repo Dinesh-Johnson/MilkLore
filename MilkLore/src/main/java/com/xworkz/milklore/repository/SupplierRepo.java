@@ -15,6 +15,7 @@ public interface SupplierRepo {
     boolean checkPhoneNumber(String phoneNumber);
 
     boolean updateSupplierDetails(SupplierEntity supplierEntity,Boolean isDelete);
+    boolean updateSupplierLogin(SupplierEntity supplierEntity);
 
     Integer getSuppliersCount();
 
@@ -23,6 +24,8 @@ public interface SupplierRepo {
     List<SupplierEntity> getSearchSuppliers(String searchTerm);
 
     SupplierEntity getSupplierByPhone(String phone);
+
+    boolean loginWithOtp(String email, String otp);
 
 
 }

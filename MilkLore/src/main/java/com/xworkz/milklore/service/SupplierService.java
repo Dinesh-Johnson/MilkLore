@@ -1,8 +1,6 @@
 package com.xworkz.milklore.service;
 
 import com.xworkz.milklore.dto.SupplierDTO;
-import com.xworkz.milklore.entity.SupplierEntity;
-
 import java.util.List;
 
 public interface SupplierService {
@@ -22,5 +20,8 @@ public interface SupplierService {
     List<SupplierDTO> searchSuppliers(String keyword);
 
     SupplierDTO getSupplierDetails(String phone);
+
+    boolean generateAndSendOtp(String email);
+    boolean verifyOtp(String email, String otp);
 
 }

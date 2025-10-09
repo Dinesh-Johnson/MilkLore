@@ -375,7 +375,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="loginDropdown">
                             <li><a class="dropdown-item" href="redirectToAdminLogin"><i class="bi bi-person-fill-gear me-2"></i>Admin Login</a></li>
-                            <li><a class="dropdown-item" href="CustomerLogin.jsp"><i class="bi bi-person-fill me-2"></i>Customer Login</a></li>
+                            <li><a class="dropdown-item" href="redirectToSupplierLogin"><i class="bi bi-person-fill me-2"></i>Supplier Login</a></li>
                         </ul>
                     </li>
                 </ul>

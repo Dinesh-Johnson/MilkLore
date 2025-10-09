@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class EmailSenderServiceImpl implements EmailSenderService{
+public class EmailSenderServiceImpl implements EmailSenderService {
 
     @Autowired
     private EmailConfiguration emailConfig;
@@ -38,12 +38,13 @@ public class EmailSenderServiceImpl implements EmailSenderService{
             emailConfig.mailSender().send(message);
             log.info("Admin mailSend method in service");
             return true;
-        }catch(Exception e) {
-            log.error("Exception in Admin mailSend method in service: {}",e.getMessage());
+        } catch (Exception e) {
+            log.error("Exception in Admin mailSend method in service: {}", e.getMessage());
             return false;
         }
 
     }
+
     @Override
     public boolean mailForSupplierRegisterSuccess(String email, String supplierName) {
         log.info("mailForSupplierRegisterSuccess method");
@@ -69,6 +70,25 @@ public class EmailSenderServiceImpl implements EmailSenderService{
             return true;
         } catch (Exception e) {
             log.error("Error while sending registration success email: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean supplierMailOtp(String email, String otp) {
+        try {
+            log.info("Supplier Login Otp method");
+            SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+            simpleMailMessage.setTo(email);
+            simpleMailMessage.setSubject("OTP From MilkLore to Login");
+            simpleMailMessage.setText("One Time Password For Log In"+otp);
+            emailConfig.mailSender().send(simpleMailMessage);
+            if (log.isInfoEnabled()) {
+                log.info("mail sent to :" + email + " - OTP : " + otp);
+            }
+            return true;
+        }catch (Exception e){
+            log.error(e.getMessage());
             return false;
         }
     }

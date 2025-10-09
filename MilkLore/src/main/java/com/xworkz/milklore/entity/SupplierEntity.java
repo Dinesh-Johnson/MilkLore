@@ -5,6 +5,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -47,6 +48,17 @@ public class SupplierEntity {
 
     @Column(name = "type_of_milk")
     private String typeOfMilk;
+
+    @Column(name = "otp_expiry_time")
+    private LocalDateTime otpExpiryTime;
+
+    @Column(name = "otp_verified")
+    private Boolean otpVerified;
+
+    @Column(name = "otp")
+    private String otp;
+
+
 
     @OneToOne(mappedBy = "supplierEntity",cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval=true)
     @ToString.Exclude

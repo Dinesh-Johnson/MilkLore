@@ -1,10 +1,12 @@
 package com.xworkz.milklore.service;
 
+import com.xworkz.milklore.configuration.EmailConfiguration;
 import com.xworkz.milklore.dto.AdminDTO;
 import com.xworkz.milklore.dto.SupplierDTO;
 import com.xworkz.milklore.entity.SupplierAuditEntity;
 import com.xworkz.milklore.entity.SupplierEntity;
 import com.xworkz.milklore.repository.SupplierRepo;
+import com.xworkz.milklore.utill.OTPUtill;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,11 @@ public class SupplierServiceImpl implements SupplierService{
 
     @Autowired
     private EmailSenderService emailSender;
+
+    @Autowired
+    private EmailConfiguration emailConfig;
+
+    private static final int OTP_EXPIRY_MINUTES = 5;
 
     public SupplierServiceImpl(){
         log.info("SupplierServiceImpl constructor");
@@ -167,4 +174,41 @@ public class SupplierServiceImpl implements SupplierService{
         BeanUtils.copyProperties(supplierEntity,supplierDTO);
         return supplierDTO;
     }
+
+    @Override
+    public boolean generateAndSendOtp(String email) {
+        SupplierEntity supplier = supplierRepo.getSupplierByEmail(email);
+        if (supplier == null) return false;
+
+        String otp = OTPUtill.generateNumericOtp(6);
+        supplier.setOtp(otp);
+        supplier.setOtpExpiryTime(LocalDateTime.now().plusMinutes(OTP_EXPIRY_MINUTES));
+
+        boolean updated = supplierRepo.updateSupplierLogin(supplier); // make sure this updates existing entity
+        if (updated) {
+            return emailSender.supplierMailOtp(email, otp);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean verifyOtp(String email, String otp) {
+        SupplierEntity supplier = supplierRepo.getSupplierByEmail(email);
+        if (supplier == null) return false;
+
+        if (supplier.getOtp() != null &&
+                supplier.getOtp().equals(otp) &&
+                supplier.getOtpExpiryTime() != null &&
+                supplier.getOtpExpiryTime().isAfter(LocalDateTime.now())) {
+
+            // OTP is valid
+            supplier.setOtp(null);
+            supplier.setOtpExpiryTime(null);
+            supplierRepo.updateSupplierLogin(supplier); // update entity
+            return true;
+        }
+        return false; // OTP invalid or expired
+    }
+
+
 }
