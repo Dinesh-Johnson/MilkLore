@@ -2,8 +2,11 @@ package com.xworkz.milklore.service;
 
 import com.xworkz.milklore.configuration.EmailConfiguration;
 import com.xworkz.milklore.dto.AdminDTO;
+import com.xworkz.milklore.dto.SupplierBankDetailsDTO;
 import com.xworkz.milklore.dto.SupplierDTO;
 import com.xworkz.milklore.entity.SupplierAuditEntity;
+import com.xworkz.milklore.entity.SupplierBankDetailsAuditEntity;
+import com.xworkz.milklore.entity.SupplierBankDetailsEntity;
 import com.xworkz.milklore.entity.SupplierEntity;
 import com.xworkz.milklore.repository.SupplierRepo;
 import com.xworkz.milklore.utill.OTPUtill;
@@ -176,6 +179,31 @@ public class SupplierServiceImpl implements SupplierService{
     }
 
     @Override
+    public SupplierDTO getSupplierDetailsByEmail(String email) {
+        log.info("Fetching supplier details by email: {}", email);
+
+        SupplierEntity entity = supplierRepo.getSupplierByEmail(email);
+
+        if (entity == null) {
+            log.warn("No supplier found with email: {}", email);
+            return null;
+        }
+
+        SupplierDTO dto = new SupplierDTO();
+        BeanUtils.copyProperties(entity, dto);
+        if(entity.getSupplierBankDetails()!=null)
+        {
+            SupplierBankDetailsDTO supplierBankDetailsDTO=new SupplierBankDetailsDTO();
+            BeanUtils.copyProperties(entity.getSupplierBankDetails(),supplierBankDetailsDTO);
+            dto.setSupplierBankDetails(supplierBankDetailsDTO);
+        }
+
+        log.info("Supplier details copied to DTO successfully");
+        return dto;
+    }
+
+
+    @Override
     public boolean generateAndSendOtp(String email) {
         if (email == null || email.trim().isEmpty()) {
             log.warn("generateAndSendOtp: empty email");
@@ -248,6 +276,101 @@ public class SupplierServiceImpl implements SupplierService{
 
         log.warn("verifyOtp: invalid or expired OTP for {}", email);
         return false;
+    }
+
+    @Override
+    public boolean updateSupplierDetailsBySupplier(SupplierDTO supplierDTO) {
+        log.info("updateSupplierDetailsBySupplier method in supplier service");
+        SupplierEntity existingEntity=supplierRepo.getSupplierByEmail(supplierDTO.getEmail());
+        SupplierAuditEntity supplierAuditEntity;
+        if(existingEntity==null)
+        {
+            log.error("Entity not found for update");
+            return false;
+        }
+        supplierAuditEntity=existingEntity.getSupplierAuditEntity();
+        if(supplierAuditEntity==null)
+        {
+            log.error("log not found");
+            return false;
+        }
+        existingEntity.setFirstName(supplierDTO.getFirstName());
+        existingEntity.setLastName(supplierDTO.getLastName());
+        existingEntity.setAddress(supplierDTO.getAddress());
+        if(supplierDTO.getProfilePath()!=null)
+        {
+            existingEntity.setProfilePath(supplierDTO.getProfilePath());
+        }
+        supplierAuditEntity.setUpdatedAt(LocalDateTime.now());
+        supplierAuditEntity.setUpdatedBy(supplierDTO.getFirstName()+" "+supplierDTO.getLastName());
+        existingEntity.setSupplierAuditEntity(supplierAuditEntity);
+        supplierAuditEntity.setSupplierEntity(existingEntity);
+
+        return supplierRepo.updateSupplierDetailsBySupplier(existingEntity);
+    }
+
+    @Override
+    public boolean updateSupplierBankDetails(SupplierBankDetailsDTO supplierBankDetailsDTO, String email) {
+        log.info("Entered updateSupplierBankDetails() in SupplierService with email: {}", email);
+        log.info("Incoming SupplierBankDetailsDTO: {}", supplierBankDetailsDTO);
+
+        SupplierEntity supplierEntity = supplierRepo.getSupplierByEmail(email);
+        if (supplierEntity == null) {
+            log.error("No SupplierEntity found for email: {}", email);
+            return false;
+        }
+
+        log.info("Fetched SupplierEntity for email: {}", supplierEntity.getEmail());
+
+        if (supplierEntity.getSupplierAuditEntity() == null) {
+            log.error("SupplierAuditEntity is null for supplier with email: {}", email);
+            return false;
+        }
+
+        SupplierAuditEntity supplierAuditEntity = supplierEntity.getSupplierAuditEntity();
+        supplierAuditEntity.setUpdatedBy(supplierEntity.getFirstName() + " " + supplierEntity.getLastName());
+        supplierAuditEntity.setUpdatedAt(LocalDateTime.now());
+        log.info("Updated SupplierAuditEntity with updatedBy: {} and updatedAt: {}",
+                supplierAuditEntity.getUpdatedBy(), supplierAuditEntity.getUpdatedAt());
+
+        supplierEntity.setSupplierAuditEntity(supplierAuditEntity);
+        supplierAuditEntity.setSupplierEntity(supplierEntity);
+
+        SupplierBankDetailsEntity supplierBankDetailsEntity = supplierEntity.getSupplierBankDetails();
+        SupplierBankDetailsAuditEntity supplierBankDetailsAuditEntity;
+
+        if (supplierBankDetailsEntity == null) {
+            log.info("No existing SupplierBankDetailsEntity found — creating new entity");
+            supplierBankDetailsEntity = new SupplierBankDetailsEntity();
+            BeanUtils.copyProperties(supplierBankDetailsDTO, supplierBankDetailsEntity);
+
+            supplierBankDetailsAuditEntity = new SupplierBankDetailsAuditEntity();
+            supplierBankDetailsAuditEntity.setCreatedAt(LocalDateTime.now());
+            supplierBankDetailsAuditEntity.setCreatedBy(supplierEntity.getFirstName() + " " + supplierEntity.getLastName());
+            log.info("Created new SupplierBankDetailsAuditEntity with createdBy: {} and createdAt: {}",
+                    supplierBankDetailsAuditEntity.getCreatedBy(), supplierBankDetailsAuditEntity.getCreatedAt());
+        } else {
+            log.info("Existing SupplierBankDetailsEntity found — updating existing entity");
+            BeanUtils.copyProperties(supplierBankDetailsDTO, supplierBankDetailsEntity);
+            supplierBankDetailsAuditEntity = supplierBankDetailsEntity.getSupplierBankDetailsAuditEntity();
+            log.info("Fetched existing SupplierBankDetailsAuditEntity for update");
+        }
+
+        supplierBankDetailsAuditEntity.setUpdatedBy(supplierEntity.getFirstName() + " " + supplierEntity.getLastName());
+        supplierBankDetailsAuditEntity.setUpdatedAt(LocalDateTime.now());
+        log.info("Set updatedBy: {} and updatedAt: {} in SupplierBankDetailsAuditEntity",
+                supplierBankDetailsAuditEntity.getUpdatedBy(), supplierBankDetailsAuditEntity.getUpdatedAt());
+
+        supplierEntity.setSupplierBankDetails(supplierBankDetailsEntity);
+        supplierBankDetailsEntity.setSupplierEntity(supplierEntity);
+        supplierBankDetailsEntity.setSupplierBankDetailsAuditEntity(supplierBankDetailsAuditEntity);
+        supplierBankDetailsAuditEntity.setSupplierBankDetailsEntity(supplierBankDetailsEntity);
+
+        boolean isUpdated = supplierRepo.updateSupplierDetailsBySupplier(supplierEntity);
+        log.info("Supplier bank details update status for email {}: {}", email, isUpdated);
+
+        log.info("Exiting updateSupplierBankDetails() in SupplierService");
+        return isUpdated;
     }
 
 

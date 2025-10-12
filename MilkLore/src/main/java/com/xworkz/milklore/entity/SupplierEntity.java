@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "supplier_d")
-@NamedQuery(name = "checkEmail",query = "select e from SupplierEntity e where e.email=:email and e.isActive=true")
+@NamedQuery(name = "checkEmail",query = "select a from SupplierEntity a LEFT JOIN FETCH a.supplierBankDetails where a.email=:email and a.isActive=true")
 @NamedQuery(name = "checkPhoneNumber",query = "select e from SupplierEntity e where e.phoneNumber=:phoneNumber and e.isActive=true")
 @NamedQuery(name="getSuppliersCount",query = "select count(a) from SupplierEntity a where a.isActive=true")
 @NamedQuery(name = "getAllSuppliers",query = "select a from SupplierEntity a where a.isActive=true order by a.supplierId DESC")
@@ -58,6 +58,8 @@ public class SupplierEntity {
     @Column(name = "otp")
     private String otp;
 
+    @Column(name = "profile_path")
+    private String profilePath;
 
 
     @OneToOne(mappedBy = "supplierEntity",cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval=true)
@@ -72,4 +74,9 @@ public class SupplierEntity {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<MilkProductReceiveEntity> milkProductReceiveList;
+
+    @OneToOne(mappedBy = "supplierEntity",cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval=true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private SupplierBankDetailsEntity supplierBankDetails;
 }

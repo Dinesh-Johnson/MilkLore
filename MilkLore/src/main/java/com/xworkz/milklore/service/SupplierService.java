@@ -1,5 +1,6 @@
 package com.xworkz.milklore.service;
 
+import com.xworkz.milklore.dto.SupplierBankDetailsDTO;
 import com.xworkz.milklore.dto.SupplierDTO;
 import java.util.List;
 
@@ -21,7 +22,11 @@ public interface SupplierService {
 
     SupplierDTO getSupplierDetails(String phone);
 
+    SupplierDTO getSupplierDetailsByEmail(String email);
     boolean generateAndSendOtp(String email);
     boolean verifyOtp(String email, String otp);
 
+    boolean updateSupplierDetailsBySupplier(SupplierDTO supplierDTO);
+
+    boolean updateSupplierBankDetails(SupplierBankDetailsDTO supplierBankDetailsDTO, String email);
 }

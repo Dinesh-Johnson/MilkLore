@@ -5,11 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceException;
-import java.util.Collections;
+import javax.persistence.*;
 import java.util.List;
 
 @Slf4j
@@ -177,8 +173,7 @@ public class SupplierRepoImpl implements SupplierRepo {
         SupplierEntity supplierEntity = null;
         try {
             entityManager = emf.createEntityManager();
-            supplierEntity = (SupplierEntity) entityManager.createNamedQuery("checkEmail").setParameter("email", email)
-                    .getSingleResult();
+            supplierEntity = (SupplierEntity) entityManager.createNamedQuery("checkEmail").setParameter("email", email).getSingleResult();
         } catch (PersistenceException e) {
             log.error(e.getMessage());
         } finally {
@@ -288,9 +283,40 @@ public class SupplierRepoImpl implements SupplierRepo {
             if (em != null && em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-        }   finally {
+        } finally {
             if (em != null && em.isOpen()) {
                 em.close();
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateSupplierDetailsBySupplier(SupplierEntity supplierEntity) {
+        log.info("updateSupplierDetailsBySupplier bySupplier method in supplier repository");
+        EntityManager entityManager=null;
+        EntityTransaction entityTransaction=null;
+
+        try {
+            entityManager=emf.createEntityManager();
+            entityTransaction=entityManager.getTransaction();
+            entityTransaction.begin();
+            entityManager.merge(supplierEntity);
+            entityTransaction.commit();
+            return true;
+        }catch (PersistenceException e)
+        {
+            log.error(e.getMessage());
+            if(entityTransaction!=null)
+            {
+                entityTransaction.rollback();
+                log.error("merge roll back");
+            }
+        }finally {
+            if(entityManager!=null && entityManager.isOpen())
+            {
+                entityManager.close();
+                log.info("EntityManager is closed");
             }
         }
         return false;

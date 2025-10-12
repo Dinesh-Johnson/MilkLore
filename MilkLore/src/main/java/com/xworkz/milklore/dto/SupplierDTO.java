@@ -32,5 +32,9 @@ public class SupplierDTO  {
     @Size(min = 5, max = 250)
     private String address;
 
+    private String profilePath;
+
     private String typeOfMilk;
+
+    private SupplierBankDetailsDTO supplierBankDetails;
 }

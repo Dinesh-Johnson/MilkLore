@@ -1,11 +1,14 @@
 package com.xworkz.milklore.controller;
 
 import com.xworkz.milklore.dto.AdminDTO;
+import com.xworkz.milklore.dto.SupplierBankDetailsDTO;
 import com.xworkz.milklore.dto.SupplierDTO;
 import com.xworkz.milklore.service.AdminService;
 import com.xworkz.milklore.service.SupplierService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,14 +16,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Slf4j
 @Controller
 @RequestMapping("/")
+@PropertySource("classpath:application.properties")
 public class SupplierController {
 
     @Autowired
@@ -28,6 +37,9 @@ public class SupplierController {
 
     @Autowired
     private SupplierService supplierService;
+
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
     public SupplierController() {
         log.info("SupplierController constructor");
@@ -170,14 +182,24 @@ public class SupplierController {
     @PostMapping("/verifyOtp")
     public String verifyOtp(@RequestParam String email,
                             @RequestParam String otp,
-                            Model model) {
+                            Model model,HttpSession session) {
         email = email.trim();
         otp = otp.trim();
 
         boolean verified = supplierService.verifyOtp(email, otp);
 
         if (verified) {
-            // OTP correct → redirect to supplier dashboard
+            // Store email in session
+            session.setAttribute("supplierEmail", email);
+
+            // Add email to model for the current request
+            model.addAttribute("email", email);
+
+            // Get supplier details to pass to the dashboard
+            SupplierDTO dto = supplierService.getSupplierDetailsByEmail(email);
+            if (dto != null) {
+                model.addAttribute("dto", dto);
+            }
             return "SupplierDashboard"; // JSP page for dashboard
         } else {
             // OTP wrong → reopen modal with error
@@ -189,7 +211,109 @@ public class SupplierController {
             return "SupplierLogin"; // JSP page
         }
     }
+    @GetMapping("/redirectToSupplierDashboard")
+    public String getSupplierDashboardPage(@RequestParam String email, Model model) {
+        log.info("getSupplierDashboardPage method in supplier controller");
+        SupplierDTO dto = supplierService.getSupplierDetailsByEmail(email);
+        model.addAttribute("dto", dto);
+        return "SupplierDashboard";
+    }
+
+    @GetMapping("/redirectToUpdateSupplierProfile")
+    public String getUpdateProfilePage(@RequestParam(required = false) String email,
+                                       Model model,
+                                       HttpSession session) {
+        log.info("getUpdateProfilePage method in supplier controller");
+
+        // If email is not provided in request, try to get it from session
+        if (email == null || email.trim().isEmpty()) {
+            email = (String) session.getAttribute("supplierEmail");
+            if (email == null) {
+                log.warn("No email provided and no email in session");
+                return "redirect:/supplierLogin"; // or appropriate error page
+            }
+        }
+
+        SupplierDTO dto = supplierService.getSupplierDetailsByEmail(email.trim());
+
+        if (dto == null) {
+            log.warn("No supplier found for email: {}", email);
+            model.addAttribute("errorMessage", "No supplier found with email: " + email);
+            return "SupplierDashboard"; // fallback page
+        }
+
+        model.addAttribute("dto", dto);
+        return "SupplierProfileFragment"; // JSP for profile update
+    }
 
 
+    @PostMapping("updateSupplierProfile")
+    public String updateSupplierProfile(@Valid SupplierDTO supplierDTO, BindingResult bindingResult, @RequestParam(required = false)MultipartFile profilePicture, Model model)
+    {
+        log.info("updateSupplierProfile method in supplier controller");
+        if(bindingResult.hasErrors())
+        {
+            log.error("fields has error");
+            bindingResult.getFieldErrors().stream().map(e->e.getField()+" -> "+e.getDefaultMessage())
+                    .forEach(log::error);
+            model.addAttribute("dto",supplierDTO);
+            model.addAttribute("errorMessage","Invalid details");
+            return "SupplierProfileFragment";
+        }
+        if (profilePicture != null && !profilePicture.isEmpty()) {
+            try {
+                byte[] bytes = profilePicture.getBytes();
+                String fileName = supplierDTO.getFirstName() + "_" + System.currentTimeMillis() + "_" + profilePicture.getOriginalFilename();
+                Path path = Paths.get(uploadDir ,fileName);
+                Files.write(path, bytes);
+                supplierDTO.setProfilePath(path.getFileName().toString());
+            } catch (IOException e) {
+                log.error(e.getMessage());
+            }
+        } else {
+            log.warn("No new profile picture uploaded.");
+        }
+        if(supplierService.updateSupplierDetailsBySupplier(supplierDTO))
+        {
+            return getSupplierDashboardPage(supplierDTO.getEmail(),model);
+        }else {
+            model.addAttribute("errorMessage","Details not updated");
+            model.addAttribute("dto",supplierDTO);
+        }
+        return "SupplierProfileFragment";
+    }
+    @GetMapping("redirectToUpdateSupplierBankDetails")
+    public String redirectToUpdateSupplierBankDetailsPage(@RequestParam String email,Model model)
+    {
+        log.info("redirectToUpdateSupplierBankDetailsPage method in supplier controller");
+        model.addAttribute("dto",supplierService.getSupplierDetailsByEmail(email));
+        return "UpdateSupplierBankDetails";
+    }
+
+
+    @PostMapping("/updateBankDetails")
+    public String supplierUpdateBankDetails(@Valid SupplierBankDetailsDTO supplierBankDetailsDTO, BindingResult bindingResult, @RequestParam String email, Model model)
+    {
+        log.info("supplierUpdateBankDetailsPage method in supplier controller");
+        if(bindingResult.hasErrors())
+        {
+            log.error("fields has error");
+            bindingResult.getFieldErrors().stream().map(e->e.getField()+" -> "+e.getDefaultMessage())
+                    .forEach(System.out::println);
+            model.addAttribute("bank",supplierBankDetailsDTO);
+            model.addAttribute("dto.email",email);
+            return "UpdateSupplierBankDetails";
+        }
+        if(supplierService.updateSupplierBankDetails(supplierBankDetailsDTO,email))
+        {
+            log.info("bank details updated");
+            return getSupplierDashboardPage(email,model);
+        }else {
+            model.addAttribute("bank",supplierBankDetailsDTO);
+            model.addAttribute("dto.email",email);
+        }
+        return "UpdateSupplierBankDetails";
+
+    }
 
 }

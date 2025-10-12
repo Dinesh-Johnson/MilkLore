@@ -27,5 +27,6 @@ public interface SupplierRepo {
 
     boolean loginWithOtp(String email, String otp);
 
+    boolean updateSupplierDetailsBySupplier(SupplierEntity supplierEntity);
 
 }
