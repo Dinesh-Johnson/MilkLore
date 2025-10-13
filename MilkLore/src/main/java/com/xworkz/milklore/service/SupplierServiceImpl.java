@@ -370,7 +370,11 @@ public class SupplierServiceImpl implements SupplierService{
         log.info("Supplier bank details update status for email {}: {}", email, isUpdated);
 
         log.info("Exiting updateSupplierBankDetails() in SupplierService");
-        return isUpdated;
+        if(isUpdated)
+        {
+            return emailSender.mailForSupplierBankDetails(supplierEntity.getEmail(), supplierBankDetailsEntity);
+        }
+        return false;
     }
 
 

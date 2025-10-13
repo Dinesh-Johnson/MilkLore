@@ -1,6 +1,7 @@
 package com.xworkz.milklore.service;
 
 import com.xworkz.milklore.configuration.EmailConfiguration;
+import com.xworkz.milklore.entity.SupplierBankDetailsEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -89,6 +90,40 @@ public class EmailSenderServiceImpl implements EmailSenderService {
             return true;
         }catch (Exception e){
             log.error(e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean mailForSupplierBankDetails(String email, SupplierBankDetailsEntity bankDetails) {
+        log.info("Entered mailForSupplierBankDetails() in EmailSender for email: {}", email);
+        try {
+            String subject = "MilkLore - Bank Details Updated Successfully";
+
+            String messageBody = "Dear Supplier,\n\n"
+                    + "We’re writing to inform you that your bank details have been successfully added or updated in your MilkLore account.\n\n"
+                    + "Here are the details currently registered in our system:\n"
+                    + "----------------------------------------------------\n"
+                    + "Bank Name       : " + bankDetails.getBankName() + "\n"
+                    + "Account Number  : " + bankDetails.getAccountNumber() + "\n"
+                    + "IFSC Code       : " + bankDetails.getIFSCCode() + "\n"
+                    + "Branch Name     : " + bankDetails.getBankBranch() + "\n"
+                    + "----------------------------------------------------\n\n"
+                    + "If you did not request this update, please contact our support team immediately at support@milklore.com.\n\n"
+                    + "Thank you for helping us keep your account information accurate and secure.\n\n"
+                    + "Warm regards,\n"
+                    + "The MilkLore Team";
+
+            SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+            simpleMailMessage.setTo(email);
+            simpleMailMessage.setSubject(subject);
+            simpleMailMessage.setText(messageBody);
+
+            emailConfig.mailSender().send(simpleMailMessage);
+            log.info("Successfully sent bank details update email to: {}", email);
+            return true;
+        } catch (Exception e) {
+            log.error("Failed to send bank details update email to {}. Error: {}", email, e.getMessage());
             return false;
         }
     }

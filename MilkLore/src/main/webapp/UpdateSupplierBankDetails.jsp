@@ -46,7 +46,7 @@
     <nav class="navbar navbar-expand-lg fixed-top" style="background: linear-gradient(90deg, #d7ccc8, #efebe9)">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
-                <img src="images/milklore-logo.png" alt="MilkLore Logo" height="60" width="60" class="rounded-circle border border-light p-1 ms-3 me-2" />
+                <img src="images/milklore.png" alt="MilkLore Logo" height="60" width="60" class="rounded-circle border border-light p-1 ms-3 me-2" />
                 <span class="fw-bold" style="color: #5d4037;">MilkLore</span>
             </a>
             <div class="collapse navbar-collapse">
