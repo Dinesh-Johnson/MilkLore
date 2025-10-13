@@ -109,11 +109,6 @@
                         <i class="fas fa-fw fa-cow me-1"></i> Milk Collection
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="redirectToPaymentStatus?email=${dto.email}">
-                        <i class="fas fa-money-bill-wave me-1"></i> Payments
-                    </a>
-                </li>
                 <li class="nav-item dropdown ms-lg-2">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown">
                         <c:choose>
@@ -269,9 +264,6 @@
                 <div class="card-body">
                     <a href="redirectToMilkCollection?email=${dto.email}" class="btn btn-outline-primary w-100 mb-3">
                         <i class="fas fa-plus-circle me-2"></i>Add Milk Collection
-                    </a>
-                    <a href="redirectToPaymentStatus?email=${dto.email}" class="btn btn-outline-success w-100 mb-3">
-                        <i class="fas fa-history me-2"></i>View Payment History
                     </a>
                     <a href="#" class="btn btn-outline-info w-100 mb-3" data-bs-toggle="modal" data-bs-target="#profileModal">
                         <i class="fas fa-user-edit me-2"></i>Update Profile
