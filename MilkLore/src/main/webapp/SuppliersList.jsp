@@ -180,6 +180,7 @@
                     <th>Phone</th>
                     <th>Milk Type</th>
                     <th>Address</th>
+                    <th>Bank Details</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -192,6 +193,38 @@
                         <td>${supplier.phoneNumber}</td>
                         <td><span class="badge bg-info text-dark">${supplier.typeOfMilk}</span></td>
                         <td>${supplier.address}</td>
+                        <td>
+                            <c:choose>
+                                <c:when test="${not empty supplier.supplierBankDetails}">
+                                    <button class="btn btn-primary btn-sm me-2 viewSupplierBankBtn"
+                                            data-bs-toggle="modal" data-bs-target="#viewSupplierBankDetailsModal"
+                                            data-supplier-name="${supplier.firstName} ${supplier.lastName}"
+                                            data-supplier-email="${supplier.email}"
+                                            data-bank-name="${supplier.supplierBankDetails.bankName}"
+                                            data-bank-branch="${supplier.supplierBankDetails.bankBranch}"
+                                            data-account-number="${supplier.supplierBankDetails.accountNumber}"
+                                            data-ifsc-code="${supplier.supplierBankDetails.IFSCCode}"
+                                            data-account-type="${supplier.supplierBankDetails.accountType}">
+                                        <i class="fa-solid fa-eye"></i>View
+                                    </button>
+                                    <button class="btn btn-primary btn-sm me-2 editSupplierBankBtn"
+                                            data-bs-toggle="modal" data-bs-target="#editSupplierBankDetailsModal"
+                                            data-supplier-id="${supplier.supplierId}"
+                                            data-supplier-name="${supplier.firstName} ${supplier.lastName}"
+                                            data-supplier-email="${supplier.email}"
+                                            data-bank-name="${supplier.supplierBankDetails.bankName}"
+                                            data-bank-branch="${supplier.supplierBankDetails.bankBranch}"
+                                            data-account-number="${supplier.supplierBankDetails.accountNumber}"
+                                            data-ifsc-code="${supplier.supplierBankDetails.IFSCCode}"
+                                            data-account-type="${supplier.supplierBankDetails.accountType}">
+                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    </button>
+                                </c:when>
+                                <c:otherwise>
+                                    <span class="text-muted">Bank Details Not Found</span>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
                         <td class="action-btns">
                             <button type="button" class="btn btn-primary btn-sm me-2 viewSupplierBtn"
                                     data-bs-toggle="modal" data-bs-target="#viewSupplierModal"
@@ -216,7 +249,6 @@
                                     data-admin="${dto.email}">
                                 <i class="fas fa-trash"></i>
                             </button>
-
                         </td>
                     </tr>
                 </c:forEach>
@@ -432,6 +464,141 @@
                 <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <a id="confirmDeleteBtn" class="btn btn-danger">Delete</a>
             </div>
+        </div>
+    </div>
+</div>
+<!-- View Supplier Bank Details Modal (Read-Only) -->
+<div class="modal fade" id="viewSupplierBankDetailsModal" tabindex="-1"
+     aria-labelledby="viewSupplierBankDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-4 shadow-lg">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="viewSupplierBankDetailsModalLabel">
+                    <i class="fa-solid fa-building-columns me-2"></i>Supplier Bank Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body px-4 py-3">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Supplier Name</label>
+                        <div><span id="supplierName"></span></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Email</label>
+                        <div><span id="supplierEmail"></span></div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Bank Name</label>
+                        <div><span id="bankName"></span></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Branch</label>
+                        <div><span id="branch"></span></div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Account Number</label>
+                        <div><span id="accountNumber"></span></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">IFSC Code</label>
+                        <div><span id="ifscCode"></span></div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Account Type</label>
+                        <div><span id="accountType"></span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Supplier Bank Details Modal -->
+<div class="modal fade" id="editSupplierBankDetailsModal" tabindex="-1"
+     aria-labelledby="editSupplierBankDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-4 shadow-lg">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editSupplierBankDetailsModalLabel">
+                    <i class="fa-solid fa-building-columns me-2"></i>Edit Supplier Bank Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <form id="editBankDetailsForm" method="post" action="updateSupplierBankDetailsByAdmin?adminEmail=${dto.email}">
+                <div class="modal-body px-4 py-3">
+                    <input type="hidden" name="supplierId" id="editBankSupplierId">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Supplier Name</label>
+                            <input type="text" class="form-control" id="editBankSupplierName" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Email</label>
+                            <input type="text" class="form-control" id="editBankSupplierEmail" name="email" readonly>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Bank Name</label>
+                            <input type="text" class="form-control" name="bankName" id="editBankName" required>
+                            <span class="text-danger" id="bankNameError"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Branch</label>
+                            <input type="text" class="form-control" name="bankBranch" id="editBankBranch" required>
+                            <span class="text-danger" id="bankBranchError"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Account Number</label>
+                            <input type="text" class="form-control" name="accountNumber" id="editAccountNumber"
+                                   required>
+                            <span class="text-danger" id="accountNumberError"></span>
+
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">IFSC Code</label>
+                            <input type="text" class="form-control" name="IFSCCode" id="editIfscCode" required>
+                            <span class="text-small">4 captial letters +0 + 6 alphanumeric letters</span>
+                            <span class="text-danger" id="ifscCodeError"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Account Type</label>
+                            <select class="form-select" name="accountType" id="editAccountType" required>
+                                <option value="">Select Account Type</option>
+                                <option value="Savings">Savings</option>
+                                <option value="Current">Current</option>
+                                <option value="Salary">Salary</option>
+                            </select>
+                            <span class="text-danger" id="accountTypeError"></span>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded-pill"
+                            data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary rounded-pill">Save Changes</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

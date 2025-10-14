@@ -14,6 +14,10 @@ import java.time.LocalDate;
 @Table(name = "milk_product_receive_details")
 @NamedQuery(name = "getAllDetailsByDate",
         query = "select e from MilkProductReceiveEntity e JOIN FETCH e.supplier JOIN FETCH e.admin where e.collectedDate = :collectedDate")
+@NamedQuery(
+        name = "getAllDetailsBySupplierEmail",
+        query = "SELECT e FROM MilkProductReceiveEntity e JOIN FETCH e.supplier s WHERE s.email = :email ORDER BY e.collectedDate DESC")
+
 public class MilkProductReceiveEntity {
 
     @Id

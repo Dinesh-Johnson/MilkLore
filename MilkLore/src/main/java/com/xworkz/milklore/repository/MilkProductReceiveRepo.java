@@ -9,4 +9,5 @@ public interface MilkProductReceiveRepo {
 
     boolean save(MilkProductReceiveEntity milkProductReceiveEntity);
     List<MilkProductReceiveEntity> getAllDetailsByDate(LocalDate collectedDate);
+    List<MilkProductReceiveEntity> getAllDetailsBySupplierEmail(String email);
 }

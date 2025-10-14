@@ -53,8 +53,13 @@
                             class="fa-solid fa-glass-water-droplet me-2"></i> Collect Milk</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="redirectToCollectMilk?email=${dto.email}">
-                        <i class="fa-solid fa-glass-water-droplet me-2"></i> Milk Receiver Details
+                    <a class="nav-link active" href="redirectToMilkSuppliersList?email=${dto.email}&page=1&size=10">
+                        <i class="fa-solid fa-glass-water-droplet me-2"></i> Milk Supplier Details
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="redirectToGetCollectMilkList?email=${dto.email}">
+                        <i class="fa-solid fa-glass-water-droplet me-2"></i> Milk Product List
                     </a>
                 </li>
                 <li class="nav-item dropdown ms-3">

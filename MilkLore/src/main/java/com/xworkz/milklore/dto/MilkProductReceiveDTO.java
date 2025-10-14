@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class MilkProductReceiveDTO {
 
-    private Integer collectMilkId;
+    private Integer milkProductReceiveId;
     private SupplierDTO supplier;
     private AdminDTO admin;
 

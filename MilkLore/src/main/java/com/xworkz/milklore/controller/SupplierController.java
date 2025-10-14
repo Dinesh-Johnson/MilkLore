@@ -316,4 +316,27 @@ public class SupplierController {
 
     }
 
+    @PostMapping("/updateSupplierBankDetailsByAdmin")
+    public String updateSupplierBankDetailsByAdmin(@Valid SupplierBankDetailsDTO supplierBankDetailsDTO,BindingResult bindingResult,
+                                                   @RequestParam String adminEmail,@RequestParam String email,Model model,HttpSession session)
+    {
+        log.info("updateSupplierBankDetailsByAdmin method in supplier controller");
+        if(bindingResult.hasErrors())
+        {
+            log.error("fields has error");
+            bindingResult.getFieldErrors().stream().map(e->e.getField()+" -> "+e.getDefaultMessage())
+                    .forEach(System.out::println);
+            model.addAttribute("error","Bank details not updated");
+            return getMilkSupplierList(adminEmail,1,10,model,session);
+        }
+        if(supplierService.updateSupplierBankDetailsByAdmin(supplierBankDetailsDTO,email,adminEmail))
+        {
+            model.addAttribute("success","Bank details updated");
+        }else {
+            model.addAttribute("error","Bank details not updated");
+        }
+        model.addAttribute("email", email);
+        return getMilkSupplierList(adminEmail,1,10,model,session);
+    }
+
 }

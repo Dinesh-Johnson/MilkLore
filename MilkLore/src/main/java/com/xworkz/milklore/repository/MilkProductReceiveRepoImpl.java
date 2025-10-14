@@ -10,6 +10,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -83,4 +84,27 @@ public class MilkProductReceiveRepoImpl implements MilkProductReceiveRepo{
         }
         return null;
     }
+    @Override
+    public List<MilkProductReceiveEntity> getAllDetailsBySupplierEmail(String email) {
+        log.info("getAllDetailsBySupplierEmail method in CollectMilkRepositoryImpl");
+        EntityManager entityManager = null;
+        try {
+            entityManager = entityManagerFactory.createEntityManager();
+            List<MilkProductReceiveEntity> milkProductReceiveEntityList = entityManager
+                    .createNamedQuery("getAllDetailsBySupplierEmail", MilkProductReceiveEntity.class)
+                    .setParameter("email", email)
+                    .getResultList();
+            log.info("Query returned {} records", milkProductReceiveEntityList.size());
+            return milkProductReceiveEntityList;
+        } catch (PersistenceException e) {
+            log.error("Error fetching milk product details: " + e.getMessage(), e);
+        } finally {
+            if (entityManager != null && entityManager.isOpen()) {
+                entityManager.close();
+                log.info("EntityManager is closed");
+            }
+        }
+        return Collections.emptyList();
+    }
+
 }

@@ -9,4 +9,5 @@ public interface MilkProductReceiveService {
 
     boolean save(MilkProductReceiveDTO milkProductReceiveDTO, String email);
     List<MilkProductReceiveDTO > getAllDetailsByDate(LocalDate collectedDate);
+    List<MilkProductReceiveDTO> getAllDetailsBySupplierEmail(String email);
 }

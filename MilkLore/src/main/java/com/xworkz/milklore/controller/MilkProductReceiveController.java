@@ -38,12 +38,19 @@ public class MilkProductReceiveController {
     }
 
     @GetMapping("/redirectToCollectMilk")
-    public String getCollectMilkPage(@RequestParam String email, Model model)
-    {
+    public String getCollectMilkPage(@RequestParam String email, Model model){
         log.info("getCollectMilkPage in CollectMilkController");
         AdminDTO adminDTO=adminService.viewAdminByEmail(email);
         model.addAttribute("dto",adminDTO);
         return "CollectMilk";
+    }
+
+    @GetMapping("/redirectToGetCollectMilkList")
+    public String redirectToGetCollectMilkList(@RequestParam String email, Model model){
+        log.info("redirectToGetCollectMilkList in CollectMilkController");
+        AdminDTO adminDTO=adminService.viewAdminByEmail(email);
+        model.addAttribute("dto",adminDTO);
+        return "ProductReceive";
     }
 
     @PostMapping("addCollectMilk")
@@ -82,12 +89,23 @@ public class MilkProductReceiveController {
         List<MilkProductReceiveDTO> collectMilkList = new ArrayList<>();
 
         if (collectedDate != null) {
-            // Fetch records for the given date
             collectMilkList = collectMilkService.getAllDetailsByDate(collectedDate);
         }
 
         model.addAttribute("collectMilkList", collectMilkList);
         return "ProductReceive";
     }
+
+    @GetMapping("/getCollectMilkListBySupplierEmail")
+    public String getCollectMilkListBySupplierEmail(@RequestParam String email, Model model) {
+        log.info("Fetching milk collection for email={}", email);
+        List<MilkProductReceiveDTO> collectMilkList = collectMilkService.getAllDetailsBySupplierEmail(email);
+        collectMilkList.forEach(System.out::println);
+        log.info("Service returned {} records", collectMilkList.size());
+        model.addAttribute("collectMilkList", collectMilkList);
+        return "ViewProductReceive";
+    }
+
+
 
 }

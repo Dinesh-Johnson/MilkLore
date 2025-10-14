@@ -15,7 +15,7 @@ import java.util.List;
 @NamedQuery(name = "checkEmail",query = "select a from SupplierEntity a LEFT JOIN FETCH a.supplierBankDetails where a.email=:email and a.isActive=true")
 @NamedQuery(name = "checkPhoneNumber",query = "select e from SupplierEntity e where e.phoneNumber=:phoneNumber and e.isActive=true")
 @NamedQuery(name="getSuppliersCount",query = "select count(a) from SupplierEntity a where a.isActive=true")
-@NamedQuery(name = "getAllSuppliers",query = "select a from SupplierEntity a where a.isActive=true order by a.supplierId DESC")
+@NamedQuery(name = "getAllSuppliers",query = "select a from SupplierEntity a LEFT JOIN FETCH a.supplierBankDetails where a.isActive=true order by a.supplierId DESC")
 @NamedQuery(name = "searchSupplierEmailNameMobile",
         query = "SELECT a FROM SupplierEntity a " +
                 "WHERE (LOWER(a.firstName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +

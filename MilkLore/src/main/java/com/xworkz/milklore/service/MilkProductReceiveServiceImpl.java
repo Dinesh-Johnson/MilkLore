@@ -77,4 +77,25 @@ public class MilkProductReceiveServiceImpl implements MilkProductReceiveService 
         });
         return collectMilkDTOS;
     }
+    @Override
+    public List<MilkProductReceiveDTO> getAllDetailsBySupplierEmail(String email) {
+        log.info("getAllDetailsBySupplierEmail method in CollectMilkServiceImpl");
+        List<MilkProductReceiveEntity> collectMilkEntities = collectMilkRepository.getAllDetailsBySupplierEmail(email);
+
+        List<MilkProductReceiveDTO> collectMilkDTOS = new ArrayList<>();
+        for (MilkProductReceiveEntity entity : collectMilkEntities) {
+            MilkProductReceiveDTO dto = new MilkProductReceiveDTO();
+            BeanUtils.copyProperties(entity, dto);
+
+            if (entity.getSupplier() != null) {
+                SupplierDTO supplierDTO = new SupplierDTO();
+                BeanUtils.copyProperties(entity.getSupplier(), supplierDTO);
+                dto.setSupplier(supplierDTO);
+            }
+
+            collectMilkDTOS.add(dto);
+        }
+        return collectMilkDTOS;
+    }
+
 }

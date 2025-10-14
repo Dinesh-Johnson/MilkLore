@@ -97,15 +97,32 @@
                         Pricing</a>
                 </li>
             </ul>
-            <div class="d-flex align-items-center">
-                <span class="text-white me-3">Welcome, ${userName}</span>
-                <a href="logout" class="btn btn-outline-light btn-sm">
-                    <i class="fas fa-sign-out-alt me-1"></i> Logout
+            <li class="nav-item dropdown ms-3">
+                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown"
+                   data-bs-toggle="dropdown" aria-expanded="false">
+                    <c:choose>
+                        <c:when test="${not empty dto.profilePath}">
+                            <img src="<c:url value='/uploads/${dto.profilePath}'/>" class="rounded-circle me-2"
+                                 style="width: 40px; height: 40px; object-fit: cover;">
+                        </c:when>
+                        <c:otherwise>
+                            <img src="images/default.png" alt="Profile" class="rounded-circle me-2"
+                                 style="width: 40px; height: 40px; object-fit: cover;">
+                        </c:otherwise>
+                    </c:choose>
                 </a>
-            </div>
+                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="profileDropdown">
+                    <li><a class="dropdown-item" href="viewProfile?email=${dto.email}"><i
+                            class="bi bi-person-circle me-2"></i> Profile</a></li>
+                    <li><a class="dropdown-item" href="logout"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
+                    </li>
+                </ul>
+            </li>
         </div>
     </div>
 </nav>
+<br>
+
 <!-- Main Content -->
 <div class="container" style="margin-top: 80px;">
     <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
