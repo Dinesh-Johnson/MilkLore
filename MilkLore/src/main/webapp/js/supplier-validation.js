@@ -1,6 +1,7 @@
+// supplier-validation.js
 document.addEventListener("DOMContentLoaded", function() {
     const form = document.getElementById("supplierForm");
-    const submitButton = document.getElementById("submitButton");
+    const submitButton = document.getElementById("submitButton"); // optional in template
 
     const firstNameInput = document.getElementById("firstName");
     const lastNameInput = document.getElementById("lastName");
@@ -19,336 +20,283 @@ document.addEventListener("DOMContentLoaded", function() {
     let emailAvailable = false;
     let phoneAvailable = false;
 
+    function safeAddListener(el, event, fn) {
+        if (el) el.addEventListener(event, fn);
+    }
+
     // Validate first name
-    firstNameInput.addEventListener("input", function() {
+    safeAddListener(firstNameInput, "input", function() {
         if (firstNameInput.value.trim().length < 3) {
-            firstNameError.innerText = "First name must be at least 3 characters.";
-            firstNameError.style.color = "red";
+            if (firstNameError) { firstNameError.innerText = "First name must be at least 3 characters."; firstNameError.style.color = "red"; }
         } else {
-            firstNameError.innerText = "";
+            if (firstNameError) firstNameError.innerText = "";
         }
         updateSubmitButton();
     });
 
     // Validate last name
-    lastNameInput.addEventListener("input", function() {
+    safeAddListener(lastNameInput, "input", function() {
         if (lastNameInput.value.trim().length < 1) {
-            lastNameError.innerText = "Last name must be at least 1 characters.";
-            lastNameError.style.color = "red";
+            if (lastNameError) { lastNameError.innerText = "Last name must be at least 1 character."; lastNameError.style.color = "red"; }
         } else {
-            lastNameError.innerText = "";
+            if (lastNameError) lastNameError.innerText = "";
         }
         updateSubmitButton();
     });
 
-    // Validate email and check backend
     // Email availability check
-emailInput.addEventListener("input", function() {
-    const email = emailInput.value.trim();
-    if (!email) {
-        emailError.innerText = "Email is required";
-        emailError.style.color = "red";
-        emailAvailable = false;
-        updateSubmitButton();
-        return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        emailError.innerText = "Enter a valid email";
-        emailError.style.color = "red";
-        emailAvailable = false;
-        updateSubmitButton();
-        return;
-    }
-
-    fetch('/MilkLore/checkSupplierEmail?email=' + encodeURIComponent(email))
-        .then(response => response.json())
-        .then(isTaken => {
-            const taken = (typeof isTaken === "string") ? (isTaken === "true") : isTaken;
-            if (taken) {
-                emailAvailable = false;
-                emailError.innerText = " Email already exists";
-                emailError.style.color = "red";
-            } else {
-                emailAvailable = true;
-                emailError.innerText = "";
-            }
-            updateSubmitButton();
-        })
-        .catch(() => {
+    safeAddListener(emailInput, "input", function() {
+        const email = emailInput.value.trim();
+        if (!email) {
+            if (emailError) { emailError.innerText = "Email is required"; emailError.style.color = "red"; }
             emailAvailable = false;
-            emailError.innerText = "Unable to check email now";
-            emailError.style.color = "orange";
             updateSubmitButton();
-        });
-});
-
-// Phone availability check
-phoneInput.addEventListener("input", function() {
-    const phone = phoneInput.value.trim();
-    if (!phone) {
-        phoneError.innerText = "Phone number is required";
-        phoneError.style.color = "red";
-        phoneAvailable = false;
-        updateSubmitButton();
-        return;
-    }
-    if (!/^[6-9]\d{9}$/.test(phone)) {
-        phoneError.innerText = "Phone must be 10 digits and start with 6-9";
-        phoneError.style.color = "red";
-        phoneAvailable = false;
-        updateSubmitButton();
-        return;
-    }
-
-    fetch('/MilkLore/checkPhone?phoneNumber=' + encodeURIComponent(phone))
-        .then(response => response.json())
-        .then(isTaken => {
-            const taken = (typeof isTaken === "string") ? (isTaken === "true") : isTaken;
-            if (taken) {
-                phoneAvailable = false;
-                phoneError.innerText = "Phone number already exists";
-                phoneError.style.color = "red";
-            } else {
-                phoneAvailable = true;
-                phoneError.innerText = "";
-
-            }
+            return;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            if (emailError) { emailError.innerText = "Enter a valid email"; emailError.style.color = "red"; }
+            emailAvailable = false;
             updateSubmitButton();
-        })
-        .catch(() => {
+            return;
+        }
+
+        fetch('/MilkLore/checkSupplierEmail?email=' + encodeURIComponent(email))
+            .then(response => response.json())
+            .then(isTaken => {
+                const taken = (typeof isTaken === "string") ? (isTaken === "true") : isTaken;
+                if (taken) {
+                    emailAvailable = false;
+                    if (emailError) { emailError.innerText = "Email already exists"; emailError.style.color = "red"; }
+                } else {
+                    emailAvailable = true;
+                    if (emailError) emailError.innerText = "";
+                }
+                updateSubmitButton();
+            })
+            .catch(() => {
+                emailAvailable = false;
+                if (emailError) { emailError.innerText = "Unable to check email now"; emailError.style.color = "orange"; }
+                updateSubmitButton();
+            });
+    });
+
+    // Phone availability check
+    safeAddListener(phoneInput, "input", function() {
+        const phone = phoneInput.value.trim();
+        if (!phone) {
+            if (phoneError) { phoneError.innerText = "Phone number is required"; phoneError.style.color = "red"; }
             phoneAvailable = false;
-            phoneError.innerText = "Unable to check phone now";
-            phoneError.style.color = "orange";
             updateSubmitButton();
-        });
-});
+            return;
+        }
+        if (!/^[6-9]\d{9}$/.test(phone)) {
+            if (phoneError) { phoneError.innerText = "Phone must be 10 digits and start with 6-9"; phoneError.style.color = "red"; }
+            phoneAvailable = false;
+            updateSubmitButton();
+            return;
+        }
 
+        fetch('/MilkLore/checkPhone?phoneNumber=' + encodeURIComponent(phone))
+            .then(response => response.json())
+            .then(isTaken => {
+                const taken = (typeof isTaken === "string") ? (isTaken === "true") : isTaken;
+                if (taken) {
+                    phoneAvailable = false;
+                    if (phoneError) { phoneError.innerText = "Phone number already exists"; phoneError.style.color = "red"; }
+                } else {
+                    phoneAvailable = true;
+                    if (phoneError) phoneError.innerText = "";
+                }
+                updateSubmitButton();
+            })
+            .catch(() => {
+                phoneAvailable = false;
+                if (phoneError) { phoneError.innerText = "Unable to check phone now"; phoneError.style.color = "orange"; }
+                updateSubmitButton();
+            });
+    });
 
     // Validate address
-    addressInput.addEventListener("input", function() {
+    safeAddListener(addressInput, "input", function() {
         if (addressInput.value.trim().length < 5) {
-            addressError.innerText = "Address must be at least 5 characters.";
-            addressError.style.color = "red";
+            if (addressError) { addressError.innerText = "Address must be at least 5 characters."; addressError.style.color = "red"; }
         } else {
-            addressError.innerText = "";
+            if (addressError) addressError.innerText = "";
         }
         updateSubmitButton();
     });
 
-    // Load milk types dynamically from backend
-fetch('/MilkLore/productList')
-    .then(response => response.json())
-    .then(data => {
-        milkSelect.innerHTML = '<option value="">Select milk type</option>';
-        data.forEach(type => {
-            const option = document.createElement("option");
-            option.value = type;
-            option.textContent = type;
+    // Load milk types dynamically from backend (simple loader)
+    function loadMilkTypes(selectElement, selectedValue = "") {
+        if (!selectElement) return;
+        fetch('/MilkLore/productList')
+            .then(response => response.json())
+            .then(data => {
+                selectElement.innerHTML = '<option value="">Select milk type</option>';
+                data.forEach(type => {
+                    const option = document.createElement("option");
+                    option.value = type;
+                    option.textContent = type;
+                    if (type === selectedValue) option.selected = true;
+                    selectElement.appendChild(option);
+                });
+            })
+            .catch(() => {
+                const errEl = document.getElementById(selectElement.id + 'Error') || document.getElementById('typeOfMilkError');
+                if (errEl) { errEl.innerText = 'Unable to load milk types'; errEl.style.color = 'orange'; }
+            });
+    }
 
-            // Preselect supplier’s milk type if editing
-            if (type === "${supplier.typeOfMilk}") {
-                option.selected = true;
+    // Validate milk select
+    if (milkSelect) {
+        milkSelect.addEventListener('change', function() {
+            if (milkSelect.value === "") {
+                if (milkError) { milkError.innerText = 'Please select milk type.'; milkError.style.color = 'red'; }
+            } else {
+                if (milkError) milkError.innerText = '';
             }
-
-            milkSelect.appendChild(option);
+            updateSubmitButton();
         });
-    })
-    .catch(() => {
-        milkError.innerText = "Unable to load milk types";
-        milkError.style.color = "orange";
-    });
-
-// Validate milk type after fetch
-// Validate milk type after fetch
-if (milkSelect) {
-    milkSelect.addEventListener("change", function() {
-        if (milkSelect.value === "") {
-            if (milkError) {
-                milkError.innerText = "Please select milk type.";
-                milkError.style.color = "red";
-            }
-        } else if (milkError) {
-            milkError.innerText = "";
-        }
-        updateSubmitButton();
-    });
-}
-
+    }
 
     // Enable/disable submit button based on all checks
-   function updateSubmitButton() {
-       if (!submitButton) return; // Add this line to prevent errors
+    function updateSubmitButton() {
+        if (!submitButton) return; // nothing to toggle
 
-       const isValid =
-           firstNameInput && firstNameInput.value.trim().length >= 3 &&
-           lastNameInput && lastNameInput.value.trim().length >= 1 &&
-           emailInput && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim()) && emailAvailable &&
-           phoneInput && /^[6-9]\d{9}$/.test(phoneInput.value.trim()) && phoneAvailable &&
-           addressInput && addressInput.value.trim().length >= 5 &&
-           milkSelect && milkSelect.value !== "Select milk type" && milkSelect.value !== "";
+        const isValid =
+            firstNameInput && firstNameInput.value.trim().length >= 3 &&
+            lastNameInput && lastNameInput.value.trim().length >= 1 &&
+            emailInput && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim()) && emailAvailable &&
+            phoneInput && /^[6-9]\d{9}$/.test(phoneInput.value.trim()) && phoneAvailable &&
+            addressInput && addressInput.value.trim().length >= 5 &&
+            milkSelect && milkSelect.value !== "";
 
-       submitButton.disabled = !isValid;
-   }
-
-    // Initial check
-    updateSubmitButton();
-});
-
-document.querySelectorAll(".viewSupplierBtn").forEach(button => {
-    button.addEventListener("click", function () {
-        document.getElementById("modalFirstName").innerText = this.dataset.firstname;
-        document.getElementById("modalLastName").innerText = this.dataset.lastname;
-        document.getElementById("modalEmail").innerText = this.dataset.email;
-        document.getElementById("modalPhone").innerText = this.dataset.phone;
-        document.getElementById("modalAddress").innerText = this.dataset.address;
-        document.getElementById("modalMilk").innerText = this.dataset.milk;
-    });
-});
-
-
-const deleteModal = document.getElementById('deleteConfirmModal');
-  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-
-  deleteModal.addEventListener('show.bs.modal', function (event) {
-    const button = event.relatedTarget; // Button/link that opened the modal
-    const deleteUrl = button.getAttribute('data-delete-url');
-    confirmDeleteBtn.setAttribute('href', deleteUrl);
-  });
-
-
-function loadMilkTypes(selectElement, selectedValue = "") {
- if (!selectElement) {
-        console.error("Select element not found");
-        return;
+        submitButton.disabled = !isValid;
     }
-    fetch('/MilkLore/productList')
-        .then(response => response.json())
-        .then(data => {
-            selectElement.innerHTML = '<option value="">Select milk type</option>';
-            data.forEach(type => {
-                const option = document.createElement("option");
-                option.value = type;
-                option.textContent = type;
 
-                // Preselect if matches existing value
-                if (type === selectedValue) {
-                    option.selected = true;
-                }
+    // Initial load
+    updateSubmitButton();
 
-                selectElement.appendChild(option);
-            });
-        })
-        .catch(() => {
-            if (selectElement) {
-                const errorDivId = selectElement.id === "typeOfMilk" ? "typeOfMilkError" : "editMilkError";
-                const errorDiv = document.getElementById(errorDivId);
-                if (errorDiv) {
-                    errorDiv.innerText = "Unable to load milk types";
-                    errorDiv.style.color = "orange";
-                }
+    // Load milk types for Add form
+    const typeOfMilkSelect = document.getElementById('typeOfMilk');
+    if (typeOfMilkSelect) loadMilkTypes(typeOfMilkSelect, "");
+
+    // View supplier buttons
+    document.querySelectorAll('.viewSupplierBtn').forEach(button => {
+        button.addEventListener('click', function () {
+            const get = (id) => document.getElementById(id);
+            if (get('modalFirstName')) get('modalFirstName').innerText = this.dataset.firstname || '';
+            if (get('modalLastName')) get('modalLastName').innerText = this.dataset.lastname || '';
+            if (get('modalEmail')) get('modalEmail').innerText = this.dataset.email || '';
+            if (get('modalPhone')) get('modalPhone').innerText = this.dataset.phone || '';
+            if (get('modalAddress')) get('modalAddress').innerText = this.dataset.address || '';
+            if (get('modalMilk')) get('modalMilk').innerText = this.dataset.milk || '';
+        });
+    });
+
+    // Delete buttons: show confirm modal and set URL
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    const deleteModalEl = document.getElementById('deleteConfirmModal');
+    let bsDeleteModal = null;
+    if (deleteModalEl && window.bootstrap) bsDeleteModal = new bootstrap.Modal(deleteModalEl);
+    document.querySelectorAll('.delete-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const email = btn.getAttribute('data-email') || '';
+            const admin = btn.getAttribute('data-admin') || '';
+            const deleteUrl = 'deleteSupplier?email=' + encodeURIComponent(email) + '&admin=' + encodeURIComponent(admin);
+            if (confirmDeleteBtn) confirmDeleteBtn.setAttribute('href', deleteUrl);
+            if (bsDeleteModal) bsDeleteModal.show();
+        });
+    });
+
+    // Edit supplier (card edit buttons use .edit-btn)
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id') || '';
+            const firstname = this.getAttribute('data-firstname') || '';
+            const lastname = this.getAttribute('data-lastname') || '';
+            const email = this.getAttribute('data-email') || '';
+            const phone = this.getAttribute('data-phone') || '';
+            const address = this.getAttribute('data-address') || '';
+            const milk = this.getAttribute('data-type') || '';
+
+            const setIf = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+            setIf('editSupplierId', id);
+            setIf('editFirstName', firstname);
+            setIf('editLastName', lastname);
+            setIf('editEmail', email);
+            setIf('editPhoneNumber', phone);
+            setIf('editAddress', address);
+            // load milk types into edit select
+            loadMilkTypes(document.getElementById('editTypeOfMilk'), milk);
+            // show edit modal via bootstrap (modal has id editSupplierModal)
+            if (window.bootstrap && document.getElementById('editSupplierModal')) {
+                const m = new bootstrap.Modal(document.getElementById('editSupplierModal'));
+                m.show();
             }
         });
-}
-
-// For Add form (preselect from supplier if available)
-const typeOfMilkSelect = document.getElementById("typeOfMilk");
-if (typeOfMilkSelect) {
-    loadMilkTypes(typeOfMilkSelect, "${supplier.typeOfMilk}");
-}
-// For Edit form when modal opens
-document.querySelectorAll(".editSupplierBtn").forEach(button => {
-    button.addEventListener("click", function () {
-        document.getElementById("editSupplierId").value = this.dataset.id;
-        document.getElementById("editFirstName").value = this.dataset.firstname;
-        document.getElementById("editLastName").value = this.dataset.lastname;
-        document.getElementById("editEmail").value = this.dataset.email;
-        document.getElementById("editPhone").value = this.dataset.phone;
-        document.getElementById("editAddress").value = this.dataset.address;
-
-        // Load milk types & preselect supplier’s existing type
-        loadMilkTypes(document.getElementById("editMilk"), this.dataset.milk);
     });
-});
 
-document.querySelectorAll('.viewSupplierBankBtn').forEach(function(btn) {
-  btn.addEventListener('click', function() {
-    document.getElementById('supplierName').textContent = btn.getAttribute('data-supplier-name') || '';
-    document.getElementById('supplierEmail').textContent = btn.getAttribute('data-supplier-email') || '';
-    document.getElementById('bankName').textContent = btn.getAttribute('data-bank-name') || '';
-    document.getElementById('branch').textContent = btn.getAttribute('data-bank-branch') || '';
-    document.getElementById('accountNumber').textContent = btn.getAttribute('data-account-number') || '';
-    document.getElementById('ifscCode').textContent = btn.getAttribute('data-ifsc-code') || '';
-    document.getElementById('accountType').textContent = btn.getAttribute('data-account-type') || '';
-  });
-});
+    // View Bank details
+    document.querySelectorAll('.viewSupplierBankBtn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val || ''; };
+            setText('supplierName', btn.getAttribute('data-supplier-name'));
+            setText('supplierEmail', btn.getAttribute('data-supplier-email'));
+            setText('bankName', btn.getAttribute('data-bank-name'));
+            setText('branch', btn.getAttribute('data-bank-branch'));
+            setText('accountNumber', btn.getAttribute('data-account-number'));
+            setText('ifscCode', btn.getAttribute('data-ifsc-code'));
+            setText('accountType', btn.getAttribute('data-account-type'));
+        });
+    });
 
-document.querySelectorAll('.editSupplierBankBtn').forEach(function(btn) {
-  btn.addEventListener('click', function() {
-    document.getElementById('editBankSupplierId').value = btn.getAttribute('data-supplier-id') || '';
-    document.getElementById('editBankSupplierName').value = btn.getAttribute('data-supplier-name') || '';
-    document.getElementById('editBankSupplierEmail').value = btn.getAttribute('data-supplier-email') || '';
-    document.getElementById('editBankName').value = btn.getAttribute('data-bank-name') || '';
-    document.getElementById('editBankBranch').value = btn.getAttribute('data-bank-branch') || '';
-    document.getElementById('editAccountNumber').value = btn.getAttribute('data-account-number') || '';
-    document.getElementById('editIfscCode').value = btn.getAttribute('data-ifsc-code') || '';
-    document.getElementById('editAccountType').value = btn.getAttribute('data-account-type') || '';
-  });
-});
+    // Edit Bank details (populate form and show modal)
+    document.querySelectorAll('.editSupplierBankBtn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const setIf = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+            setIf('editBankSupplierId', btn.getAttribute('data-supplier-id'));
+            setIf('editBankSupplierName', btn.getAttribute('data-supplier-name'));
+            setIf('editBankSupplierEmail', btn.getAttribute('data-supplier-email'));
+            setIf('editBankName', btn.getAttribute('data-bank-name'));
+            setIf('editBankBranch', btn.getAttribute('data-bank-branch'));
+            setIf('editAccountNumber', btn.getAttribute('data-account-number'));
+            setIf('editIfscCode', btn.getAttribute('data-ifsc-code'));
+            setIf('editAccountType', btn.getAttribute('data-account-type'));
+            if (window.bootstrap && document.getElementById('editSupplierBankDetailsModal')) {
+                const m = new bootstrap.Modal(document.getElementById('editSupplierBankDetailsModal'));
+                m.show();
+            }
+        });
+    });
 
-// Edit Bank Details Form Validation
-// Edit Bank Details Form Validation
-document.getElementById('editBankDetailsForm').addEventListener('input', function (e) {
-    let valid = true;
+    // Edit Bank Details Form Validation
+    const editBankForm = document.getElementById('editBankDetailsForm');
+    if (editBankForm) {
+        editBankForm.addEventListener('input', function (e) {
+            let valid = true;
+            const setErr = (id, msg) => { const el = document.getElementById(id); if (el) el.textContent = msg; };
 
-    // Clear previous errors
-    document.getElementById('bankNameError').textContent = '';
-    document.getElementById('bankBranchError').textContent = '';
-    document.getElementById('accountNumberError').textContent = '';
-    document.getElementById('ifscCodeError').textContent = '';
-    document.getElementById('accountTypeError').textContent = '';
+            setErr('bankNameError', ''); setErr('bankBranchError', ''); setErr('accountNumberError', ''); setErr('ifscCodeError', ''); setErr('accountTypeError', '');
 
-    // Bank Name
-    const bankName = document.getElementById('editBankName').value.trim();
-    if (!bankName) {
-        document.getElementById('bankNameError').textContent = 'Bank name is required';
-        valid = false;
-    } else if (bankName.length < 3) {
-        document.getElementById('bankNameError').textContent = 'Bank name should be at least 3 characters';
-        valid = false;
-    }
+            const bankName = (document.getElementById('editBankName') || {}).value || '';
+            if (!bankName.trim()) { setErr('bankNameError','Bank name is required'); valid = false; }
+            else if (bankName.trim().length < 3) { setErr('bankNameError','Bank name should be at least 3 characters'); valid = false; }
 
-    // Branch
-    const bankBranch = document.getElementById('editBankBranch').value.trim();
-    if (!bankBranch) {
-        document.getElementById('bankBranchError').textContent = 'Branch is required';
-        valid = false;
-    } else if (bankBranch.length < 3) {
-        document.getElementById('bankBranchError').textContent = 'Branch name should be at least 3 characters';
-        valid = false;
-    }
+            const bankBranch = (document.getElementById('editBankBranch') || {}).value || '';
+            if (!bankBranch.trim()) { setErr('bankBranchError','Branch is required'); valid = false; }
+            else if (bankBranch.trim().length < 3) { setErr('bankBranchError','Branch name should be at least 3 characters'); valid = false; }
 
-    // Account Number
-    const accountNumber = document.getElementById('editAccountNumber').value.trim();
-    if (!/^\d{9,18}$/.test(accountNumber)) {
-        document.getElementById('accountNumberError').textContent = 'Enter a valid account number (9-18 digits)';
-        valid = false;
-    }
+            const accountNumber = (document.getElementById('editAccountNumber') || {}).value || '';
+            if (!/^\d{9,18}$/.test(accountNumber.trim())) { setErr('accountNumberError','Enter a valid account number (9-18 digits)'); valid = false; }
 
-    // IFSC Code
-    const ifscCode = document.getElementById('editIfscCode').value.trim();
-    if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifscCode)) {
-        document.getElementById('ifscCodeError').textContent = 'Invalid IFSC code format';
-        valid = false;
-    }
+            const ifscCode = (document.getElementById('editIfscCode') || {}).value || '';
+            if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifscCode.trim())) { setErr('ifscCodeError','Invalid IFSC code format'); valid = false; }
 
-    // Account Type
-    const accountType = document.getElementById('editAccountType').value;
-    if (!accountType) {
-        document.getElementById('accountTypeError').textContent = 'Please select an account type.';
-        valid = false;
-    }
+            const accountType = (document.getElementById('editAccountType') || {}).value || '';
+            if (!accountType) { setErr('accountTypeError','Please select an account type.'); valid = false; }
 
-    if (!valid) {
-        e.preventDefault();
+            if (!valid) e.preventDefault();
+        });
     }
 });

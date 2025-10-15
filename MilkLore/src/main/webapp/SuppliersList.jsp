@@ -168,97 +168,99 @@
         </c:if>
     </div>
 
-    <!-- Table Card -->
+    <!-- Suppliers Card Grid -->
     <div class="card shadow-sm">
-        <div class="card-body table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-primary">
-                <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Milk Type</th>
-                    <th>Address</th>
-                    <th>Bank Details</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
+        <div class="card-body">
+            <div class="row g-3">
                 <c:forEach items="${milkSuppliers}" var="supplier" varStatus="loop">
-                    <tr>
-                        <td>${loop.index + 1}</td>
-                        <td><i class="fas fa-user me-1 text-muted"></i>${supplier.firstName} ${supplier.lastName}</td>
-                        <td>${supplier.email}</td>
-                        <td>${supplier.phoneNumber}</td>
-                        <td><span class="badge bg-info text-dark">${supplier.typeOfMilk}</span></td>
-                        <td>${supplier.address}</td>
-                        <td>
-                            <c:choose>
-                                <c:when test="${not empty supplier.supplierBankDetails}">
-                                    <button class="btn btn-primary btn-sm me-2 viewSupplierBankBtn"
-                                            data-bs-toggle="modal" data-bs-target="#viewSupplierBankDetailsModal"
-                                            data-supplier-name="${supplier.firstName} ${supplier.lastName}"
-                                            data-supplier-email="${supplier.email}"
-                                            data-bank-name="${supplier.supplierBankDetails.bankName}"
-                                            data-bank-branch="${supplier.supplierBankDetails.bankBranch}"
-                                            data-account-number="${supplier.supplierBankDetails.accountNumber}"
-                                            data-ifsc-code="${supplier.supplierBankDetails.IFSCCode}"
-                                            data-account-type="${supplier.supplierBankDetails.accountType}">
-                                        <i class="fa-solid fa-eye"></i>View
-                                    </button>
-                                    <button class="btn btn-primary btn-sm me-2 editSupplierBankBtn"
-                                            data-bs-toggle="modal" data-bs-target="#editSupplierBankDetailsModal"
-                                            data-supplier-id="${supplier.supplierId}"
-                                            data-supplier-name="${supplier.firstName} ${supplier.lastName}"
-                                            data-supplier-email="${supplier.email}"
-                                            data-bank-name="${supplier.supplierBankDetails.bankName}"
-                                            data-bank-branch="${supplier.supplierBankDetails.bankBranch}"
-                                            data-account-number="${supplier.supplierBankDetails.accountNumber}"
-                                            data-ifsc-code="${supplier.supplierBankDetails.IFSCCode}"
-                                            data-account-type="${supplier.supplierBankDetails.accountType}">
-                                        <i class="fa-solid fa-pen-to-square"></i> Edit
-                                    </button>
-                                </c:when>
-                                <c:otherwise>
-                                    <span class="text-muted">Bank Details Not Found</span>
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                        <td class="action-btns">
-                            <button type="button" class="btn btn-primary btn-sm me-2 viewSupplierBtn"
-                                    data-bs-toggle="modal" data-bs-target="#viewSupplierModal"
-                                    data-firstname="${supplier.firstName}" data-lastname="${supplier.lastName}"
-                                    data-email="${supplier.email}" data-phone="${supplier.phoneNumber}"
-                                    data-address="${supplier.address}" data-milk="${supplier.typeOfMilk}">
-                                <i class="fa-solid fa-eye"></i> View
-                            </button>
-                            <button class="btn btn-warning btn-sm edit-btn"
-                                    data-id="${supplier.supplierId}"
-                                    data-firstname="${supplier.firstName}"
-                                    data-lastname="${supplier.lastName}"
-                                    data-email="${supplier.email}"
-                                    data-phone="${supplier.phoneNumber}"
-                                    data-type="${supplier.typeOfMilk}"
-                                    data-address="${supplier.address}">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button type="button"
-                                    class="btn btn-danger btn-sm delete-btn"
-                                    data-email="${supplier.email}"
-                                    data-admin="${dto.email}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h5 class="card-title mb-1">
+                                            <i class="fas fa-user me-1 text-muted"></i>
+                                            ${supplier.firstName} ${supplier.lastName}
+                                        </h5>
+                                        <p class="mb-0 text-muted small">${supplier.email}</p>
+                                    </div>
+                                    <span class="badge bg-info text-dark align-self-start">${supplier.typeOfMilk}</span>
+                                </div>
+
+                                <p class="mb-1"><strong>Phone:</strong> ${supplier.phoneNumber}</p>
+                                <p class="mb-2 text-truncate"><strong>Address:</strong> ${supplier.address}</p>
+
+                                <div class="mt-auto">
+                                    <div class="mb-2">
+                                        <c:choose>
+                                            <c:when test="${not empty supplier.supplierBankDetails}">
+                                                <button class="btn btn-sm btn-outline-primary me-2 viewSupplierBankBtn"
+                                                        data-bs-toggle="modal" data-bs-target="#viewSupplierBankDetailsModal"
+                                                        data-supplier-name="${supplier.firstName} ${supplier.lastName}"
+                                                        data-supplier-email="${supplier.email}"
+                                                        data-bank-name="${supplier.supplierBankDetails.bankName}"
+                                                        data-bank-branch="${supplier.supplierBankDetails.bankBranch}"
+                                                        data-account-number="${supplier.supplierBankDetails.accountNumber}"
+                                                        data-ifsc-code="${supplier.supplierBankDetails.IFSCCode}"
+                                                        data-account-type="${supplier.supplierBankDetails.accountType}">
+                                                    <i class="fa-solid fa-eye"></i> Bank
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary me-2 editSupplierBankBtn"
+                                                        data-bs-toggle="modal" data-bs-target="#editSupplierBankDetailsModal"
+                                                        data-supplier-id="${supplier.supplierId}"
+                                                        data-supplier-name="${supplier.firstName} ${supplier.lastName}"
+                                                        data-supplier-email="${supplier.email}"
+                                                        data-bank-name="${supplier.supplierBankDetails.bankName}"
+                                                        data-bank-branch="${supplier.supplierBankDetails.bankBranch}"
+                                                        data-account-number="${supplier.supplierBankDetails.accountNumber}"
+                                                        data-ifsc-code="${supplier.supplierBankDetails.IFSCCode}"
+                                                        data-account-type="${supplier.supplierBankDetails.accountType}">
+                                                    <i class="fa-solid fa-pen-to-square"></i> Edit Bank
+                                                </button>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="text-muted">Bank Details Not Found</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
+
+                                    <div class="d-flex gap-2">
+                                        <button type="button" class="btn btn-primary btn-sm viewSupplierBtn"
+                                                data-bs-toggle="modal" data-bs-target="#viewSupplierModal"
+                                                data-firstname="${supplier.firstName}" data-lastname="${supplier.lastName}"
+                                                data-email="${supplier.email}" data-phone="${supplier.phoneNumber}"
+                                                data-address="${supplier.address}" data-milk="${supplier.typeOfMilk}">
+                                            <i class="fa-solid fa-eye"></i> View
+                                        </button>
+
+                                        <button class="btn btn-warning btn-sm edit-btn"
+                                                data-id="${supplier.supplierId}"
+                                                data-firstname="${supplier.firstName}"
+                                                data-lastname="${supplier.lastName}"
+                                                data-email="${supplier.email}"
+                                                data-phone="${supplier.phoneNumber}"
+                                                data-type="${supplier.typeOfMilk}"
+                                                data-address="${supplier.address}">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+
+                                        <button type="button" class="btn btn-danger btn-sm delete-btn"
+                                                data-email="${supplier.email}" data-admin="${dto.email}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </c:forEach>
+
                 <c:if test="${empty milkSuppliers}">
-                    <tr>
-                        <td colspan="7" class="text-center text-muted">No suppliers found</td>
-                    </tr>
+                    <div class="col-12">
+                        <div class="text-center text-muted py-5">No suppliers found</div>
+                    </div>
                 </c:if>
-                </tbody>
-            </table>
+            </div>
 
             <!-- Pagination -->
             <div class="d-flex justify-content-center mt-3">
@@ -272,7 +274,6 @@
                        href="?email=${dto.email}&page=${currentPage + 1}&size=${pageSize}">Next</a>
                 </c:if>
             </div>
-            <!-- End Pagination -->
 
         </div>
     </div>

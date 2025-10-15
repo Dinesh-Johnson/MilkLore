@@ -1,8 +1,6 @@
-<%@ page isELIgnored="false" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %><%@ page isELIgnored="false" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<html lang="en" xmlns:c="">
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -49,6 +47,56 @@
         }
         .table th {
             background-color: #f8f9fa;
+        }
+        /* Product card styles */
+        .product-card {
+            border: 0;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 0.75rem 1.5rem rgba(0,0,0,0.08);
+        }
+        .product-hero {
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 0.4rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 0.75rem;
+        }
+        .product-type {
+            font-size: 0.62rem;
+            letter-spacing: .03em;
+            text-transform: uppercase;
+            opacity: 0.95;
+        }
+        .product-price-bubble {
+            background: rgba(255,255,255,0.12);
+            padding: 0.12rem 0.28rem;
+            border-radius: 999px;
+            font-weight: 700;
+            color: white;
+            font-size: 0.75rem;
+        }
+        .card-product-body { padding: 0.28rem 0.5rem 0.45rem; }
+        .card .card-title { font-size: 0.86rem; font-weight: 700; margin-bottom: 0.05rem; }
+        .product-actions .btn { flex: 0 0 auto; padding: 0.16rem 0.22rem; font-size: 0.72rem; }
+        .product-card { border-radius: 0.42rem; box-shadow: 0 4px 8px rgba(30,30,70,0.03); position: relative; margin: 4px; }
+        .action-icon { width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; }
+        .product-badge-price { font-size: 0.92rem; font-weight: 700; }
+        /* Custom 8-per-row column for large screens */
+        @media (min-width: 992px) {
+            .col-lg-8per {
+                -webkit-box-flex: 0;
+                -ms-flex: 0 0 12.5%;
+                flex: 0 0 12.5%;
+                max-width: 12.5%;
+            }
         }
     </style>
 </head>
@@ -135,41 +183,37 @@
 
         <!-- Products Table -->
         <div class="card shadow-sm">
-            <div class="card-body p-0">
+            <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
                             <tr>
-                                <th>Product Name</th>
-                                <th>Price (₹)</th>
-                                <th>Product Type</th>
-                                <th>Action</th>
+                                <th>Product</th>
+                                <th>Type</th>
+                                <th class="text-end">Price (₹)</th>
+                                <th class="text-end">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <c:forEach var="product" items="${productsPrice}">
                                 <tr>
                                     <td>${product.productName}</td>
-                                    <td>₹${product.price}</td>
-                                    <td>${product.productType}</td>
-                                    <td>
-                    <button type="button" class="btn btn-sm btn-outline-primary me-2 editProductBtn"
-                        data-bs-toggle="modal" data-bs-target="#editProductModal"
-                        data-id="${product.productId}" data-name="${product.productName}"
-                        data-price="${product.price}" data-type="${product.productType}">
-                                            <i class="fa-solid fa-pen-to-square me-1"></i> Edit
-                                        </button>
-                                        <a href="#" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
-                                           data-bs-target="#deleteConfirmModal"
-                                           data-delete-url="deleteProductPrice?productId=${product.productId}&adminEmail=${dto.email}">
-                                            <i class="fa-solid fa-trash me-1"></i> Delete
-                                        </a>
+                                    <td><span class="badge bg-secondary">${product.productType}</span></td>
+                                    <td class="text-end">₹${product.price}</td>
+                                    <td class="text-end">
+                                        <div class="btn-group" role="group">
+                                            <a href="#" class="btn btn-sm btn-outline-primary editProductBtn" data-id="${product.productId}"
+                                               data-name="${product.productName}" data-price="${product.price}" data-type="${product.productType}"
+                                               data-bs-toggle="modal" data-bs-target="#editProductModal">Edit</a>
+                                            <a href="#" class="btn btn-sm btn-outline-danger deleteProductItem ms-1" data-delete-url="deleteProductPrice?productId=${product.productId}&adminEmail=${dto.email}" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">Delete</a>
+                                        </div>
                                     </td>
                                 </tr>
                             </c:forEach>
+
                             <c:if test="${empty productsPrice}">
                                 <tr>
-                                    <td colspan="3" class="text-center py-4">
+                                    <td colspan="4" class="text-center text-muted py-4">
                                         <i class="fa-solid fa-inbox me-2"></i>No products found
                                     </td>
                                 </tr>
