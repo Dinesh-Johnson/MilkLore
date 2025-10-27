@@ -4,6 +4,7 @@ import com.xworkz.milklore.dto.AdminDTO;
 import com.xworkz.milklore.dto.MilkProductReceiveDTO;
 import com.xworkz.milklore.service.AdminService;
 import com.xworkz.milklore.service.MilkProductReceiveService;
+import com.xworkz.milklore.utill.CommonControllerHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,6 +33,9 @@ public class MilkProductReceiveController {
     @Autowired
     private MilkProductReceiveService collectMilkService;
 
+    @Autowired
+    private CommonControllerHelper controllerHelper;
+
     public MilkProductReceiveController()
     {
         log.info("CollectMilkController constructor");
@@ -42,6 +46,7 @@ public class MilkProductReceiveController {
         log.info("getCollectMilkPage in CollectMilkController");
         AdminDTO adminDTO=adminService.viewAdminByEmail(email);
         model.addAttribute("dto",adminDTO);
+        controllerHelper.addNotificationData(model,email);
         return "CollectMilk";
     }
 
@@ -75,6 +80,7 @@ public class MilkProductReceiveController {
             model.addAttribute("error","Details not saved");
             model.addAttribute("milk",collectMilkDTO);
         }
+        controllerHelper.addNotificationData(model,email);
         return "ProductReceive";
     }
 
@@ -103,6 +109,7 @@ public class MilkProductReceiveController {
         collectMilkList.forEach(System.out::println);
         log.info("Service returned {} records", collectMilkList.size());
         model.addAttribute("collectMilkList", collectMilkList);
+        controllerHelper.addNotificationData(model,email);
         return "ViewProductReceive";
     }
 

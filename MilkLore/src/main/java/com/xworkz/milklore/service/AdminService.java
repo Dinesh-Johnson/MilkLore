@@ -2,6 +2,7 @@ package com.xworkz.milklore.service;
 
 
 import com.xworkz.milklore.dto.AdminDTO;
+import com.xworkz.milklore.entity.AdminEntity;
 
 public interface AdminService {
 
@@ -15,5 +16,6 @@ public interface AdminService {
     boolean sendMailToSetPassword(String email);
     boolean setPasswordByEmail(String email,String password,String confirmPassword);
     int getSupplierCount();
+
 
 }

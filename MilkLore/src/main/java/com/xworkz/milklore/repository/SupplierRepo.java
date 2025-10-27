@@ -29,4 +29,6 @@ public interface SupplierRepo {
 
     boolean updateSupplierDetailsBySupplier(SupplierEntity supplierEntity);
 
+    List<SupplierEntity> getAllActiveSupplierEntities();
+
 }

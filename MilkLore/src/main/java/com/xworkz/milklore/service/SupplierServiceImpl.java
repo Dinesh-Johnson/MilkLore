@@ -8,6 +8,7 @@ import com.xworkz.milklore.entity.SupplierAuditEntity;
 import com.xworkz.milklore.entity.SupplierBankDetailsAuditEntity;
 import com.xworkz.milklore.entity.SupplierBankDetailsEntity;
 import com.xworkz.milklore.entity.SupplierEntity;
+import com.xworkz.milklore.repository.NotificationRepo;
 import com.xworkz.milklore.repository.SupplierRepo;
 import com.xworkz.milklore.utill.OTPUtill;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,9 @@ public class SupplierServiceImpl implements SupplierService{
 
     @Autowired
     private EmailConfiguration emailConfig;
+
+    @Autowired
+    private NotificationRepo notificationRepo;
 
     private static final int OTP_EXPIRY_MINUTES = 5;
 
@@ -422,5 +426,18 @@ public class SupplierServiceImpl implements SupplierService{
         return false;
     }
 
+    @Override
+    public SupplierDTO getSupplierDetailsByNotificationId(Long notificationId) {
+        log.info("getSupplierDetailsByNotificationId method in supplier service");
+        SupplierEntity supplierEntity=notificationRepo.getSupplierEntityByNotificationId(notificationId);
+        return getSupplierDetailsByEmail(supplierEntity.getEmail());
+    }
+
+    @Override
+    public boolean requestForSupplierBankDetails(String supplierEmail) {
+        log.info("requestForSupplierBankDetails method in supplier service");
+        SupplierEntity supplierEntity=supplierRepo.getSupplierByEmail(supplierEmail);
+        return emailSender.mailForBankDetailsRequest(supplierEntity);
+    }
 
 }

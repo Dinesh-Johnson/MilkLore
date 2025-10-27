@@ -2,6 +2,7 @@ package com.xworkz.milklore.restcontroller;
 
 import com.xworkz.milklore.dto.AdminDTO;
 import com.xworkz.milklore.service.AdminService;
+import com.xworkz.milklore.service.NotificationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,9 @@ public class AdminRestController {
 
     @Autowired
     private AdminService adminService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     public AdminRestController()
     {
@@ -56,6 +60,16 @@ public class AdminRestController {
     public boolean checkEmailByEmail(@RequestParam("email") String email) {
         log.info("Checking if email exists: {}", email);
         return adminService.viewAdminByEmail(email) != null;
+    }
+
+    @PostMapping("/markNotificationAsRead")
+    public ResponseEntity<String> markNotificationAsRead(@RequestParam Long notificationId) {
+        log.info("markNotificationAsRead method in admin rest controller");
+        if (notificationService.markAsRead(notificationId))
+            return ResponseEntity.ok("Notification marked as read");
+        else
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to mark notification as read");
     }
 
 }

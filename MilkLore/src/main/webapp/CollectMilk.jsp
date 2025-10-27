@@ -68,6 +68,48 @@
                         <i class="fa-solid fa-glass-water-droplet me-2"></i> Milk Receiver Details
                     </a>
                 </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-bell fa-lg"></i>
+                        <c:if test="${unreadCount > 0}">
+                                <span
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    ${unreadCount}
+                                </span>
+                        </c:if>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown"
+                        style="width: 350px; max-height: 400px; overflow-y: auto;">
+                        <li>
+                            <h6 class="dropdown-header">Notifications</h6>
+                        </li>
+
+                        <c:choose>
+                            <c:when test="${empty notifications}">
+                                <li>
+                                    <span class="dropdown-item text-muted">No new notifications</span>
+                                </li>
+                            </c:when>
+                            <c:otherwise>
+                                <c:forEach var="notification" items="${notifications}">
+                                    <li data-notification-id="${notification.id}" data-admin-email="${dto.email}"
+                                        data-notification-type="${notification.notificationType}">
+                                        <a class="dropdown-item notification-item" href="#"
+                                           data-notification-id="${notification.id}"
+                                           data-admin-email="${dto.email}"
+                                           data-notification-type="${notification.notificationType}">
+                                            <i class="fas fa-bell me-2"></i>
+                                            ${notification.message}
+                                            <br />
+                                        </a>
+                                    </li>
+                                </c:forEach>
+                            </c:otherwise>
+                        </c:choose>
+                    </ul>
+                </li>
                 <li class="nav-item dropdown ms-3">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <c:choose>

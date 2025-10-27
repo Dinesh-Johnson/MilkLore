@@ -10,4 +10,7 @@ public interface MilkProductReceiveService {
     boolean save(MilkProductReceiveDTO milkProductReceiveDTO, String email);
     List<MilkProductReceiveDTO > getAllDetailsByDate(LocalDate collectedDate);
     List<MilkProductReceiveDTO> getAllDetailsBySupplierEmail(String email);
-}
+    Integer getCountOFMilkDetailsByEmail(String email);
+    List<MilkProductReceiveDTO> getAllDetailsBySupplier(Long notificationId);
+    LocalDate getLastCollectedDate(Integer supplierId);
+    Double getTotalLitre(Integer supplierId);}

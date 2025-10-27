@@ -79,4 +79,21 @@ public class SupplierEntity {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private SupplierBankDetailsEntity supplierBankDetails;
+
+    @ManyToOne
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @JoinColumn(name = "admin_id")
+    private AdminEntity createdByAdmin;
+
+    @OneToMany(mappedBy = "supplier")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<PaymentDetailsEntity> paymentDetailsEntities;
+
+    @OneToMany(mappedBy = "supplier")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<NotificationEntity> notificationEntities;
+
 }

@@ -3,10 +3,9 @@ package com.xworkz.milklore.service;
 import com.xworkz.milklore.dto.AdminDTO;
 import com.xworkz.milklore.dto.MilkProductReceiveDTO;
 import com.xworkz.milklore.dto.SupplierDTO;
-import com.xworkz.milklore.entity.AdminEntity;
-import com.xworkz.milklore.entity.MilkProductReceiveAuditEntity;
-import com.xworkz.milklore.entity.MilkProductReceiveEntity;
+import com.xworkz.milklore.entity.*;
 import com.xworkz.milklore.repository.MilkProductReceiveRepo;
+import com.xworkz.milklore.repository.NotificationRepo;
 import com.xworkz.milklore.repository.SupplierRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -17,6 +16,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -30,6 +32,9 @@ public class MilkProductReceiveServiceImpl implements MilkProductReceiveService 
 
     @Autowired
     private SupplierRepo supplierRepo;
+
+    @Autowired
+    private NotificationRepo notificationRepo;
 
     public MilkProductReceiveServiceImpl() {
         log.info("CollectMilkServiceImpl constructor");
@@ -97,5 +102,52 @@ public class MilkProductReceiveServiceImpl implements MilkProductReceiveService 
         }
         return collectMilkDTOS;
     }
+
+    @Override
+    public Integer getCountOFMilkDetailsByEmail(String email) {
+        log.info("getCountOFMilkDetailsByEmail method in collectMilk service");
+        return collectMilkRepository.getCountOFMilkDetailsByEmail(email);
+    }
+
+    @Override
+    public List<MilkProductReceiveDTO> getAllDetailsBySupplier(Long notificationId) {
+        log.info("getAllDetailsBySupplier method in collect milk service");
+        NotificationEntity notification=notificationRepo.getNotificationById(notificationId);
+        SupplierEntity supplier=notification.getSupplier();
+
+        String message=notification.getMessage();
+        Pattern pattern = Pattern.compile("\\((\\d{4}-\\d{2}-\\d{2})\\s+to\\s+(\\d{4}-\\d{2}-\\d{2})\\)");
+        Matcher matcher = pattern.matcher(message);
+        LocalDate startDate =null;
+        LocalDate endDate =null;
+        if (matcher.find()) {
+            String startDateStr = matcher.group(1);
+            String endDateStr = matcher.group(2);
+
+            startDate = LocalDate.parse(startDateStr);
+            endDate = LocalDate.parse(endDateStr);
+        }
+        List<MilkProductReceiveEntity> list=collectMilkRepository.getCollectMilkDetailsForSupplierById(supplier.getSupplierId(),startDate,endDate);
+        List<MilkProductReceiveDTO> collectMilkDTOS=new ArrayList<>();
+        list.forEach(e->{
+            MilkProductReceiveDTO collectMilkDTO=new MilkProductReceiveDTO();
+            BeanUtils.copyProperties(e,collectMilkDTO);
+            collectMilkDTOS.add(collectMilkDTO);
+        });
+        return collectMilkDTOS;
+    }
+
+    @Override
+    public LocalDate getLastCollectedDate(Integer supplierId) {
+        log.info("getLastCollectedDate method in collect milk service");
+        return collectMilkRepository.getLastCollectedDate(supplierId);
+    }
+
+    @Override
+    public Double getTotalLitre(Integer supplierId) {
+        log.info("getTotalLitre method in collect milk service");
+        return collectMilkRepository.getTotalLitre(supplierId);
+    }
+
 
 }

@@ -11,6 +11,7 @@ import java.util.List;
 @Entity
 @Table(name = "admin_info")
 @NamedQuery(name = "viewAdminByEmail",query = "select e from AdminEntity e where e.email =:email")
+@NamedQuery(name ="getAll",query = "select a from AdminEntity a")
 public class AdminEntity {
 
     @Id
@@ -49,5 +50,15 @@ public class AdminEntity {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<MilkProductReceiveEntity> milkProductReceiveList;
+
+    @OneToMany(mappedBy = "admin")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<NotificationEntity> notificationEntities;
+
+    @OneToMany(mappedBy = "admin")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<PaymentDetailsEntity> paymentDetailsEntities;
 
 }

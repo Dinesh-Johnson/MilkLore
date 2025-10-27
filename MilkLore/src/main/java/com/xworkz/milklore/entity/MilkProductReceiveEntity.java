@@ -12,12 +12,14 @@ import java.time.LocalDate;
 @Data
 @Entity
 @Table(name = "milk_product_receive_details")
-@NamedQuery(name = "getAllDetailsByDate",
-        query = "select e from MilkProductReceiveEntity e JOIN FETCH e.supplier JOIN FETCH e.admin where e.collectedDate = :collectedDate")
+@NamedQuery(name = "getAllDetailsByDate",query = "select a from MilkProductReceiveEntity a " +
+        "JOIN FETCH a.supplier where a.collectedDate=:selectDate order by a.milkProductReceiveId DESC")
 @NamedQuery(
         name = "getAllDetailsBySupplierEmail",
         query = "SELECT e FROM MilkProductReceiveEntity e JOIN FETCH e.supplier s WHERE s.email = :email ORDER BY e.collectedDate DESC")
-
+@NamedQuery(
+        name = "getTotalAmountForSupplier",
+        query = "SELECT SUM(e.totalAmount) FROM MilkProductReceiveEntity e WHERE e.supplier.id = :supplierId AND e.collectedDate BETWEEN :startDate AND :endDate")
 public class MilkProductReceiveEntity {
 
     @Id

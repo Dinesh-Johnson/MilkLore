@@ -321,4 +321,23 @@ public class SupplierRepoImpl implements SupplierRepo {
         }
         return false;
     }
+
+    @Override
+    public List<SupplierEntity> getAllActiveSupplierEntities() {
+        log.info("getAllActiveSupplierEntities method in supplier repository");
+        EntityManager entityManager = null;
+        List<SupplierEntity> list = null;
+        try {
+            entityManager = emf.createEntityManager();
+            list = entityManager.createNamedQuery("getAllActiveSupplierEntities").getResultList();
+        } catch (PersistenceException e) {
+            log.error(e.getMessage());
+        } finally {
+            if (entityManager != null && entityManager.isOpen()) {
+                entityManager.close();
+                log.info("EntityManager is closed");
+            }
+        }
+        return list;
+    }
 }

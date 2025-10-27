@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -158,5 +159,26 @@ public class AdminRepoImpl implements AdminRepo{
         return false;
     }
 
+
+    @Override
+    public List<AdminEntity> findAll() {
+        log.info("findAll method in Admin repository");
+        EntityManager entityManager=null;
+        List<AdminEntity> list=null;
+        try{
+            entityManager=emf.createEntityManager();
+            list=entityManager.createNamedQuery("getAll").getResultList();
+        }catch (PersistenceException e)
+        {
+            log.error(e.getMessage());
+        }finally {
+            if(entityManager!=null && entityManager.isOpen())
+            {
+                entityManager.close();
+                log.info("Entity manager is closed");
+            }
+        }
+        return list;
+    }
 
 }

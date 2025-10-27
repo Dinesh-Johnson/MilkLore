@@ -37,4 +37,6 @@ public class SupplierDTO  {
     private String typeOfMilk;
 
     private SupplierBankDetailsDTO supplierBankDetails;
+
+    private AdminDTO createdByAdmin;
 }

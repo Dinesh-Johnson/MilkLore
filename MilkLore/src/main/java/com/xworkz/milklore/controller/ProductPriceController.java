@@ -4,6 +4,7 @@ import com.xworkz.milklore.dto.AdminDTO;
 import com.xworkz.milklore.dto.ProductPriceDTO;
 import com.xworkz.milklore.service.AdminService;
 import com.xworkz.milklore.service.ProductPriceService;
+import com.xworkz.milklore.utill.CommonControllerHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,9 @@ public class ProductPriceController {
     @Autowired
     private ProductPriceService productPriceService;
 
+    @Autowired
+    private CommonControllerHelper controllerHelper;
+
     public ProductPriceController() {
         log.info("ProductPriceController constructor");
     }
@@ -40,6 +44,7 @@ public class ProductPriceController {
 
         List<ProductPriceDTO> list = productPriceService.getAllDetails();
         model.addAttribute("productsPrice", list);
+        controllerHelper.addNotificationData(model,email);
         return "ProductsPrice";
     }
 

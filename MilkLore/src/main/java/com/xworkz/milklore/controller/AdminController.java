@@ -1,7 +1,12 @@
 package com.xworkz.milklore.controller;
 
 import com.xworkz.milklore.dto.AdminDTO;
+import com.xworkz.milklore.entity.NotificationEntity;
 import com.xworkz.milklore.service.AdminService;
+import com.xworkz.milklore.service.MilkProductReceiveService;
+import com.xworkz.milklore.service.NotificationService;
+import com.xworkz.milklore.service.SupplierService;
+import com.xworkz.milklore.utill.CommonControllerHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +23,7 @@ import javax.servlet.http.HttpSession;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Controller
 @RequestMapping("/")
@@ -30,6 +36,18 @@ public class AdminController {
 
     @Value("${file.upload-dir}")
     private String uploadDir;
+
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private SupplierService supplierService;
+
+    @Autowired
+    private CommonControllerHelper controllerHelper;
+
+    @Autowired
+    private MilkProductReceiveService collectMilkService;
 
     @Autowired
     AppController controller;
@@ -171,6 +189,7 @@ public class AdminController {
         log.info("redirectToAdminSuccess method in admin Admin controller");
         AdminDTO dto = service.viewAdminByEmail(email);
         model.addAttribute("dto", dto);
+        controllerHelper.addNotificationData(model,email);
         return "AdminLoginSuccess";
     }
 
@@ -182,5 +201,44 @@ public class AdminController {
         return "AdminLogin";
     }
 
+    @GetMapping("/supplierPaymentDetails")
+    public String getSupplierPaymentDetails(@RequestParam Long notificationId,@RequestParam String email, Model model)
+    {
+        log.info("getSupplierPaymentDetails method in supplier controller");
+        model.addAttribute("supplier",supplierService.getSupplierDetailsByNotificationId(notificationId));
+        model.addAttribute("dto",service.viewAdminByEmail(email));
+        model.addAttribute("notificationId",notificationId);
+        model.addAttribute("paymentAmount",notificationService.getAmountById(notificationId));
+        controllerHelper.addNotificationData(model,email);
+        model.addAttribute("milkList",collectMilkService.getAllDetailsBySupplier(notificationId));
+        return "SupplierPayDetails";
+    }
+
+    @PostMapping("/payToSupplier")
+    public String payToSupplier(@RequestParam String email,@RequestParam String supplierEmail,@RequestParam Long notificationId,Model model)
+    {
+        log.info("pay to supplier method in supplier controller");
+        if(notificationService.markAsReadForPayment(notificationId,supplierEmail,email))
+        {
+            return redirectToAdminSuccess(email,model);
+        }
+        model.addAttribute("errorMessage","Amount Not paid");
+        return getSupplierPaymentDetails(notificationId,email,model);
+    }
+
+    @PostMapping("/requestSupplierBankDetails")
+    public String requestForSupplierBankDetails(@RequestParam String adminEmail,@RequestParam String supplierEmail,@RequestParam Long notificationId,Model model)
+    {
+        log.info("requestForSupplierBankDetails method in admin Controller");
+        if(supplierService.requestForSupplierBankDetails(supplierEmail))
+        {
+            model.addAttribute("dto",service.viewAdminByEmail(adminEmail));
+            model.addAttribute("successMessage","Mail sent successfully");
+        }else {
+            model.addAttribute("errorMessage", "Mail not send");
+        }
+        return getSupplierPaymentDetails(notificationId,adminEmail,model);
+
+    }
 
 }

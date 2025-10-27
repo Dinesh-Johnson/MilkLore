@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html lang="en" data-bs-theme="light" xmlns:c="http://www.w3.org/1999/XSL/Transform">
 <head>
     <meta charset="UTF-8">
@@ -25,6 +26,32 @@
         .social-links { display: flex; gap: 1rem; margin-top: 1.5rem; }
         .social-links a { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; color: white; font-size: 1.25rem; transition: all 0.3s ease; }
         .social-links a:hover { background: white; color: #764ba2; transform: translateY(-3px); }
+        /* Add this to your CSS */
+#notificationList {
+    max-height: 300px;
+    overflow-y: auto;
+}
+.notification-item {
+    font-weight: bold;
+}
+#notificationList .list-group-item {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#notificationList .list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+#notificationList .list-group-item.fw-bold {
+    background-color: #f8f9fa;
+}
+
+#notificationCount {
+    font-size: 0.75em;
+    padding: 0.25em 0.5em;
+    border-radius: 10px;
+}
     </style>
 </head>
 <body>
@@ -62,27 +89,73 @@
                         <i class="fa-solid fa-glass-water-droplet me-2"></i> Milk Product List
                     </a>
                 </li>
-                <li class="nav-item dropdown ms-3">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown"
+                <li class="nav-item dropdown">
+                    <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button"
                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-bell-fill"></i>
+                        <c:if test="${unreadCount > 0}">
+                                <span
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    ${unreadCount}
+                                </span>
+                        </c:if>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown"
+                        style="width: 350px; max-height: 400px; overflow-y: auto;">
+                                <li>
+                                    <h6 class="dropdown-header">Notifications</h6>
+                                </li>
+
                         <c:choose>
-                            <c:when test="${not empty dto.profilePath}">
-                                <img src="<c:url value='/uploads/${dto.profilePath}'/>" class="rounded-circle me-2"
-                                     style="width: 40px; height: 40px; object-fit: cover;">
+                            <c:when test="${empty notifications}">
+                                <li>
+                                    <span class="dropdown-item text-muted">No new notifications</span>
+                                </li>
                             </c:when>
                             <c:otherwise>
-                                <img src="images/default.png" alt="Profile" class="rounded-circle me-2"
-                                     style="width: 40px; height: 40px; object-fit: cover;">
+                                <c:forEach var="notification" items="${notifications}">
+                                    <li data-notification-id="${notification.id}" data-admin-email="${dto.email}"
+                                        data-notification-type="${notification.notificationType}">
+                                        <a class="dropdown-item notification-item" href="#"
+                                           data-notification-id="${notification.id}"
+                                           data-admin-email="${dto.email}"
+                                           data-notification-type="${notification.notificationType}">
+                                            <i class="fas fa-bell me-2"></i>
+                                            ${notification.message}
+                                            <br />
+                                        </a>
+                                    </li>
+                                </c:forEach>
                             </c:otherwise>
                         </c:choose>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="profileDropdown">
-                        <li><a class="dropdown-item" href="viewProfile?email=${dto.email}"><i
-                                class="bi bi-person-circle me-2"></i> Profile</a></li>
-                        <li><a class="dropdown-item" href="logout"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
-                        </li>
                     </ul>
                 </li>
+                <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button"
+                   data-bs-toggle="dropdown" aria-expanded="false">
+                    <c:choose>
+                        <c:when test="${empty dto.profilePath}">
+                            <img src="images/dummy-profile.png" alt="Profile" class="rounded-circle" width="40"
+                                 height="40" style="object-fit: cover;">
+                        </c:when>
+                        <c:otherwise>
+                            <img src="<c:url value='/uploads/${dto.profilePath}'/>" alt="Profile"
+                                 class="rounded-circle" width="40" height="40" style="object-fit: cover;">
+                        </c:otherwise>
+                    </c:choose>
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
+                           data-bs-target="#adminProfileModal"><i class="fa-solid fa-user me-2"></i>View
+                        Profile</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-danger" href="adminLogout?email=${dto.email}"><i
+                                class="fa-solid fa-right-from-bracket me-2"></i> Logout</a>
+                    </li>
+                </ul>
             </ul>
         </div>
     </div>
@@ -188,7 +261,24 @@
         </div>
     </div>
 </section>
-
+<!-- Modal for supplier invoice -->
+<div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="invoiceModalLabel">Supplier Invoice</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="invoiceDetails">
+                <!-- Invoice details loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="payButton">Pay</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Footer -->
 <footer class="footer mt-auto py-4 text-white">
     <div class="container">
@@ -239,5 +329,60 @@
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/dashboardProductRender.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="js/admin-notification.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('click', function(e) {
+            const notificationItem = e.target.closest('.notification-item');
+            if (notificationItem) {
+                e.preventDefault();
+                const notificationId = notificationItem.dataset.notificationId;
+                if (notificationId) {
+                    markNotificationAsRead(notificationId, notificationItem);
+                }
+            }
+        });
+    });
+
+    async function markNotificationAsRead(notificationId, element) {
+        try {
+            const response = await fetch('/farm-fresh/markNotificationAsRead', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `notificationId=${notificationId}`,
+                credentials: 'same-origin'
+            });
+
+            if (response.ok) {
+                const listItem = element.closest('li');
+                listItem.remove();
+
+                const badge = document.querySelector('.badge');
+                if (badge) {
+                    const currentCount = parseInt(badge.textContent);
+                    const newCount = currentCount - 1;
+                    if (newCount > 0) {
+                        badge.textContent = newCount;
+                    } else {
+                        badge.remove();
+                    }
+                }
+
+                const dropdownMenu = document.querySelector('.dropdown-menu');
+                if (dropdownMenu.querySelectorAll('li').length === 1) {
+                    dropdownMenu.insertAdjacentHTML('beforeend',
+                        '<li><span class="dropdown-item text-muted">No new notifications</span></li>'
+                    );
+                }
+            }
+        } catch (error) {
+            console.error('Notification update failed:', error);
+        }
+    }
+
+</script>
 </body>
 </html>

@@ -2,6 +2,8 @@ package com.xworkz.milklore.service;
 
 import com.xworkz.milklore.dto.SupplierBankDetailsDTO;
 import com.xworkz.milklore.dto.SupplierDTO;
+import com.xworkz.milklore.entity.SupplierEntity;
+
 import java.util.List;
 
 public interface SupplierService {
@@ -31,4 +33,6 @@ public interface SupplierService {
     boolean updateSupplierBankDetails(SupplierBankDetailsDTO supplierBankDetailsDTO, String email);
 
     boolean updateSupplierBankDetailsByAdmin(SupplierBankDetailsDTO supplierBankDetailsDTO,String email,String adminEmail);
+    SupplierDTO getSupplierDetailsByNotificationId(Long notificationId);
+    boolean requestForSupplierBankDetails(String supplierEmail);
 }

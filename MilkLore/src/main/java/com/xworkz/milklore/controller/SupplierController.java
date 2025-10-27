@@ -1,10 +1,14 @@
 package com.xworkz.milklore.controller;
 
 import com.xworkz.milklore.dto.AdminDTO;
+import com.xworkz.milklore.dto.PaymentDetailsDTO;
 import com.xworkz.milklore.dto.SupplierBankDetailsDTO;
 import com.xworkz.milklore.dto.SupplierDTO;
 import com.xworkz.milklore.service.AdminService;
+import com.xworkz.milklore.service.MilkProductReceiveService;
+import com.xworkz.milklore.service.NotificationService;
 import com.xworkz.milklore.service.SupplierService;
+import com.xworkz.milklore.utill.CommonControllerHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +28,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -38,8 +43,17 @@ public class SupplierController {
     @Autowired
     private SupplierService supplierService;
 
+    @Autowired
+    private CommonControllerHelper controllerHelper;
+
     @Value("${file.upload-dir}")
     private String uploadDir;
+
+    @Autowired
+    private MilkProductReceiveService collectMilkService;
+
+    @Autowired
+    private NotificationService paymentNotificationService;
 
     public SupplierController() {
         log.info("SupplierController constructor");
@@ -149,6 +163,7 @@ public class SupplierController {
         model.addAttribute("milkSuppliers", list);
         model.addAttribute("currentPage", 1);
         model.addAttribute("totalPages", 1);
+        controllerHelper.addNotificationData(model,email);
         return "SuppliersList";
 
     }
@@ -215,6 +230,20 @@ public class SupplierController {
     public String getSupplierDashboardPage(@RequestParam String email, Model model) {
         log.info("getSupplierDashboardPage method in supplier controller");
         SupplierDTO dto = supplierService.getSupplierDetailsByEmail(email);
+        LocalDate lastDate=collectMilkService.getLastCollectedDate(dto.getSupplierId());
+        if(lastDate==null)
+            model.addAttribute("lastCollectedDate","Yet to collect");
+        else model.addAttribute("lastCollectedDate",lastDate);
+
+        Double litres=collectMilkService.getTotalLitre(dto.getSupplierId());
+        if(litres==null)
+            model.addAttribute("totalLitres",0);
+        else model.addAttribute("totalLitres",litres);
+
+        Double amount=paymentNotificationService.getTotalAmountPaid(dto.getSupplierId());
+        if(amount==null)
+            model.addAttribute("totalAmountPaid","No Collection");
+        else model.addAttribute("totalAmountPaid","Rs."+amount+"/-");
         model.addAttribute("dto", dto);
         return "SupplierDashboard";
     }
@@ -337,6 +366,17 @@ public class SupplierController {
         }
         model.addAttribute("email", email);
         return getMilkSupplierList(adminEmail,1,10,model,session);
+    }
+
+    @GetMapping("/redirectToPaymentStatus")
+    public String getPaymentStatus(@RequestParam String email,Model model)
+    {
+        log.info("getPayment status in supplier controller");
+        SupplierDTO supplierDTO=supplierService.getSupplierDetailsByEmail(email);
+        List<PaymentDetailsDTO> list=paymentNotificationService.getPaymentDetailsForSupplier(supplierDTO);
+        model.addAttribute("dto",supplierDTO);
+        model.addAttribute("paymentList",list);
+        return "SupplierPaymentStatus";
     }
 
 }
