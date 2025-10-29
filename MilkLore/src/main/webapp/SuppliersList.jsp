@@ -101,17 +101,59 @@
                     <a class="nav-link" href="redirectToProductsPrice?email=${dto.email}"><i
                             class="fa-solid fa-tag me-2"></i> Products Price</a>
                 </li>
-                <li class="nav-item dropdown ms-3">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown"
+                <li class="nav-item dropdown">
+                    <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button"
                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-bell fa-lg"></i>
+                        <c:if test="${unreadCount > 0}">
+                                <span
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    ${unreadCount}
+                                </span>
+                        </c:if>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown"
+                        style="width: 350px; max-height: 400px; overflow-y: auto;">
+                        <li>
+                            <h6 class="dropdown-header">Notifications</h6>
+                        </li>
+
                         <c:choose>
-                            <c:when test="${not empty dto.profilePath}">
-                                <img src="<c:url value='/uploads/${dto.profilePath}'/>" class="rounded-circle me-2"
-                                     style="width: 40px; height: 40px; object-fit: cover;">
+                            <c:when test="${empty notifications}">
+                                <li>
+                                    <span class="dropdown-item text-muted">No new notifications</span>
+                                </li>
                             </c:when>
                             <c:otherwise>
-                                <img src="images/default.png" alt="Profile" class="rounded-circle me-2"
-                                     style="width: 40px; height: 40px; object-fit: cover;">
+                                <c:forEach var="notification" items="${notifications}">
+                                    <li data-notification-id="${notification.id}" data-admin-email="${dto.email}"
+                                        data-notification-type="${notification.notificationType}">
+                                        <a class="dropdown-item notification-item" href="#"
+                                           data-notification-id="${notification.id}"
+                                           data-admin-email="${dto.email}"
+                                           data-notification-type="${notification.notificationType}">
+                                            <i class="fas fa-bell me-2"></i>
+                                            ${notification.message}
+                                            <br />
+                                        </a>
+                                    </li>
+                                </c:forEach>
+                            </c:otherwise>
+                        </c:choose>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown ms-3">
+                    <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <c:choose>
+                            <c:when test="${empty dto.profilePath}">
+                                <img src="images/dummy-profile.png" alt="Profile" class="rounded-circle" width="40"
+                                     height="40" style="object-fit: cover;">
+                            </c:when>
+                            <c:otherwise>
+                                <img src="<c:url value='/uploads/${dto.profilePath}'/>" alt="Profile"
+                                     class="rounded-circle" width="40" height="40" style="object-fit: cover;">
                             </c:otherwise>
                         </c:choose>
                     </a>
@@ -657,5 +699,6 @@
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="js/supplier-validation.js"></script>
+<script src="js/admin-notification.js"></script>
 </body>
 </html>

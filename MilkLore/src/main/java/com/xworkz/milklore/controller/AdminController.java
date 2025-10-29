@@ -1,6 +1,7 @@
 package com.xworkz.milklore.controller;
 
 import com.xworkz.milklore.dto.AdminDTO;
+import com.xworkz.milklore.dto.PaymentDetailsDTO;
 import com.xworkz.milklore.entity.NotificationEntity;
 import com.xworkz.milklore.service.AdminService;
 import com.xworkz.milklore.service.MilkProductReceiveService;
@@ -85,7 +86,7 @@ public class AdminController {
 
 
     @GetMapping("viewProfile")
-    public String onView(@RequestParam("email")String email,Model model,HttpSession session){
+    public String onView(@RequestParam("email")String email,Model model){
         System.out.println("Opening View In Page..");
         AdminDTO dto = service.viewAdminByEmail(email);
 
@@ -99,11 +100,11 @@ public class AdminController {
     }
 
     @GetMapping("editProfile")
-    public String onEdit(@RequestParam("email") String email, Model model,HttpSession session) {
-        AdminDTO userlogin = (AdminDTO) session.getAttribute("dto");
-        if(userlogin == null){
-            return "AdminLogin";
-        }
+    public String onEdit(@RequestParam("email") String email, Model model) {
+//        AdminDTO userlogin = (AdminDTO) session.getAttribute("dto");
+//        if(userlogin == null){
+//            return "AdminLogin";
+//        }
         System.out.println("Opening Edit In Page..");
         AdminDTO dto = service.viewAdminByEmail(email);
         model.addAttribute("dto", dto);
@@ -115,7 +116,7 @@ public class AdminController {
                          @RequestParam("mobileNumber") String mobileNumber,
                          @RequestParam(value = "profileImage", required = false) MultipartFile profilePicture,
                          @RequestParam("email") String email,
-                         Model model,HttpSession session) {
+                         Model model) {
         System.out.println("AdminEdit method in Admin controller");
         String filePath = null;
 
@@ -136,12 +137,12 @@ public class AdminController {
 
         if (service.updateAdminDetails(email, adminName, mobileNumber, filePath)) {
             AdminDTO dto = service.viewAdminByEmail(email);
-            AdminDTO userlogin = (AdminDTO) session.getAttribute("dto");
+//            AdminDTO userlogin = (AdminDTO) session.getAttribute("dto");
             model.addAttribute("dto", dto);
             return "AdminLoginSuccess";
         } else {
             model.addAttribute("errorMessage", "Check The Details");
-            return onEdit(email, model,session);
+            return onEdit(email, model);
         }
     }
     @PostMapping("/forgotPassword")
@@ -190,6 +191,7 @@ public class AdminController {
         AdminDTO dto = service.viewAdminByEmail(email);
         model.addAttribute("dto", dto);
         controllerHelper.addNotificationData(model,email);
+        log.error("WORKING");
         return "AdminLoginSuccess";
     }
 
@@ -239,6 +241,25 @@ public class AdminController {
         }
         return getSupplierPaymentDetails(notificationId,adminEmail,model);
 
+    }
+
+    @GetMapping("/redirectToAdminPaymentHistory")
+    public String redirectToAdminPaymentHistory(@RequestParam String email,@RequestParam(defaultValue = "1") int page,
+                                                @RequestParam(defaultValue = "10") int size, Model model)
+    {
+        log.info("redirectToAdminPaymentHistory method in adminController");
+        List<PaymentDetailsDTO> list=notificationService.getAllPaymentDetailsForAdminHistory(page,size);
+        model.addAttribute("paymentList",list);
+        model.addAttribute("dto",service.viewAdminByEmail(email));
+
+        Integer totalCount= notificationService.getTotalCount();
+        int totalPages = (int) Math.ceil((double) totalCount / size);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("pageSize", size);
+
+        controllerHelper.addNotificationData(model,email);
+        return "AdminPaymentHistory";
     }
 
 }

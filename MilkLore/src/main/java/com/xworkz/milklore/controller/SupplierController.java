@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -62,9 +61,14 @@ public class SupplierController {
     // List Suppliers
     @GetMapping("/redirectToMilkSuppliersList")
     public String getMilkSupplierList(@RequestParam String email, @RequestParam(defaultValue = "1") int page,
-                                      @RequestParam(defaultValue = "10") int size, Model model, HttpSession session) {
+                                      @RequestParam(defaultValue = "10") int size, Model model) {
         log.info("getMilkSupplierList method in supplier controller");
 
+        // Get admin DTO and add to model
+        AdminDTO adminDTO = adminService.viewAdminByEmail(email);
+        if (adminDTO != null) {
+            model.addAttribute("dto", adminDTO);
+        }
 
         List<SupplierDTO> list = supplierService.getAllSuppliers(page, size);
         long totalSuppliers = adminService.getSupplierCount();
@@ -73,7 +77,7 @@ public class SupplierController {
         model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);
         model.addAttribute("totalPages", totalPages);
-
+        controllerHelper.addNotificationData(model,email);
         return "SuppliersList";
     }
 
@@ -82,8 +86,7 @@ public class SupplierController {
     public String addMilkSupplier(@Valid SupplierDTO supplierDTO,
                                   BindingResult bindingResult,
                                   @RequestParam String adminEmail,
-                                  Model model,
-                                  HttpSession session) {
+                                  Model model) {
         log.info("addMilkSupplier in supplierController");
         System.out.println(supplierDTO);
         System.out.println("Admin Email :" + adminEmail);
@@ -94,7 +97,7 @@ public class SupplierController {
                     .forEach(System.out::println);
             model.addAttribute("supplier", supplierDTO);
             model.addAttribute("error", "Details not saved");
-            return getMilkSupplierList(adminEmail, 1, 10, model, session);
+            return getMilkSupplierList(adminEmail, 1, 10, model);
         }
         if (supplierService.addSupplier(supplierDTO, adminEmail)) {
             log.info("supplier added");
@@ -103,7 +106,7 @@ public class SupplierController {
             log.warn("supplier not added");
             model.addAttribute("error", "Supplier details not saved");
         }
-        return getMilkSupplierList(adminEmail, 1, 10, model, session);
+        return getMilkSupplierList(adminEmail, 1, 10, model);
     }
 
     // Edit Supplier
@@ -111,8 +114,8 @@ public class SupplierController {
     public String editSupplier(@Valid SupplierDTO supplierDTO,
                                BindingResult bindingResult,
                                @RequestParam String adminEmail,
-                               Model model,
-                               HttpSession session) {
+                               Model model
+                                ) {
         log.info("editSupplier method in supplierController");
         System.out.println(supplierDTO);
         System.out.println("Admin EMail Update :" + adminEmail);
@@ -123,7 +126,7 @@ public class SupplierController {
                     .forEach(System.out::println);
             model.addAttribute("supplier", supplierDTO);
             model.addAttribute("error", "Details not saved");
-            return getMilkSupplierList(adminEmail, 1, 10, model, session);
+            return getMilkSupplierList(adminEmail, 1, 10, model);
         }
         if (supplierService.editSupplierDetails(supplierDTO, adminEmail)) {
             log.info("supplier updated");
@@ -132,15 +135,14 @@ public class SupplierController {
             log.warn("supplier not updated");
             model.addAttribute("error", "Supplier details not updated");
         }
-        return getMilkSupplierList(adminEmail, 1, 10, model, session);
+        return getMilkSupplierList(adminEmail, 1, 10, model);
     }
 
     // Delete Supplier
     @GetMapping("/deleteMilkSupplier")
     public String deleteSupplier(@RequestParam String email,
                                  @RequestParam(required = false) String adminEmail,
-                                 Model model,
-                                 HttpSession session) {
+                                 Model model) {
         log.info("deleteSupplier in supplier controller");
         if (supplierService.deleteSupplierDetails(email, adminEmail)) {
             log.info("supplier deleted");
@@ -149,7 +151,7 @@ public class SupplierController {
             log.warn("supplier not deleted");
             model.addAttribute("error", "Supplier details deleted");
         }
-        return getMilkSupplierList(adminEmail, 1, 10, model, session);
+        return getMilkSupplierList(adminEmail, 1, 10, model);
     }
 
     @GetMapping("/searchSuppliers")
@@ -197,15 +199,14 @@ public class SupplierController {
     @PostMapping("/verifyOtp")
     public String verifyOtp(@RequestParam String email,
                             @RequestParam String otp,
-                            Model model,HttpSession session) {
+                            Model model) {
         email = email.trim();
         otp = otp.trim();
 
         boolean verified = supplierService.verifyOtp(email, otp);
 
         if (verified) {
-            // Store email in session
-            session.setAttribute("supplierEmail", email);
+            // Store email in
 
             // Add email to model for the current request
             model.addAttribute("email", email);
@@ -250,15 +251,13 @@ public class SupplierController {
 
     @GetMapping("/redirectToUpdateSupplierProfile")
     public String getUpdateProfilePage(@RequestParam(required = false) String email,
-                                       Model model,
-                                       HttpSession session) {
+                                       Model model) {
         log.info("getUpdateProfilePage method in supplier controller");
 
-        // If email is not provided in request, try to get it from session
+        // If email is not provided in request, try to get it from 
         if (email == null || email.trim().isEmpty()) {
-            email = (String) session.getAttribute("supplierEmail");
             if (email == null) {
-                log.warn("No email provided and no email in session");
+                log.warn("No email provided and no email in ");
                 return "redirect:/supplierLogin"; // or appropriate error page
             }
         }
@@ -347,7 +346,7 @@ public class SupplierController {
 
     @PostMapping("/updateSupplierBankDetailsByAdmin")
     public String updateSupplierBankDetailsByAdmin(@Valid SupplierBankDetailsDTO supplierBankDetailsDTO,BindingResult bindingResult,
-                                                   @RequestParam String adminEmail,@RequestParam String email,Model model,HttpSession session)
+                                                   @RequestParam String adminEmail,@RequestParam String email,Model model)
     {
         log.info("updateSupplierBankDetailsByAdmin method in supplier controller");
         if(bindingResult.hasErrors())
@@ -356,7 +355,7 @@ public class SupplierController {
             bindingResult.getFieldErrors().stream().map(e->e.getField()+" -> "+e.getDefaultMessage())
                     .forEach(System.out::println);
             model.addAttribute("error","Bank details not updated");
-            return getMilkSupplierList(adminEmail,1,10,model,session);
+            return getMilkSupplierList(adminEmail,1,10,model);
         }
         if(supplierService.updateSupplierBankDetailsByAdmin(supplierBankDetailsDTO,email,adminEmail))
         {
@@ -365,7 +364,7 @@ public class SupplierController {
             model.addAttribute("error","Bank details not updated");
         }
         model.addAttribute("email", email);
-        return getMilkSupplierList(adminEmail,1,10,model,session);
+        return getMilkSupplierList(adminEmail,1,10,model);
     }
 
     @GetMapping("/redirectToPaymentStatus")

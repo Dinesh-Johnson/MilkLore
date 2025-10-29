@@ -1,5 +1,6 @@
 package com.xworkz.milklore.service;
 
+import com.xworkz.milklore.dto.AdminDTO;
 import com.xworkz.milklore.dto.PaymentDetailsDTO;
 import com.xworkz.milklore.dto.SupplierDTO;
 import com.xworkz.milklore.entity.AdminEntity;
@@ -62,11 +63,9 @@ public class NotificationServiceImpl implements NotificationService {
         String dayStr;
 
         if (dayOfMonth == 13) {
-            LocalDate prevMonth = today.minusMonths(1);
-            int startDay = Math.min(30, prevMonth.lengthOfMonth());
-            periodStart = prevMonth.withDayOfMonth(startDay);
-            periodEnd = today.withDayOfMonth(12);
-            paymentDate = today.withDayOfMonth(15);
+            periodStart = today.minusMonths(1).withDayOfMonth(today.minusMonths(1).lengthOfMonth());
+            periodEnd = today.withDayOfMonth(14);
+            paymentDate=today.withDayOfMonth(15);
             dayStr = "15th";
         } else {
             periodStart = today.withDayOfMonth(15);
@@ -139,12 +138,11 @@ public class NotificationServiceImpl implements NotificationService {
         LocalDate periodEnd;
 
         if (dayOfMonth == 15) {
-            int prevMonthLastDay = today.minusMonths(1).lengthOfMonth();
-            periodStart = today.minusMonths(1).withDayOfMonth(Math.min(30, prevMonthLastDay));
+            periodStart = today.minusMonths(1).withDayOfMonth(today.minusMonths(1).lengthOfMonth());
             periodEnd = today.withDayOfMonth(14);
         } else {
             periodStart = today.withDayOfMonth(15);
-            periodEnd = today.withDayOfMonth(Math.min(30, lastDayOfMonth - 1));
+            periodEnd = today.withDayOfMonth(lastDayOfMonth - 1);
         }
 
         log.info("Generating payment notifications for period {} to {}", periodStart, periodEnd);
@@ -262,5 +260,35 @@ public class NotificationServiceImpl implements NotificationService {
             list.add(paymentDetailsDTO);
         });
         return emailSender.mailForAdminPaymentSummary(list);
+    }
+
+    @Override
+    public List<PaymentDetailsDTO> getAllPaymentDetailsForAdminHistory(int page, int size) {
+        log.info("getAllPaymentDetailsForAdminHistory method in payment service");
+        List<PaymentDetailsEntity> paymentDetailsEntities=paymentDetailsRepository.getAllPaymentDetailsForAdminHistory(page,size);
+        List<PaymentDetailsDTO> paymentDetailsDTOS=new ArrayList<>();
+        paymentDetailsEntities.forEach(paymentDetailsEntity -> {
+            PaymentDetailsDTO paymentDetailsDTO=new PaymentDetailsDTO();
+            BeanUtils.copyProperties(paymentDetailsEntity,paymentDetailsDTO);
+            if(paymentDetailsEntity.getSupplier()!=null) {
+                SupplierDTO supplierDTO = new SupplierDTO();
+                BeanUtils.copyProperties(paymentDetailsEntity.getSupplier(), supplierDTO);
+                paymentDetailsDTO.setSupplier(supplierDTO);
+            }
+            if(paymentDetailsEntity.getAdmin()!=null)
+            {
+                AdminDTO adminDTO=new AdminDTO();
+                BeanUtils.copyProperties(paymentDetailsEntity.getAdmin(),adminDTO);
+                paymentDetailsDTO.setAdmin(adminDTO);
+            }
+            paymentDetailsDTOS.add(paymentDetailsDTO);
+        });
+        return paymentDetailsDTOS;
+    }
+
+    @Override
+    public Integer getTotalCount() {
+        log.info("getTotalCount method in payment service");
+        return paymentDetailsRepository.getTotalCount();
     }
 }

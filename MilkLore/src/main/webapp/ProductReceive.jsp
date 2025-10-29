@@ -9,6 +9,7 @@
     <link rel="icon" type="image/png" href="images/icon.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body { background-color: #f8f9fc; color: #333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
         .navbar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15); padding: 0.8rem 0; }
@@ -72,9 +73,6 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="toIndex"><i class="fas fa-home me-1"></i> Home</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="toSuppliersList?email=${dto.email}"><i class="fas fa-users me-1"></i>
                         Suppliers</a>
                 </li>
@@ -93,31 +91,75 @@
                         Products</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="redirectToAdminPaymentHistory?email=${dto.email}&page=1&size=10"><i
+                            class="fa-solid fa-money-bill-transfer me-2"></i> Payment History</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="toProductsPrice?email=${dto.email}"><i class="fas fa-tags me-1"></i>
                         Pricing</a>
                 </li>
+                <!-- Notification Dropdown -->
+                <li class="nav-item dropdown ms-3">
+                    <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-bell-fill"></i>
+                        <c:if test="${unreadCount > 0}">
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                ${unreadCount}
+            </span>
+                        </c:if>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown"
+                        style="width: 350px; max-height: 400px; overflow-y: auto;">
+                        <li>
+                            <h6 class="dropdown-header">Notifications</h6>
+                        </li>
+
+                        <c:choose>
+                            <c:when test="${empty notifications}">
+                                <li><span class="dropdown-item text-muted">No new notifications</span></li>
+                            </c:when>
+                            <c:otherwise>
+                                <c:forEach var="notification" items="${notifications}">
+                                    <li data-notification-id="${notification.id}" data-admin-email="${dto.email}"
+                                        data-notification-type="${notification.notificationType}">
+                                        <a class="dropdown-item notification-item" href="#"
+                                           data-notification-id="${notification.id}"
+                                           data-admin-email="${dto.email}"
+                                           data-notification-type="${notification.notificationType}">
+                                            <i class="fas fa-bell me-2"></i>
+                                            ${notification.message}
+                                        </a>
+                                    </li>
+                                </c:forEach>
+                            </c:otherwise>
+                        </c:choose>
+                    </ul>
+                </li>
+
+                <!-- Profile Dropdown -->
+                <li class="nav-item dropdown ms-3">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <c:choose>
+                            <c:when test="${not empty dto.profilePath}">
+                                <img src="<c:url value='/uploads/${dto.profilePath}'/>" class="rounded-circle me-2"
+                                     style="width: 40px; height: 40px; object-fit: cover;">
+                            </c:when>
+                            <c:otherwise>
+                                <img src="images/default.png" alt="Profile" class="rounded-circle me-2"
+                                     style="width: 40px; height: 40px; object-fit: cover;">
+                            </c:otherwise>
+                        </c:choose>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="profileDropdown">
+                        <li><a class="dropdown-item" href="viewProfile?email=${dto.email}">
+                            <i class="bi bi-person-circle me-2"></i> Profile</a></li>
+                        <li><a class="dropdown-item" href="logout">
+                            <i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                    </ul>
+                </li>
             </ul>
-            <li class="nav-item dropdown ms-3">
-                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown"
-                   data-bs-toggle="dropdown" aria-expanded="false">
-                    <c:choose>
-                        <c:when test="${not empty dto.profilePath}">
-                            <img src="<c:url value='/uploads/${dto.profilePath}'/>" class="rounded-circle me-2"
-                                 style="width: 40px; height: 40px; object-fit: cover;">
-                        </c:when>
-                        <c:otherwise>
-                            <img src="images/default.png" alt="Profile" class="rounded-circle me-2"
-                                 style="width: 40px; height: 40px; object-fit: cover;">
-                        </c:otherwise>
-                    </c:choose>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="profileDropdown">
-                    <li><a class="dropdown-item" href="viewProfile?email=${dto.email}"><i
-                            class="bi bi-person-circle me-2"></i> Profile</a></li>
-                    <li><a class="dropdown-item" href="logout"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
-                    </li>
-                </ul>
-            </li>
         </div>
     </div>
 </nav>
@@ -274,5 +316,6 @@
 </script>
 
 <script src="js/get-milk-product-receive.js"></script>
+<script src="js/admin-notification.js"></script>
 </body>
 </html>

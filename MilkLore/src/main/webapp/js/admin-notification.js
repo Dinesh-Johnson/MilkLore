@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (notificationType === 'PAYMENT') {
              const email = notificationItem.dataset.adminEmail;
-            window.location.href = '/farm-fresh/supplierPaymentDetails?notificationId=' + notificationId+'&email='+email;
+            window.location.href = '/MilkLore/supplierPaymentDetails?notificationId=' + notificationId+'&email='+email;
 
         } else {
             markNotificationAsRead(notificationId, notificationItem);
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function markNotificationAsRead(notificationId, element) {
     try {
-        const response = await fetch('/farm-fresh/markNotificationAsRead', {
+        const response = await fetch('/MilkLore/markNotificationAsRead', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `notificationId=${notificationId}`,

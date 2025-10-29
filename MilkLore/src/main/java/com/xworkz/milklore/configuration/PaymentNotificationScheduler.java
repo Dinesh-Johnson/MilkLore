@@ -1,20 +1,14 @@
 package com.xworkz.milklore.configuration;
 
-import com.xworkz.milklore.dto.AdminDTO;
-import com.xworkz.milklore.dto.SupplierDTO;
-import com.xworkz.milklore.entity.NotificationEntity;
-import com.xworkz.milklore.service.AdminService;
-import com.xworkz.milklore.service.MilkProductReceiveService;
+
 import com.xworkz.milklore.service.NotificationService;
-import com.xworkz.milklore.service.SupplierService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.List;
+
 
 @Component
 @Slf4j
@@ -23,9 +17,19 @@ public class PaymentNotificationScheduler {
     @Autowired
     private NotificationService paymentNotificationService;
 
-    @Scheduled(cron = "0 0 9 13,28 * *",zone = "Asia/Kolkata")
+    @Scheduled(cron = "0 51 10 * * *", zone = "Asia/Kolkata") // runs daily at 9 AM
     public void runAdvanceNotification() {
-        paymentNotificationService.generateAdvanceNotifications();
+        LocalDate today = LocalDate.now();
+        int dayOfMonth = today.getDayOfMonth();
+        int lastDayOfMonth = today.lengthOfMonth();
+
+        if (dayOfMonth == 13 || dayOfMonth == lastDayOfMonth - 2) {
+            log.info("Triggering advance payment notification for {}", today);
+            paymentNotificationService.generateAdvanceNotifications();
+        } else {
+            log.info("Today ({}) is not 13th or {} (2 days before month end). Skipping advance notification.",
+                    dayOfMonth, lastDayOfMonth - 2);
+        }
     }
 
     // every day at 9 AM    // 0 */1 * * * *

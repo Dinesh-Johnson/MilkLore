@@ -1,6 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false" %>
+<%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html lang="en" data-bs-theme="light" xmlns:c="http://www.w3.org/1999/XSL/Transform">
 <head>
     <meta charset="UTF-8">
@@ -52,6 +51,12 @@
     padding: 0.25em 0.5em;
     border-radius: 10px;
 }
+        .payment-card:hover,
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.75rem 2rem rgba(0,0,0,0.12);
+}
+
     </style>
 </head>
 <body>
@@ -76,6 +81,10 @@
                             class="fa-solid fa-tag me-2"></i> Products Price</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="redirectToAdminSuccess?email=${dto.email}&page=1&size=10"><i
+                            class="fa-solid fa-grip"></i> DashBoard</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="redirectToCollectMilk?email=${dto.email}"><i
                             class="fa-solid fa-glass-water-droplet me-2"></i> Collect Milk</a>
                 </li>
@@ -88,6 +97,10 @@
                     <a class="nav-link active" href="redirectToGetCollectMilkList?email=${dto.email}">
                         <i class="fa-solid fa-glass-water-droplet me-2"></i> Milk Product List
                     </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="redirectToAdminPaymentHistory?email=${dto.email}&page=1&size=10"><i
+                            class="fa-solid fa-money-bill-transfer me-2"></i> Payment History</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button"
@@ -160,7 +173,13 @@
         </div>
     </div>
 </nav>
-
+<c:if test="${not empty notifications}">
+    <div style="display:none;" id="notificationsDebug">
+        <c:forEach items="${notifications}" var="notif">
+            ${notif.id} - ${notif.message}<br>
+        </c:forEach>
+    </div>
+</c:if>
 <!-- Dashboard -->
 <section class="dashboard-section py-5 mt-5">
     <div class="container">
@@ -194,20 +213,22 @@
                         <div class="carousel-inner" id="card-carousel-products"></div>
                     </div>
                     <h5>Products</h5>
-                    <p class="text-muted">Add or update products</p>
                     <a href="manageProducts" class="btn btn-success btn-sm">Manage</a>
                 </div>
             </div>
 
-            <!-- Orders Card -->
             <div class="col-md-3 col-sm-6">
-                <div class="card shadow-sm text-center p-3 h-100">
-                    <i class="bi bi-cart-check-fill text-warning" style="font-size:2rem;"></i>
-                    <h5 class="mt-3">Orders</h5>
-                    <p class="text-muted">View customer orders</p>
-                    <a href="manageOrders" class="btn btn-warning btn-sm">Check</a>
+                <div class="card shadow-sm text-center p-3 h-100 payment-card">
+                    <i class="bi bi-cash-stack text-success" style="font-size:2rem;"></i>
+                    <h5 class="mt-3 fw-bold">Payment History</h5>
+                    <p class="text-muted" style="font-size:0.9rem;">Track all payments securely</p>
+                    <a href="redirectToAdminPaymentHistory?email=${dto.email}&page=1&size=10"
+                       class="btn btn-success btn-sm rounded-pill px-3">
+                        <i class="bi bi-arrow-right"></i> View
+                    </a>
                 </div>
             </div>
+
 
             <!-- Reports Card -->
             <!-- Suppliers Card -->
@@ -331,58 +352,5 @@
 <script src="js/dashboardProductRender.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="js/admin-notification.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.addEventListener('click', function(e) {
-            const notificationItem = e.target.closest('.notification-item');
-            if (notificationItem) {
-                e.preventDefault();
-                const notificationId = notificationItem.dataset.notificationId;
-                if (notificationId) {
-                    markNotificationAsRead(notificationId, notificationItem);
-                }
-            }
-        });
-    });
-
-    async function markNotificationAsRead(notificationId, element) {
-        try {
-            const response = await fetch('/farm-fresh/markNotificationAsRead', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `notificationId=${notificationId}`,
-                credentials: 'same-origin'
-            });
-
-            if (response.ok) {
-                const listItem = element.closest('li');
-                listItem.remove();
-
-                const badge = document.querySelector('.badge');
-                if (badge) {
-                    const currentCount = parseInt(badge.textContent);
-                    const newCount = currentCount - 1;
-                    if (newCount > 0) {
-                        badge.textContent = newCount;
-                    } else {
-                        badge.remove();
-                    }
-                }
-
-                const dropdownMenu = document.querySelector('.dropdown-menu');
-                if (dropdownMenu.querySelectorAll('li').length === 1) {
-                    dropdownMenu.insertAdjacentHTML('beforeend',
-                        '<li><span class="dropdown-item text-muted">No new notifications</span></li>'
-                    );
-                }
-            }
-        } catch (error) {
-            console.error('Notification update failed:', error);
-        }
-    }
-
-</script>
 </body>
 </html>

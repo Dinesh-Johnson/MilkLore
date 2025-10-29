@@ -31,7 +31,7 @@ public class MilkProductReceiveEntity {
     @JoinColumn(name = "supplier_id",nullable = false)
     private SupplierEntity supplier;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "admin_id",nullable = false)
     private AdminEntity admin;
 
