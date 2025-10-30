@@ -196,11 +196,9 @@ public class AdminController {
     }
 
     @GetMapping("logout")
-    public String logout(HttpSession session,Model model){
+    public String logout(){
         log.info("logout method in admin Admin controller");
-        session.invalidate();
-        model.addAttribute("errorMessage","Logged out successfully");
-        return "AdminLogin";
+        return "index";
     }
 
     @GetMapping("/supplierPaymentDetails")

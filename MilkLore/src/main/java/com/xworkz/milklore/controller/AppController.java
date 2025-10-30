@@ -19,11 +19,6 @@ public class AppController {
         return "index";
     }
 
-    @GetMapping("logout")
-    public String logout() {
-        System.out.println("Logging Out");
-        return "index";
-    }
 
     @GetMapping("redirectToAdminLogin")
     public String adminLogin() {

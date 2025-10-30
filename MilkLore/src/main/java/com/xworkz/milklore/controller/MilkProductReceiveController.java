@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -59,7 +60,9 @@ public class MilkProductReceiveController {
     }
 
     @PostMapping("addCollectMilk")
-    public String getCollectedMilk(@Valid MilkProductReceiveDTO collectMilkDTO, BindingResult bindingResult, @RequestParam String email, Model model)
+    public String getCollectedMilk(@Valid MilkProductReceiveDTO collectMilkDTO,
+                                   BindingResult bindingResult,
+                                   @RequestParam String email, Model model)
     {
         log.info("===== Inside addCollectMilk POST method =====");
         if(bindingResult.hasErrors())
@@ -81,6 +84,8 @@ public class MilkProductReceiveController {
             model.addAttribute("milk",collectMilkDTO);
         }
         controllerHelper.addNotificationData(model,email);
+        AdminDTO adminDTO=adminService.viewAdminByEmail(email);
+        model.addAttribute("dto",adminDTO);
         return "ProductReceive";
     }
 
@@ -88,6 +93,7 @@ public class MilkProductReceiveController {
     public String getCollectMilkList(
             @RequestParam(value = "collectedDate", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate collectedDate,
+            @RequestParam String email,
             Model model) {
 
         log.info("getCollectMilkList called with collectedDate={}", collectedDate);
@@ -98,9 +104,14 @@ public class MilkProductReceiveController {
             collectMilkList = collectMilkService.getAllDetailsByDate(collectedDate);
         }
 
+        AdminDTO adminDTO = adminService.viewAdminByEmail(email);
+        model.addAttribute("dto", adminDTO);
+        controllerHelper.addNotificationData(model, email);
+
         model.addAttribute("collectMilkList", collectMilkList);
         return "ProductReceive";
     }
+
 
     @GetMapping("/getCollectMilkListBySupplierEmail")
     public String getCollectMilkListBySupplierEmail(@RequestParam String email, Model model) {
@@ -110,6 +121,8 @@ public class MilkProductReceiveController {
         log.info("Service returned {} records", collectMilkList.size());
         model.addAttribute("collectMilkList", collectMilkList);
         controllerHelper.addNotificationData(model,email);
+        AdminDTO adminDTO=adminService.viewAdminByEmail(email);
+        model.addAttribute("dto",adminDTO);
         return "ViewProductReceive";
     }
 

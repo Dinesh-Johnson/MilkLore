@@ -98,6 +98,10 @@
                     <a class="nav-link" href="toProductsPrice?email=${dto.email}"><i class="fas fa-tags me-1"></i>
                         Pricing</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="redirectToCollectMilk?email=${dto.email}"><i
+                            class="fa-solid fa-glass-water-droplet me-2"></i> Collect Milk</a>
+                </li>
                 <!-- Notification Dropdown -->
                 <li class="nav-item dropdown ms-3">
                     <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button"
@@ -136,27 +140,22 @@
                         </c:choose>
                     </ul>
                 </li>
-
                 <!-- Profile Dropdown -->
                 <li class="nav-item dropdown ms-3">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown"
-                       data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <c:choose>
                             <c:when test="${not empty dto.profilePath}">
-                                <img src="<c:url value='/uploads/${dto.profilePath}'/>" class="rounded-circle me-2"
-                                     style="width: 40px; height: 40px; object-fit: cover;">
+                                <img src="<c:url value='/uploads/${dto.profilePath}'/>" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
                             </c:when>
                             <c:otherwise>
-                                <img src="images/default.png" alt="Profile" class="rounded-circle me-2"
-                                     style="width: 40px; height: 40px; object-fit: cover;">
+                                <img src="images/default.png" alt="Profile" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
                             </c:otherwise>
                         </c:choose>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="profileDropdown">
-                        <li><a class="dropdown-item" href="viewProfile?email=${dto.email}">
-                            <i class="bi bi-person-circle me-2"></i> Profile</a></li>
-                        <li><a class="dropdown-item" href="logout">
-                            <i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#adminProfileModal"><i class="bi bi-person-circle me-2"></i> View Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="adminLogout?email=${dto.email}"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
                     </ul>
                 </li>
             </ul>
@@ -185,6 +184,7 @@
             <fmt:formatDate value="${now}" pattern="yyyy-MM-dd" var="today"/>
 
             <form action="getCollectMilkList" method="get" class="row g-3" id="milkListForm">
+                <input type="hidden" name="email" value="${dto.email}">
                 <div class="col-md-4">
                     <label for="collectedDate" class="form-label">Collected Date</label>
                     <input type="date" id="collectedDate" name="collectedDate" class="form-control"
