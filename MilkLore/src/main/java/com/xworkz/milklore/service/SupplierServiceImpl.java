@@ -1,14 +1,16 @@
 package com.xworkz.milklore.service;
 
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.xworkz.milklore.configuration.EmailConfiguration;
 import com.xworkz.milklore.dto.AdminDTO;
 import com.xworkz.milklore.dto.SupplierBankDetailsDTO;
 import com.xworkz.milklore.dto.SupplierDTO;
-import com.xworkz.milklore.entity.SupplierAuditEntity;
-import com.xworkz.milklore.entity.SupplierBankDetailsAuditEntity;
-import com.xworkz.milklore.entity.SupplierBankDetailsEntity;
-import com.xworkz.milklore.entity.SupplierEntity;
+import com.xworkz.milklore.entity.*;
+import com.xworkz.milklore.repository.MilkProductReceiveRepo;
 import com.xworkz.milklore.repository.NotificationRepo;
+import com.xworkz.milklore.repository.PaymentDetailsRepository;
 import com.xworkz.milklore.repository.SupplierRepo;
 import com.xworkz.milklore.utill.OTPUtill;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +18,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+
 
 @Slf4j
 @Service
@@ -38,6 +44,12 @@ public class SupplierServiceImpl implements SupplierService{
 
     @Autowired
     private NotificationRepo notificationRepo;
+
+    @Autowired
+    private MilkProductReceiveRepo milkProductReceiveRepo;
+
+    @Autowired
+    private PaymentDetailsRepository paymentDetailsRepository;
 
     private static final int OTP_EXPIRY_MINUTES = 5;
 
@@ -439,5 +451,188 @@ public class SupplierServiceImpl implements SupplierService{
         SupplierEntity supplierEntity=supplierRepo.getSupplierByEmail(supplierEmail);
         return emailSender.mailForBankDetailsRequest(supplierEntity);
     }
+
+    @Override
+    public void downloadInvoicePdf(Integer supplierId, LocalDate start, LocalDate end, LocalDate paymentDate, HttpServletResponse response) {
+        log.info("Generating MilkLore invoice (Letterhead + Watermark) for supplierId {}", supplierId);
+
+        try {
+            // === Fetch data ===
+            PaymentDetailsEntity payment = paymentDetailsRepository.getEntityBySupplierIdAndPaymentDate(paymentDate, supplierId);
+            List<MilkProductReceiveEntity> milkList = milkProductReceiveRepo.getCollectMilkDetailsForSupplierById(supplierId, start, end);
+            SupplierEntity supplier = supplierRepo.getSupplierDetailsAndBankById(supplierId);
+
+            // === PDF Setup ===
+            response.setContentType("application/pdf");
+            response.setHeader("Content-Disposition", "attachment; filename=MilkLore_Invoice_"
+                    + supplier.getFirstName() + "_" + supplier.getLastName() + ".pdf");
+
+            Document document = new Document(PageSize.A4, 50, 50, 100, 70);
+            PdfWriter writer = PdfWriter.getInstance(document, response.getOutputStream());
+            document.open();
+
+            // === Apply full-page watermark ===
+            String bgPath = "D:\\MilkLore\\MilkLore\\MilkLore\\src\\main\\webapp\\images\\milklore.png"; // 🔁 Replace this path
+            Image bg = Image.getInstance(bgPath);
+            bg.scaleToFit(PageSize.A4.getWidth(), PageSize.A4.getHeight());
+            bg.setAbsolutePosition(0, 0);
+
+            PdfContentByte canvas = writer.getDirectContentUnder();
+            PdfGState gState = new PdfGState();
+            gState.setFillOpacity(0.15f); // 15% transparency
+            canvas.saveState();
+            canvas.setGState(gState);
+            canvas.addImage(bg);
+            canvas.restoreState();
+
+            // === Brand fonts & colors ===
+            BaseColor milkBlue = new BaseColor(0, 153, 204);
+            BaseColor darkGray = new BaseColor(40, 40, 40);
+            BaseColor lightGray = new BaseColor(245, 245, 245);
+
+            Font brandFont = new Font(Font.FontFamily.HELVETICA, 22, Font.BOLD, milkBlue);
+            Font subFont = new Font(Font.FontFamily.HELVETICA, 13, Font.BOLD, darkGray);
+            Font normalFont = new Font(Font.FontFamily.HELVETICA, 11, Font.NORMAL, darkGray);
+            Font italicFont = new Font(Font.FontFamily.HELVETICA, 10, Font.ITALIC, BaseColor.GRAY);
+            Font whiteBoldFont = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD, BaseColor.WHITE);
+
+            // === LETTERHEAD HEADER ===
+            PdfPTable headerTable = new PdfPTable(2);
+            headerTable.setWidthPercentage(100);
+            headerTable.setWidths(new float[]{70, 30});
+
+            // Left: Company details
+            PdfPCell companyCell = new PdfPCell();
+            companyCell.setBorder(Rectangle.NO_BORDER);
+            companyCell.addElement(new Paragraph("MilkLore", brandFont));
+            companyCell.addElement(new Paragraph("Pure. Fresh. Local.", italicFont));
+            companyCell.addElement(new Paragraph("MilkLore Pvt. Ltd.", normalFont));
+            companyCell.addElement(new Paragraph("123 Dairy Road, Village Green, Pune, Maharashtra", normalFont));
+            companyCell.addElement(new Paragraph("Phone: +91-98765-43210 | Email: contact@milklore.in", normalFont));
+
+            // Right: Logo
+            String logoPath = "/path/to/milklore_logo.png"; // 🔁 Replace this path
+            Image logo = Image.getInstance(logoPath);
+            logo.scaleToFit(100, 60);
+            PdfPCell logoCell = new PdfPCell(logo, false);
+            logoCell.setBorder(Rectangle.NO_BORDER);
+            logoCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+
+            headerTable.addCell(companyCell);
+            headerTable.addCell(logoCell);
+            document.add(headerTable);
+
+            // === Divider Line ===
+            LineSeparator line = new LineSeparator();
+            line.setLineColor(milkBlue);
+            line.setLineWidth(2);
+            document.add(new Chunk(line));
+            document.add(Chunk.NEWLINE);
+
+            // === Title & Invoice Info ===
+            Paragraph title = new Paragraph("SUPPLIER INVOICE", subFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            document.add(title);
+            document.add(Chunk.NEWLINE);
+
+            PdfPTable infoTable = new PdfPTable(2);
+            infoTable.setWidthPercentage(100);
+            infoTable.setSpacingBefore(5f);
+            infoTable.addCell(createKeyValueCell("Invoice Date:", LocalDate.now().toString(), normalFont));
+            infoTable.addCell(createKeyValueCell("Period:", start + " to " + end, normalFont));
+            infoTable.addCell(createKeyValueCell("Supplier Name:", supplier.getFirstName() + " " + supplier.getLastName(), normalFont));
+            infoTable.addCell(createKeyValueCell("Phone:", supplier.getPhoneNumber(), normalFont));
+            infoTable.addCell(createKeyValueCell("Address:", supplier.getAddress(), normalFont));
+            document.add(infoTable);
+            document.add(Chunk.NEWLINE);
+
+            // === Milk Collection Table ===
+            Paragraph milkSection = new Paragraph("Milk Collection Details", subFont);
+            document.add(milkSection);
+
+            PdfPTable milkTable = new PdfPTable(5);
+            milkTable.setWidthPercentage(100);
+            milkTable.setSpacingBefore(5f);
+            milkTable.setWidths(new float[]{20, 20, 20, 20, 20});
+
+            addHeaderCell(milkTable, "Milk Type", milkBlue, whiteBoldFont);
+            addHeaderCell(milkTable, "Date", milkBlue, whiteBoldFont);
+            addHeaderCell(milkTable, "Quantity (L)", milkBlue, whiteBoldFont);
+            addHeaderCell(milkTable, "Rate (₹)", milkBlue, whiteBoldFont);
+            addHeaderCell(milkTable, "Total (₹)", milkBlue, whiteBoldFont);
+
+            double total = 0;
+            boolean alternate = false;
+            for (MilkProductReceiveEntity m : milkList) {
+                BaseColor bgColor = alternate ? lightGray : BaseColor.WHITE;
+                milkTable.addCell(createTableCell(m.getTypeOfMilk(), normalFont, bgColor));
+                milkTable.addCell(createTableCell(m.getCollectedDate().toString(), normalFont, bgColor));
+                milkTable.addCell(createTableCell(String.format("%.2f", m.getQuantity()), normalFont, bgColor));
+                milkTable.addCell(createTableCell(String.format("%.2f", m.getPrice()), normalFont, bgColor));
+                milkTable.addCell(createTableCell(String.format("%.2f", m.getTotalAmount()), normalFont, bgColor));
+                total += m.getTotalAmount();
+                alternate = !alternate;
+            }
+            document.add(milkTable);
+            document.add(Chunk.NEWLINE);
+
+            // === Payment Details ===
+            Paragraph paySection = new Paragraph("Payment Summary", subFont);
+            document.add(paySection);
+
+            PdfPTable payTable = new PdfPTable(2);
+            payTable.setWidthPercentage(100);
+            payTable.addCell(createKeyValueCell("Payment Date:", payment != null ? payment.getPaymentDate().toString() : "N/A", normalFont));
+            payTable.addCell(createKeyValueCell("Total Amount (₹):", String.format("%.2f", total), normalFont));
+            payTable.addCell(createKeyValueCell("Status:", payment != null ? payment.getPaymentStatus() : "Pending", normalFont));
+            document.add(payTable);
+            document.add(Chunk.NEWLINE);
+
+            // === Footer ===
+            document.add(new Chunk(line));
+            Paragraph footer = new Paragraph("Thank you for partnering with MilkLore!", italicFont);
+            footer.setAlignment(Element.ALIGN_CENTER);
+            document.add(footer);
+            Paragraph contactFooter = new Paragraph("www.milklore.in | +91-98765-43210 | contact@milklore.in", italicFont);
+            contactFooter.setAlignment(Element.ALIGN_CENTER);
+            document.add(contactFooter);
+
+            document.close();
+            log.info("MilkLore letterhead + watermark invoice generated successfully for supplier {}", supplierId);
+
+        } catch (Exception e) {
+            log.error("Error generating MilkLore invoice for supplier {}: {}", supplierId, e.getMessage(), e);
+            throw new RuntimeException("Error generating MilkLore invoice PDF", e);
+        }
+    }
+
+// === Helper methods ===
+
+    private PdfPCell createKeyValueCell(String key, String value, Font font) {
+        Phrase phrase = new Phrase();
+        phrase.add(new Chunk(key + " ", new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD)));
+        phrase.add(new Chunk(value, font));
+        PdfPCell cell = new PdfPCell(phrase);
+        cell.setBorder(Rectangle.NO_BORDER);
+        cell.setPadding(4f);
+        return cell;
+    }
+
+    private void addHeaderCell(PdfPTable table, String text, BaseColor bgColor, Font font) {
+        PdfPCell cell = new PdfPCell(new Phrase(text, font));
+        cell.setBackgroundColor(bgColor);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setPadding(6f);
+        table.addCell(cell);
+    }
+
+    private PdfPCell createTableCell(String text, Font font, BaseColor bgColor) {
+        PdfPCell cell = new PdfPCell(new Phrase(text, font));
+        cell.setBackgroundColor(bgColor);
+        cell.setPadding(5f);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        return cell;
+    }
+
 
 }

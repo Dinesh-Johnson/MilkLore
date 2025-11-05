@@ -4,6 +4,8 @@ import com.xworkz.milklore.dto.SupplierBankDetailsDTO;
 import com.xworkz.milklore.dto.SupplierDTO;
 import com.xworkz.milklore.entity.SupplierEntity;
 
+import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface SupplierService {
@@ -35,4 +37,5 @@ public interface SupplierService {
     boolean updateSupplierBankDetailsByAdmin(SupplierBankDetailsDTO supplierBankDetailsDTO,String email,String adminEmail);
     SupplierDTO getSupplierDetailsByNotificationId(Long notificationId);
     boolean requestForSupplierBankDetails(String supplierEmail);
+    void downloadInvoicePdf(Integer supplierId, LocalDate start, LocalDate end, LocalDate paymentDate, HttpServletResponse response);
 }

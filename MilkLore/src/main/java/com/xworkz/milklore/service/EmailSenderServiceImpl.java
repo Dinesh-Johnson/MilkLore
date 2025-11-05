@@ -168,7 +168,7 @@ public class EmailSenderServiceImpl implements EmailSenderService {
                     + "Supply Period: " + paymentDetails.getPeriodStart() + " to " + paymentDetails.getPeriodEnd() + "\n"
                     + "---------------------------------------\n\n"
                     + "This payment covers the total amount for the milk supplied during the above period.\n\n"
-                    + "If you have any questions or concerns regarding this payment, please contact our accounts team at info@farmfresh.com.\n\n"
+                    + "If you have any questions or concerns regarding this payment, please contact our accounts team at info@milklore.com.\n\n"
                     + "Thank you for your consistent and quality milk supply.\n\n"
                     + "Warm regards,\n"
                     + "MilkLore Team";

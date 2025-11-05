@@ -17,7 +17,7 @@ public class PaymentNotificationScheduler {
     @Autowired
     private NotificationService paymentNotificationService;
 
-    @Scheduled(cron = "0 51 10 * * *", zone = "Asia/Kolkata") // runs daily at 9 AM
+    @Scheduled(cron = "0 0 9 * * *", zone = "Asia/Kolkata") // runs daily at 9 AM
     public void runAdvanceNotification() {
         LocalDate today = LocalDate.now();
         int dayOfMonth = today.getDayOfMonth();
@@ -33,7 +33,7 @@ public class PaymentNotificationScheduler {
     }
 
     // every day at 9 AM    // 0 */1 * * * *
-    @Scheduled(cron = "0 0 9 * * *", zone = "Asia/Kolkata")
+    @Scheduled(cron = "0 46 10 * * *", zone = "Asia/Kolkata")
     public void runPaymentNotification() {
         LocalDate today = LocalDate.now();
         int dayOfMonth = today.getDayOfMonth();

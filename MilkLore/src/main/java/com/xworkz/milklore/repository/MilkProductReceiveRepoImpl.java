@@ -170,7 +170,7 @@ public class MilkProductReceiveRepoImpl implements MilkProductReceiveRepo{
         List<MilkProductReceiveEntity> list=null;
         try{
             entityManager=entityManagerFactory.createEntityManager();
-            list=entityManager.createQuery("select a from MilkProductReceiveEntity a where a.supplier.supplierId=:id and a.collectedDate between :start and :end order by a.collectMilkId desc", MilkProductReceiveEntity.class)
+            list=entityManager.createQuery("select a from MilkProductReceiveEntity a where a.supplier.supplierId=:id and a.collectedDate between :start and :end order by a.milkProductReceiveId desc", MilkProductReceiveEntity.class)
                     .setParameter("id",supplierId)
                     .setParameter("end",end)
                     .setParameter("start",start)

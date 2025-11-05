@@ -114,11 +114,11 @@
                         <i class="fas fa-fw fa-cow me-1"></i> View Milk Collection
                     </a>
                 </li>
-<!--                <li class="nav-item">-->
-<!--                    <a class="nav-link" href="redirectToPaymentStatus?email=${dto.email}">-->
-<!--                        <i class="fas fa-money-bill-wave me-1"></i> Payments-->
-<!--                    </a>-->
-<!--                </li>-->
+                <li class="nav-item">
+                    <a class="nav-link" href="redirectToPaymentStatus?email=${dto.email}">
+                        <i class="fas fa-money-bill-wave me-1"></i> Payments
+                    </a>
+                </li>
                 <li class="nav-item dropdown ms-lg-2">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown">
                         <c:choose>

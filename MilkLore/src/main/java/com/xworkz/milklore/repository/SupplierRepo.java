@@ -31,4 +31,6 @@ public interface SupplierRepo {
 
     List<SupplierEntity> getAllActiveSupplierEntities();
 
+    SupplierEntity getSupplierDetailsAndBankById(Integer id);
+
 }

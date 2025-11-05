@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -209,10 +211,19 @@ public class AdminController {
         model.addAttribute("dto",service.viewAdminByEmail(email));
         model.addAttribute("notificationId",notificationId);
         model.addAttribute("paymentAmount",notificationService.getAmountById(notificationId));
-        controllerHelper.addNotificationData(model,email);
         model.addAttribute("milkList",collectMilkService.getAllDetailsBySupplier(notificationId));
+        controllerHelper.addNotificationData(model,email);
         return "SupplierPayDetails";
     }
+
+//    @GetMapping("/supplierPaymentDetails/pdf")
+//    public ResponseEntity<byte[]> downloadPaymentReceipt(@RequestParam Long notificationId) {
+//        byte[] pdf = pdfService.generatePaymentReceipt(notificationId);
+//        return ResponseEntity.ok()
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=PaymentReceipt.pdf")
+//                .contentType(MediaType.APPLICATION_PDF)
+//                .body(pdf);
+//    }
 
     @PostMapping("/payToSupplier")
     public String payToSupplier(@RequestParam String email,@RequestParam String supplierEmail,@RequestParam Long notificationId,Model model)
