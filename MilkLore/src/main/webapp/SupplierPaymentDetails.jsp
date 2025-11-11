@@ -438,14 +438,6 @@
                                 <div class="text-muted small">
                                     Showing ${paymentList.size()} records
                                 </div>
-                                <div>
-                                    <button class="btn btn-sm btn-outline-secondary me-2">
-                                        <i class="fas fa-file-export me-1"></i>Export
-                                    </button>
-                                    <button class="btn btn-sm btn-primary">
-                                        <i class="fas fa-print me-1"></i>Print
-                                    </button>
-                                </div>
                             </div>
                         </div>
                     </c:if>

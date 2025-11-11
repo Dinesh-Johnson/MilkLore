@@ -9,11 +9,13 @@ import com.xworkz.milklore.entity.SupplierEntity;
 import com.xworkz.milklore.repository.AdminRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import javax.mail.internet.MimeMessage;
+import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -60,30 +62,37 @@ public class EmailSenderServiceImpl implements EmailSenderService {
     }
 
     @Override
-    public boolean mailForSupplierRegisterSuccess(String email, String supplierName) {
+    public boolean mailForSupplierRegisterSuccess(String email, String supplierName, String qrCodePath) {
         log.info("mailForSupplierRegisterSuccess method");
+
         try {
             String subject = "Welcome to MilkLore - Registration Successful";
 
-            String messageBody = "Dear " + supplierName + ",\n\n"
-                    + "We are pleased to inform you that your registration as a Milk Supplier with MilkLore has been successfully completed.\n\n"
-                    + "You are now officially part of our trusted network of suppliers. "
-                    + "Our team is dedicated to supporting you in consistently delivering high-quality milk to our customers with efficiency and reliability.\n\n"
-                    + "Should you have any questions or require assistance, please feel free to contact us at info@milklore.com or call our support line.\n\n"
-                    + "Once again, welcome to MilkLore. We look forward to a strong and enduring partnership.\n\n"
-                    + "Warm regards,\n"
-                    + "MilkLore Team";
+            String messageBody = "<p>Dear <b>" + supplierName + "</b>,</p>"
+                    + "<p>We are happy to inform you that your registration as a Milk Supplier with <b>MilkLore</b> has been successfully completed.</p>"
+                    + "<p>You are now officially part of our trusted network of suppliers. "
+                    + "Our team is committed to supporting you in delivering high-quality milk efficiently.</p>"
+                    + "<p><b>Your QR Code:</b> This QR code will be used for quick identification during milk collection.</p>"
+                    + "<p><img src='cid:qrCodeImage' alt='QR Code' style='width:150px;height:150px;'/></p>"
+                    + "<p>If you have any questions, reach out to us at <a href='mailto:info@milklore.com'>info@milklore.com</a>.</p>"
+                    + "<p>Warm regards,<br/>MilkLore Team</p>";
 
-            SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-            simpleMailMessage.setTo(email);
-            simpleMailMessage.setSubject(subject);
-            simpleMailMessage.setText(messageBody);
+            MimeMessage mimeMessage = emailConfig.mailSender().createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 
-            emailConfig.mailSender().send(simpleMailMessage);
-            log.info("Registration success mail sent to: {}", email);
+            helper.setTo(email);
+            helper.setSubject(subject);
+            helper.setText(messageBody, true);
+
+            FileSystemResource qrImage = new FileSystemResource(new File(qrCodePath));
+            helper.addInline("qrCodeImage", qrImage);
+
+            emailConfig.mailSender().send(mimeMessage);
+            log.info("Registration email with QR sent to: {}", email);
             return true;
+
         } catch (Exception e) {
-            log.error("Error while sending registration success email: {}", e.getMessage());
+            log.error("Error while sending registration success email: {}", e.getMessage(), e);
             return false;
         }
     }

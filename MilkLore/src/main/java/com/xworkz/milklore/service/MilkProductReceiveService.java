@@ -2,6 +2,7 @@ package com.xworkz.milklore.service;
 
 import com.xworkz.milklore.dto.MilkProductReceiveDTO;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -13,4 +14,6 @@ public interface MilkProductReceiveService {
     Integer getCountOFMilkDetailsByEmail(String email);
     List<MilkProductReceiveDTO> getAllDetailsBySupplier(Long notificationId);
     LocalDate getLastCollectedDate(Integer supplierId);
-    Double getTotalLitre(Integer supplierId);}
+    Double getTotalLitre(Integer supplierId);
+    void exportAllMilkCollectData(HttpServletResponse response);
+}

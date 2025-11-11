@@ -16,5 +16,5 @@ public interface MilkProductReceiveRepo {
     Integer getCountOFMilkDetailsByEmail(String email);
     LocalDate getLastCollectedDate(Integer supplierId);
     Double getTotalLitre(Integer supplierId);
-
+    List<MilkProductReceiveEntity> getAllEntityForExport();
 }

@@ -272,6 +272,9 @@
                     <div class="card-body">
                         <p><strong>Total Users:</strong> 120</p>
                         <p><strong>Total Products:</strong> 45</p>
+                        <p class="card-text fs-4 fw-bold">
+                            <fmt:formatNumber value="${totalMilkCollected}" type="number" maxFractionDigits="2" minFractionDigits="2"/> L
+                        </p>
                         <p><strong>Orders Today:</strong> 8</p>
                         <p><strong>Revenue:</strong> ₹12,350</p>
                         <div class="progress mt-3" style="height:6px;">

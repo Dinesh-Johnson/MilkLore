@@ -259,4 +259,24 @@ public class MilkProductReceiveRepoImpl implements MilkProductReceiveRepo{
         }
         return lastDate;
     }
+    @Override
+    public List<MilkProductReceiveEntity> getAllEntityForExport() {
+        log.info("getAllEntityForExport method in collect milk repo");
+        EntityManager entityManager=null;
+        try {
+            entityManager=entityManagerFactory.createEntityManager();
+            return entityManager.createQuery("SELECT m FROM MilkProductReceiveEntity m join fetch m.supplier join fetch m.admin order by m.milkProductReceiveId", MilkProductReceiveEntity.class)
+                    .getResultList();
+        } catch (PersistenceException e)
+        {
+            log.error(e.getMessage());
+        }finally {
+            if(entityManager!=null && entityManager.isOpen())
+            {
+                entityManager.close();
+                log.info("EntityManager is closed");
+            }
+        }
+        return null;
+    }
 }

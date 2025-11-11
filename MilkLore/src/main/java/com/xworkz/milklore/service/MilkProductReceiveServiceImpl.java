@@ -12,6 +12,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -150,4 +153,35 @@ public class MilkProductReceiveServiceImpl implements MilkProductReceiveService 
     }
 
 
+    @Override
+    public void exportAllMilkCollectData(HttpServletResponse response) {
+        log.info("exportAllMilkCollectData method in collect milk service");
+        List<MilkProductReceiveEntity> collectMilk = collectMilkRepository.getAllEntityForExport();
+        try {
+            response.setContentType("text/csv");
+            response.setHeader("Content-Disposition", "attachment; filename=collect_milk_data.csv");
+
+            PrintWriter writer = response.getWriter();
+            writer.println("CollectMilkId,SupplierName,CollectedBy,TypeOfMilk,Price,Quantity,TotalAmount,CollectedDate");
+
+            for (MilkProductReceiveEntity milk : collectMilk) {
+                writer.println(
+                        milk.getMilkProductReceiveId() + "," +
+                                milk.getSupplier().getFirstName() + " " + milk.getSupplier().getLastName() + "," +
+                                milk.getAdmin().getAdminName() + "," +
+                                milk.getTypeOfMilk() + "," +
+                                milk.getPrice() + "," +
+                                milk.getQuantity() + "," +
+                                milk.getTotalAmount() + "," +
+                                milk.getCollectedDate()
+                );
+            }
+
+            writer.flush();
+            writer.close();
+            log.info("Export collect milk data list in csv is done");
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
 }

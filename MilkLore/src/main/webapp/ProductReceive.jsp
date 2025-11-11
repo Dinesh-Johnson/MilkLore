@@ -179,6 +179,12 @@
 
     <!-- Form to get milk collection list for a specific date -->
     <div class="card shadow-sm mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="mb-4">Collected Milk Details</h1>
+            <a href="redirectToExportAllMilkCollectData?email=${dto.email}" class="btn btn-primary">
+                <i class="fa-solid fa-file-export me-2"></i>Export All Data
+            </a>
+        </div>
         <div class="card-body">
             <jsp:useBean id="now" class="java.util.Date"/>
             <fmt:formatDate value="${now}" pattern="yyyy-MM-dd" var="today"/>

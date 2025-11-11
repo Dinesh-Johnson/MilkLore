@@ -51,6 +51,9 @@ public class SupplierServiceImpl implements SupplierService{
     @Autowired
     private PaymentDetailsRepository paymentDetailsRepository;
 
+    @Autowired
+    private QrGeneratorService qrGeneratorService;
+
     private static final int OTP_EXPIRY_MINUTES = 5;
 
     public SupplierServiceImpl(){
@@ -89,13 +92,11 @@ public class SupplierServiceImpl implements SupplierService{
 
         if (supplierRepo.addSupplier(supplierEntity)) {
             log.info("supplier details saved");
-            if (emailSender.mailForSupplierRegisterSuccess(
-                    supplierEntity.getEmail(),
-                    supplierEntity.getFirstName() + " " + supplierEntity.getLastName())) {
+            SupplierEntity supplier=supplierRepo.getSupplierByEmail(supplierEntity.getEmail());
+            String qrcode= qrGeneratorService.generateSupplierQR(supplier.getSupplierId(),supplier.getEmail(),supplier.getPhoneNumber());
+            if(emailSender.mailForSupplierRegisterSuccess(supplierEntity.getEmail(),supplierEntity.getFirstName()+supplierEntity.getLastName(),qrcode)){
                 log.info("Mail sent to supplier");
                 return true;
-            } else {
-                log.error("Mail not sent");
             }
         } else {
             log.error("Supplier details not saved");
@@ -511,7 +512,7 @@ public class SupplierServiceImpl implements SupplierService{
             companyCell.addElement(new Paragraph("Phone: +91-98765-43210 | Email: contact@milklore.in", normalFont));
 
             // Right: Logo
-            String logoPath = "/path/to/milklore_logo.png"; // 🔁 Replace this path
+            String logoPath = "D:\\MilkLore\\MilkLore\\MilkLore\\src\\main\\webapp\\images\\milklore.png"; // 🔁 Replace this path
             Image logo = Image.getInstance(logoPath);
             logo.scaleToFit(100, 60);
             PdfPCell logoCell = new PdfPCell(logo, false);

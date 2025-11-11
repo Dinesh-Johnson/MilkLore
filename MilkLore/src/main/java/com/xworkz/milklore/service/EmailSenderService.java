@@ -9,10 +9,11 @@ import java.util.List;
 
 public interface EmailSenderService {
     boolean mailSend(String email);
-    boolean mailForSupplierRegisterSuccess(String email,String supplierName);
+    boolean mailForSupplierRegisterSuccess(String email,String supplierName,String qrCodePath);
     boolean supplierMailOtp(String email,String otp);
     boolean mailForSupplierBankDetails(String email, SupplierBankDetailsEntity bankDetails);
     boolean mailForSupplierPayment(SupplierEntity supplier, PaymentDetailsEntity paymentDetails);
     boolean mailForBankDetailsRequest(SupplierEntity supplier);
     boolean mailForAdminPaymentSummary(List<PaymentDetailsDTO> payments);
+
 }
