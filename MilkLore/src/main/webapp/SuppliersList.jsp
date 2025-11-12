@@ -67,6 +67,59 @@
             text-decoration: underline;
             opacity: 0.9;
         }
+        /* ✅ Fix space below navbar */
+/* ✅ Fix navbar overlap */
+body {
+    padding-top: 80px;
+}
+
+/* ✅ Page Title */
+h2.fw-bold.text-primary {
+    font-size: 1.8rem;
+    letter-spacing: 0.5px;
+    color: #4a4eea;
+}
+
+/* ✅ Toolbar Card */
+.bg-white.rounded-3.shadow-sm.border.p-3 {
+    border-left: 5px solid #667eea;
+    transition: box-shadow 0.3s ease;
+}
+.bg-white.rounded-3.shadow-sm.border.p-3:hover {
+    box-shadow: 0 0.75rem 1.5rem rgba(102, 126, 234, 0.15);
+}
+
+/* ✅ Buttons & Inputs Consistency */
+.btn-outline-primary.btn-sm,
+.btn-outline-success.btn-sm {
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-primary.btn-sm:hover,
+.btn-outline-success.btn-sm:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.1);
+}
+
+form input[type="file"] {
+    max-width: 220px;
+}
+
+@media (max-width: 768px) {
+    .bg-white.rounded-3.shadow-sm.border.p-3 {
+        text-align: center;
+    }
+    .bg-white.rounded-3.shadow-sm.border.p-3 form {
+        justify-content: center;
+    }
+    h2.fw-bold.text-primary {
+        text-align: center;
+    }
+}
+
+
     </style>
 </head>
 <body>
@@ -87,20 +140,12 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item">
-                    <a class="nav-link" href="redirectToAdminSuccess?email=${dto.email}">
-                        <i class="fas fa-tachometer-alt me-1"></i> Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="redirectToMilkSuppliersList?email=${dto.email}&page=1&size=10">
-                        <i class="fa-solid fa-bottle-droplet me-1"></i> Milk Suppliers
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="redirectToProductsPrice?email=${dto.email}"><i
-                            class="fa-solid fa-tag me-2"></i> Products Price</a>
-                </li>
+                <li class="nav-item"><a class="nav-link" href="redirectToAdminSuccess?email=${dto.email}"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="redirectToAdminPaymentHistory?email=${dto.email}&page=1&size=10"><i class="fa-solid fa-money-bill-transfer me-2"></i>Payment History</a></li>
+                <li class="nav-item"><a class="nav-link" href="redirectToCollectMilk?email=${dto.email}"><i class="fa-solid fa-box me-2"></i>Manage Products</a></li>
+                <li class="nav-item"><a class="nav-link" href="redirectToProductsPrice?email=${dto.email}"><i class="fa-solid fa-tag me-2"></i>Products Price</a></li>
+                <li class="nav-item"><a class="nav-link" href="redirectToMilkSuppliersList?email=${dto.email}&page=1&size=10"><i class="fa-solid fa-bottle-droplet me-2"></i>Milk Suppliers</a></li>
+                <li class="nav-item"><a class="nav-link active" href="redirectToGetCollectMilkList?email=${dto.email}"><i class="fa-solid fa-glass-water-droplet me-2"></i>Milk Collect List</a></li>
                 <li class="nav-item dropdown">
                     <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button"
                        data-bs-toggle="dropdown" aria-expanded="false">
@@ -170,19 +215,59 @@
 </nav>
 
 <!-- Main content -->
-<div class="container" style="margin-top: 80px;">
-    <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h2><i class="fas fa-cow me-2"></i> Milk Suppliers</h2>
-        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
-            <i class="fas fa-plus me-1"></i> Add Supplier
-        </button>
-
-        <form action="searchSuppliers" method="get" class="d-flex">
-            <input type="hidden" name="email" value="${dto.email}">
-            <input type="text" name="keyword" class="form-control me-2" placeholder="Search suppliers...">
-            <button type="submit" class="btn btn-primary">Search</button>
-        </form>
+<!-- 🌿 Page Title -->
+<div class="container mt-5 pt-4">
+    <div class="mb-3">
+        <h2 class="fw-bold text-primary d-flex align-items-center">
+            <i class="fa-solid fa-bottle-droplet me-2"></i> Milk Suppliers
+        </h2>
+        <hr class="mt-2 mb-4" style="width: 80px; height: 3px; background-color: #667eea; border: none; border-radius: 2px;">
     </div>
+
+    <!-- 🌿 Toolbar Box -->
+    <div class="bg-white rounded-3 shadow-sm border p-3 mb-4">
+        <div class="row g-3 align-items-center justify-content-between">
+
+            <!-- Left: Import CSV -->
+            <div class="col-lg-5 col-md-6 d-flex flex-wrap align-items-center">
+                <form action="importForSupplierRegister" method="post" enctype="multipart/form-data"
+                      class="d-flex align-items-center w-100">
+                    <input type="hidden" name="email" value="${dto.email}">
+                    <input type="file" name="file" id="fileInput"
+                           class="form-control form-control-sm"
+                           accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                           required>
+                    <button type="submit" class="btn btn-outline-success btn-sm ms-2">
+                        <i class="fa-solid fa-file-import me-1"></i> Import
+                    </button>
+                </form>
+            </div>
+
+            <!-- Center: Add Supplier (now outlined, compact, and elegant) -->
+            <div class="col-lg-2 col-md-3 text-center">
+                <button class="btn btn-outline-primary btn-sm w-100"
+                        data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                    <i class="fas fa-plus me-1"></i> Add Supplier
+                </button>
+            </div>
+
+            <!-- Right: Search -->
+            <div class="col-lg-5 col-md-6">
+                <form action="searchSuppliers" method="get" class="d-flex">
+                    <input type="hidden" name="email" value="${dto.email}">
+                    <input type="text" name="keyword" class="form-control form-control-sm me-2"
+                           placeholder="Search suppliers...">
+                    <button type="submit" class="btn btn-outline-primary btn-sm">
+                        <i class="fa-solid fa-magnifying-glass me-1"></i> Search
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
 
     <!-- Toast Notifications -->
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 1100">

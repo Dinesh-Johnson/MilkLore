@@ -19,6 +19,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.sql.DataSource;
+import javax.validation.Validation;
 import java.util.Properties;
 
 @PropertySource("classpath:application.properties")
@@ -104,6 +105,11 @@ public class AppConfiguration implements WebMvcConfigurer {
         properties.setProperty("hibernate.show_sql", environment.getProperty("hibernate.show_sql"));
         properties.setProperty("hibernate.format_sql", environment.getProperty("hibernate.format_sql"));
         return properties;
+    }
+
+    @Bean
+    public javax.validation.Validator validator() {
+        return Validation.buildDefaultValidatorFactory().getValidator();
     }
 
 }

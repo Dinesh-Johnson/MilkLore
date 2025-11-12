@@ -1,13 +1,7 @@
 package com.xworkz.milklore.controller;
 
-import com.xworkz.milklore.dto.AdminDTO;
-import com.xworkz.milklore.dto.PaymentDetailsDTO;
-import com.xworkz.milklore.dto.SupplierBankDetailsDTO;
-import com.xworkz.milklore.dto.SupplierDTO;
-import com.xworkz.milklore.service.AdminService;
-import com.xworkz.milklore.service.MilkProductReceiveService;
-import com.xworkz.milklore.service.NotificationService;
-import com.xworkz.milklore.service.SupplierService;
+import com.xworkz.milklore.dto.*;
+import com.xworkz.milklore.service.*;
 import com.xworkz.milklore.utill.CommonControllerHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +17,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -49,11 +46,17 @@ public class SupplierController {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
+    @Value("${supplier-upload.path}")
+    private String uploadPath;
+
     @Autowired
     private MilkProductReceiveService collectMilkService;
 
     @Autowired
     private NotificationService paymentNotificationService;
+
+    @Autowired
+    private SupplierImportService supplierImportService;
 
     public SupplierController() {
         log.info("SupplierController constructor");
@@ -200,59 +203,77 @@ public class SupplierController {
     @PostMapping("/verifyOtp")
     public String verifyOtp(@RequestParam String email,
                             @RequestParam String otp,
-                            Model model) {
+                            Model model,
+                            HttpSession session) {
+
         email = email.trim();
         otp = otp.trim();
-
         boolean verified = supplierService.verifyOtp(email, otp);
 
         if (verified) {
-            // Store email in
+            // ✅ Save supplier email in session
+            session.setAttribute("supplierEmail", email);
 
-            // Add email to model for the current request
-            model.addAttribute("email", email);
-
-            // Get supplier details to pass to the dashboard
             SupplierDTO dto = supplierService.getSupplierDetailsByEmail(email);
             if (dto != null) {
                 model.addAttribute("dto", dto);
             }
-            return "SupplierDashboard"; // JSP page for dashboard
+            return getSupplierDashboardPage(email, model,session); // Go to dashboard
         } else {
-            // OTP wrong → reopen modal with error
             model.addAttribute("email", email);
-            model.addAttribute("otpSent", true);           // keep modal styling
-            model.addAttribute("showOtpModal", true);      // show modal again
+            model.addAttribute("otpSent", true);
+            model.addAttribute("showOtpModal", true);
             model.addAttribute("message", "Invalid or expired OTP. Try again.");
-
-            return "SupplierLogin"; // JSP page
+            return "SupplierLogin";
         }
     }
+
     @GetMapping("/redirectToSupplierDashboard")
-    public String getSupplierDashboardPage(@RequestParam String email, Model model) {
+    public String getSupplierDashboardPage(@RequestParam(required = false) String email,
+                                           Model model,
+                                           HttpSession session) {
         log.info("getSupplierDashboardPage method in supplier controller");
-        SupplierDTO dto = supplierService.getSupplierDetailsByEmail(email);
-        LocalDate lastDate=collectMilkService.getLastCollectedDate(dto.getSupplierId());
-        if(lastDate==null)
-            model.addAttribute("lastCollectedDate","Yet to collect");
-        else model.addAttribute("lastCollectedDate",lastDate);
 
-        Double litres=collectMilkService.getTotalLitre(dto.getSupplierId());
-        if(litres==null)
-            model.addAttribute("totalLitres",0);
-        else model.addAttribute("totalLitres",litres);
+        // ✅ Use session email if not provided
+        if (email == null || email.trim().isEmpty()) {
+            email = (String) session.getAttribute("supplierEmail");
+            log.info("Email fetched from session: {}", email);
+        }
 
-        Double amount=paymentNotificationService.getTotalAmountPaid(dto.getSupplierId());
-        if(amount==null)
-            model.addAttribute("totalAmountPaid","No Collection");
-        else model.addAttribute("totalAmountPaid","Rs."+amount+"/-");
+        if (email == null || email.trim().isEmpty()) {
+            log.warn("Email missing or session expired");
+            model.addAttribute("errorMessage", "Session expired. Please log in again.");
+            return "SupplierLogin";
+        }
+
+        SupplierDTO dto = supplierService.getSupplierDetailsByEmail(email.trim());
+        if (dto == null) {
+            model.addAttribute("errorMessage", "No supplier found for " + email);
+            return "SupplierLogin";
+        }
+
+        // ✅ Now safely get all supplier-related data
+        LocalDate lastDate = collectMilkService.getLastCollectedDate(dto.getSupplierId());
+        model.addAttribute("lastCollectedDate", lastDate == null ? "Yet to collect" : lastDate);
+
+        Double litres = collectMilkService.getTotalLitre(dto.getSupplierId());
+        model.addAttribute("totalLitres", litres == null ? 0 : litres);
+
+        Double amount = paymentNotificationService.getTotalAmountPaid(dto.getSupplierId());
+        model.addAttribute("totalAmountPaid", amount == null ? "No Collection" : "Rs." + amount + "/-");
+
+        model.addAttribute("paymentList", paymentNotificationService.getPaymentDetailsForSupplier(dto));
+        model.addAttribute("collectionList", collectMilkService.getAllDetailsBySupplierEmail(email));
         model.addAttribute("dto", dto);
+
         return "SupplierDashboard";
     }
 
+
+
     @GetMapping("/redirectToUpdateSupplierProfile")
     public String getUpdateProfilePage(@RequestParam(required = false) String email,
-                                       Model model) {
+                                       Model model,HttpSession session) {
         log.info("getUpdateProfilePage method in supplier controller");
 
         // If email is not provided in request, try to get it from 
@@ -277,7 +298,7 @@ public class SupplierController {
 
 
     @PostMapping("updateSupplierProfile")
-    public String updateSupplierProfile(@Valid SupplierDTO supplierDTO, BindingResult bindingResult, @RequestParam(required = false)MultipartFile profilePicture, Model model)
+    public String updateSupplierProfile(@Valid SupplierDTO supplierDTO, BindingResult bindingResult, @RequestParam(required = false)MultipartFile profilePicture, Model model,HttpSession session)
     {
         log.info("updateSupplierProfile method in supplier controller");
         if(bindingResult.hasErrors())
@@ -304,7 +325,7 @@ public class SupplierController {
         }
         if(supplierService.updateSupplierDetailsBySupplier(supplierDTO))
         {
-            return getSupplierDashboardPage(supplierDTO.getEmail(),model);
+            return getSupplierDashboardPage(supplierDTO.getEmail(),model,session);
         }else {
             model.addAttribute("errorMessage","Details not updated");
             model.addAttribute("dto",supplierDTO);
@@ -321,7 +342,7 @@ public class SupplierController {
 
 
     @PostMapping("/updateBankDetails")
-    public String supplierUpdateBankDetails(@Valid SupplierBankDetailsDTO supplierBankDetailsDTO, BindingResult bindingResult, @RequestParam String email, Model model)
+    public String supplierUpdateBankDetails(@Valid SupplierBankDetailsDTO supplierBankDetailsDTO, BindingResult bindingResult, @RequestParam String email, Model model,HttpSession session)
     {
         log.info("supplierUpdateBankDetailsPage method in supplier controller");
         if(bindingResult.hasErrors())
@@ -336,7 +357,7 @@ public class SupplierController {
         if(supplierService.updateSupplierBankDetails(supplierBankDetailsDTO,email))
         {
             log.info("bank details updated");
-            return getSupplierDashboardPage(email,model);
+            return getSupplierDashboardPage(email,model,session);
         }else {
             model.addAttribute("bank",supplierBankDetailsDTO);
             model.addAttribute("dto.email",email);
@@ -386,6 +407,35 @@ public class SupplierController {
     {
         log.info("getInvoiceForSupplier method in supplier controller");
         supplierService.downloadInvoicePdf(supplierId, LocalDate.parse(periodStart), LocalDate.parse(periodEnd), LocalDate.parse(paymentDate), response);
+    }
+
+    @PostMapping("/importForSupplierRegister")
+    public String uploadFile(@RequestParam("file") MultipartFile file,@RequestParam String email, Model model) {
+        log.info("uploadFile method in SupplierController");
+        try {
+            if (file.isEmpty()) {
+                model.addAttribute("error", "Please choose a file to upload.");
+                return "supplier";
+            }
+
+            File directory = new File(uploadPath);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            Path filePath = Paths.get(uploadPath, fileName);
+
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            List<Integer> invalidRows=supplierImportService.importSuppliersFromExcel(filePath.toString());
+            invalidRows.forEach(e->log.error("row:{}",e));
+            log.info("File uploaded successfully to: {}", filePath.toAbsolutePath());
+            model.addAttribute("success", "File uploaded successfully: " + fileName);
+        } catch (Exception e) {
+            log.error("Upload failed: " + e.getMessage());
+            model.addAttribute("error", "Error saving file: " + e.getMessage());
+        }
+        return getMilkSupplierList(email,1,10,model);
     }
 
 }

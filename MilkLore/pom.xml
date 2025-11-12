@@ -21,6 +21,7 @@
         <swagger.version>2.9.2</swagger.version>
         <jackson-databind.version>2.17.2</jackson-databind.version>
         <zxing.qr-code.version>3.5.2</zxing.qr-code.version>
+        <apache-poi.version>5.2.3</apache-poi.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
@@ -159,6 +160,11 @@
             <groupId>com.google.zxing</groupId>
             <artifactId>javase</artifactId>
             <version>${zxing.qr-code.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${apache-poi.version}</version>
         </dependency>
     </dependencies>
   <build>

@@ -2,8 +2,10 @@ package com.xworkz.milklore.controller;
 
 import com.xworkz.milklore.dto.AdminDTO;
 import com.xworkz.milklore.dto.MilkProductReceiveDTO;
+import com.xworkz.milklore.dto.SupplierDTO;
 import com.xworkz.milklore.service.AdminService;
 import com.xworkz.milklore.service.MilkProductReceiveService;
+import com.xworkz.milklore.service.SupplierService;
 import com.xworkz.milklore.utill.CommonControllerHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,9 @@ public class MilkProductReceiveController {
 
     @Autowired
     private CommonControllerHelper controllerHelper;
+
+    @Autowired
+    private SupplierService supplierService;
 
     public MilkProductReceiveController()
     {
@@ -116,14 +121,26 @@ public class MilkProductReceiveController {
 
     @GetMapping("/getCollectMilkListBySupplierEmail")
     public String getCollectMilkListBySupplierEmail(@RequestParam String email, Model model) {
-        log.info("Fetching milk collection for email={}", email);
+        log.info("Fetching milk collection for supplier email={}", email);
+
+        // ✅ Fetch the supplier instead of admin
+        SupplierDTO supplierDTO = supplierService.getSupplierDetailsByEmail(email);
+        if (supplierDTO == null) {
+            log.error("No supplier found with email {}", email);
+            model.addAttribute("errorMessage", "No supplier found with email: " + email);
+            return "SupplierDashboard"; // fallback or login
+        }
+
         List<MilkProductReceiveDTO> collectMilkList = collectMilkService.getAllDetailsBySupplierEmail(email);
-        collectMilkList.forEach(System.out::println);
         log.info("Service returned {} records", collectMilkList.size());
+
+        // ✅ Add correct model attributes
         model.addAttribute("collectMilkList", collectMilkList);
-        controllerHelper.addNotificationData(model,email);
-        AdminDTO adminDTO=adminService.viewAdminByEmail(email);
-        model.addAttribute("dto",adminDTO);
+        model.addAttribute("dto", supplierDTO);
+
+        // ✅ Add notifications if available
+        controllerHelper.addNotificationData(model, email);
+
         return "ViewProductReceive";
     }
 

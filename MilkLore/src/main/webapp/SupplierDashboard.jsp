@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Milklore | Supplier Dashboard</title>
-    <link rel="shortcut icon" href="images/logo.png" type="image/x-icon">
+    <link rel="shortcut icon" href="images/milklore.png" type="image/x-icon">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -15,6 +15,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
     <style>
+
         :root {
             --primary-color: #4a6fa5;
             --secondary-color: #6b8cae;
@@ -145,7 +146,7 @@
                             <hr class="dropdown-divider">
                         </li>
                         <li>
-                            <a class="dropdown-item text-danger" href="logout">
+                            <a class="dropdown-item text-danger" href="logoutSupplier">
                                 <i class="fas fa-sign-out-alt me-2"></i>Logout
                             </a>
                         </li>
@@ -157,31 +158,32 @@
 </nav>
 
 <!-- Main Content -->
+<!-- Main Content -->
 <div class="container" style="margin-top: 80px;">
+
     <!-- Welcome Section -->
     <div class="welcome-section p-4 mb-4">
         <div class="row align-items-center">
             <div class="col-md-8">
                 <h2 class="fw-bold mb-2">Welcome back, ${dto.firstName}!</h2>
-                <p class="text-muted mb-0">Here's your dashboard overview and recent activities.</p>
+                <p class="text-muted mb-0">Here’s your complete dashboard overview.</p>
             </div>
             <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <span class="badge bg-primary p-2">
-                        <i class="fas fa-shield-alt me-1"></i> Supplier Account
-                    </span>
+                <span class="badge bg-primary p-2">
+                    <i class="fas fa-shield-alt me-1"></i> Supplier Account
+                </span>
             </div>
         </div>
     </div>
 
-    <!-- Stats Cards -->
+    <!-- Dashboard Stats -->
     <div class="row g-4 mb-4">
         <div class="col-md-4">
             <div class="stat-card bg-primary rounded-3 h-100 p-4">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="text-uppercase text-white-50 mb-1">Total Collection</h6>
-                        <h2 class="mb-0 text-white">10 Ltr</h2>
-                        <span class="text-white-50 small">+2.5% from last month</span>
+                        <h6 class="text-uppercase text-white-50 mb-1">Total Milk Collected</h6>
+                        <h2 class="mb-0 text-white">${totalLitres} Ltr</h2>
                     </div>
                     <div class="icon-shape bg-white bg-opacity-10 rounded-circle p-3">
                         <i class="fas fa-fw fa-cow text-white"></i>
@@ -189,13 +191,13 @@
                 </div>
             </div>
         </div>
+
         <div class="col-md-4">
             <div class="stat-card bg-success rounded-3 h-100 p-4">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="text-uppercase text-white-50 mb-1">Pending Payments</h6>
-                        <h2 class="mb-0 text-white">₹100</h2>
-                        <span class="text-white-50 small">Next payout in 2 days</span>
+                        <h6 class="text-uppercase text-white-50 mb-1">Total Amount Paid</h6>
+                        <h2 class="mb-0 text-white">${totalAmountPaid}</h2>
                     </div>
                     <div class="icon-shape bg-white bg-opacity-10 rounded-circle p-3">
                         <i class="fas fa-fw fa-wallet text-white"></i>
@@ -203,13 +205,13 @@
                 </div>
             </div>
         </div>
+
         <div class="col-md-4">
             <div class="stat-card bg-warning rounded-3 h-100 p-4">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="text-uppercase text-white-50 mb-1">Last Collection</h6>
-                        <h2 class="mb-0 text-white">10/03/2025</h2>
-                        <span class="text-white-50 small">2 days ago</span>
+                        <h6 class="text-uppercase text-white-50 mb-1">Last Collection Date</h6>
+                        <h2 class="mb-0 text-white">${lastCollectedDate}</h2>
                     </div>
                     <div class="icon-shape bg-white bg-opacity-10 rounded-circle p-3">
                         <i class="fas fa-fw fa-calendar-check text-white"></i>
@@ -219,197 +221,141 @@
         </div>
     </div>
 
-    <!-- Recent Activity Section -->
+    <!-- Two-Column Layout -->
     <div class="row">
+        <!-- Left Side: Tables -->
         <div class="col-lg-8">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0">Recent Activities</h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex mb-4">
-                        <div class="flex-shrink-0">
-                            <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3">
-                                <i class="fas fa-fw fa-cow"></i>
-                            </div>
-                        </div>
-                        <div class="ms-3">
-                            <h6 class="mb-1">Milk Collection Added</h6>
-                            <p class="text-muted small mb-0">You've added 2L of milk to your collection</p>
-                            <span class="text-muted small">2 hours ago</span>
-                        </div>
-                    </div>
-                    <div class="d-flex mb-4">
-                        <div class="flex-shrink-0">
-                            <div class="bg-success bg-opacity-10 text-success rounded-circle p-3">
-                                <i class="fas fa-fw fa-money-bill-wave"></i>
-                            </div>
-                        </div>
-                        <div class="ms-3">
-                            <h6 class="mb-1">Payment Received</h6>
-                            <p class="text-muted small mb-0">Payment of ₹500 has been credited to your account</p>
-                            <span class="text-muted small">1 day ago</span>
-                        </div>
-                    </div>
-                    <div class="d-flex">
-                        <div class="flex-shrink-0">
-                            <div class="bg-info bg-opacity-10 text-info rounded-circle p-3">
-                                <i class="fas fa-fw fa-bell"></i>
-                            </div>
-                        </div>
-                        <div class="ms-3">
-                            <h6 class="mb-1">New Notification</h6>
-                            <p class="text-muted small mb-0">Your profile has been updated successfully</p>
-                            <span class="text-muted small">3 days ago</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 mt-4 mt-lg-0">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0">Quick Actions</h5>
-                </div>
-                <div class="card-body">
-                    <a href="redirectToMilkCollection?email=${dto.email}" class="btn btn-outline-primary w-100 mb-3">
-                        <i class="fas fa-plus-circle me-2"></i>Add Milk Collection
-                    </a>
-<!--                    <a href="redirectToPaymentStatus?email=${dto.email}" class="btn btn-outline-success w-100 mb-3">-->
-<!--                        <i class="fas fa-history me-2"></i>View Payment History-->
-<!--                    </a>-->
-                    <a href="#" class="btn btn-outline-info w-100 mb-3" data-bs-toggle="modal" data-bs-target="#profileModal">
-                        <i class="fas fa-user-edit me-2"></i>Update Profile
-                    </a>
-                    <a href="#" class="btn btn-outline-secondary w-100">
-                        <i class="fas fa-question-circle me-2"></i>Help & Support
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Profile Modal -->
-<div class="modal fade" id="profileModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));">
-                <h5 class="modal-title text-white">My Profile</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="text-center mb-4">
-                    <div class="position-relative d-inline-block">
+            <!-- Milk Collections -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-cow me-2 text-primary"></i>Recent Milk Collections</h5>
+                    <a href="getCollectMilkListBySupplierEmail?email=${dto.email}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Milk Type</th>
+                            <th>Quantity (L)</th>
+                            <th>Price (₹)</th>
+                            <th>Total (₹)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
                         <c:choose>
-                            <c:when test="${empty dto.profilePath}">
-                                <img src="images/default-avatar.png" class="rounded-circle border border-4 border-light" width="120" height="120" alt="Profile">
+                            <c:when test="${empty collectionList}">
+                                <tr><td colspan="5" class="text-center text-muted">No milk collections found.</td></tr>
                             </c:when>
                             <c:otherwise>
-                                <img src="<c:url value='/uploads/${dto.profilePath}'/>" class="rounded-circle border border-4 border-light" width="120" height="120" alt="Profile">
+                                <c:forEach var="milk" items="${collectionList}">
+                                    <tr>
+                                        <td>${milk.collectedDate}</td>
+                                        <td>${milk.typeOfMilk}</td>
+                                        <td>${milk.quantity}</td>
+                                        <td>${milk.price}</td>
+                                        <td>${milk.totalAmount}</td>
+                                    </tr>
+                                </c:forEach>
                             </c:otherwise>
                         </c:choose>
-                        <button class="btn btn-sm btn-primary rounded-circle position-absolute bottom-0 end-0" style="width: 36px; height: 36px;">
-                            <i class="fas fa-camera"></i>
-                        </button>
-                    </div>
-<!--                    <h4 class="mt-3 mb-0">${dto.firstName} ${dto.lastName}</h4>-->
-<!--                    <span class="badge bg-primary mt-2">${dto.typeOfMilk} Supplier</span>-->
-                </div>
-
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label class="form-label text-muted small mb-1">Full Name</label>
-                            <div class="form-control bg-light">${dto.firstName} ${dto.lastName}</div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label text-muted small mb-1">Email Address</label>
-                            <div class="form-control bg-light">${dto.email}</div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label text-muted small mb-1">Phone Number</label>
-                            <div class="form-control bg-light">${dto.phoneNumber}</div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label text-muted small mb-1">Milk Type</label>
-                            <div class="form-control bg-light">${dto.typeOfMilk}</div>
-                        </div>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <a href="redirectToUpdateSupplierProfile?email=${dto.email}" class="btn btn-primary">
-                    <i class="fas fa-edit me-2"></i>Edit Profile
-                </a>
+
+            <!-- Payment History -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-money-bill-wave me-2 text-success"></i>Recent Payments</h5>
+                    <a href="redirectToPaymentStatus?email=${dto.email}" class="btn btn-sm btn-outline-success">View All</a>
+                </div>
+                <div class="card-body table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                        <tr>
+                            <th>Payment Date</th>
+                            <th>Period</th>
+                            <th>Amount (₹)</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <c:choose>
+                            <c:when test="${empty paymentList}">
+                                <tr><td colspan="4" class="text-center text-muted">No payment records found.</td></tr>
+                            </c:when>
+                            <c:otherwise>
+                                <c:forEach var="pay" items="${paymentList}">
+                                    <tr>
+                                        <td>${pay.paymentDate}</td>
+                                        <td>${pay.periodStart} - ${pay.periodEnd}</td>
+                                        <td>${pay.amountPaid}</td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${pay.status == 'PAID'}">
+                                                    <span class="badge bg-success">Paid</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="badge bg-warning text-dark">Pending</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </c:otherwise>
+                        </c:choose>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: Profile & Bank -->
+        <div class="col-lg-4 mt-4 mt-lg-0">
+
+            <!-- Profile Overview -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0"><i class="fas fa-user me-2 text-info"></i>Profile Overview</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> ${dto.firstName} ${dto.lastName}</p>
+                    <p><strong>Email:</strong> ${dto.email}</p>
+                    <p><strong>Phone:</strong> ${dto.phoneNumber}</p>
+                    <p><strong>Milk Type:</strong> ${dto.typeOfMilk}</p>
+                    <a href="redirectToUpdateSupplierProfile?email=${dto.email}" class="btn btn-outline-primary btn-sm w-100 mt-2">
+                        <i class="fas fa-edit me-2"></i>Update Profile
+                    </a>
+                </div>
+            </div>
+
+            <!-- Bank Details -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0"><i class="fa-solid fa-building-columns me-2 text-secondary"></i>Bank Details</h5>
+                </div>
+                <div class="card-body">
+                    <c:choose>
+                        <c:when test="${empty dto.supplierBankDetails}">
+                            <div class="alert alert-warning">No bank details found.</div>
+                            <a href="redirectToUpdateSupplierBankDetails?email=${dto.email}" class="btn btn-sm btn-primary w-100">Add Bank Details</a>
+                        </c:when>
+                        <c:otherwise>
+                            <p><strong>Bank:</strong> ${dto.supplierBankDetails.bankName}</p>
+                            <p><strong>Branch:</strong> ${dto.supplierBankDetails.bankBranch}</p>
+                            <p><strong>Account:</strong> ${dto.supplierBankDetails.accountNumber}</p>
+                            <p><strong>IFSC:</strong> ${dto.supplierBankDetails.IFSCCode}</p>
+                            <p><strong>Type:</strong> ${dto.supplierBankDetails.accountType}</p>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
             </div>
         </div>
     </div>
 </div>
-<!-- Bank Details Modal -->
-<div class="modal fade" id="supplierBankModal" tabindex="-1" aria-labelledby="supplierBankModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h5 class="modal-title" id="supplierBankModalLabel">
-                    <i class="fa-solid fa-building-columns me-2"></i>Bank Details
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
 
-            <!-- Modal Body -->
-            <div class="modal-body">
-                <c:choose>
-                    <c:when test="${empty dto.supplierBankDetails}">
-                        <div class="alert alert-warning" role="alert">
-                            No bank details found. Please add your bank details.
-                        </div>
-                    </c:when>
-                    <c:otherwise>
-                        <div class="card p-3 shadow-sm">
-                            <ul class="list-group list-group-flush">
-                                <div class="row mb-2">
-                                    <div class="col-sm-4 fw-bold"><i class="fa-solid fa-building-columns me-2"></i>Bank Name:</div>
-                                    <div class="col-sm-8 text-break">${dto.supplierBankDetails.bankName}</div>
-                                </div>
-                                <div class="row mb-2">
-                                    <div class="col-sm-4 fw-bold"><i class="fa-solid fa-code-branch me-2"></i>Branch Name:</div>
-                                    <div class="col-sm-8 text-break">${dto.supplierBankDetails.bankBranch}</div>
-                                </div>
-                                <div class="row mb-2">
-                                    <div class="col-sm-4 fw-bold"><i class="fa-solid fa-hashtag me-2"></i>Account Number:</div>
-                                    <div class="col-sm-8 text-break">${dto.supplierBankDetails.accountNumber}</div>
-                                </div>
-                                <div class="row mb-2">
-                                    <div class="col-sm-4 fw-bold"><i class="fa-solid fa-key me-2"></i>IFSC Code:</div>
-                                    <div class="col-sm-8 text-break">${dto.supplierBankDetails.IFSCCode}</div>
-                                </div>
-                                <div class="row mb-2">
-                                    <div class="col-sm-4 fw-bold"><i class="fa-solid fa-list-check me-2"></i>Account Type:</div>
-                                    <div class="col-sm-8 text-break">${dto.supplierBankDetails.accountType}</div>
-                                </div>
-                            </ul>
-                        </div>
-                        <div class="alert alert-warning mt-3" role="alert">
-                            To update bank details, please contact Admin.
-                        </div>
-                    </c:otherwise>
-                </c:choose>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <c:if test="${empty dto.supplierBankDetails}">
-                    <a href="redirectToUpdateSupplierBankDetails?email=${dto.email}" class="btn btn-primary">Fill Bank Details</a>
-                </c:if>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 <!-- Footer -->

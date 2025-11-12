@@ -2,13 +2,13 @@
   "id" : 0,
   "title" : "Pure Milk",
   "description" : "Fresh, pasteurized milk straight from trusted farms.",
-  "price" : "20",
+  "price" : null,
   "imagePath" : "images/milk.png"
 }, {
   "id" : 0,
   "title" : "Curd",
   "description" : "Creamy, probiotic-rich curd for daily nourishment.",
-  "price" : "75",
+  "price" : null,
   "imagePath" : "images/curd.png"
 }, {
   "id" : 0,
