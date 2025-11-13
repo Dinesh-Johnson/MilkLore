@@ -1,16 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<html lang="en" data-bs-theme="light" xmlns:c="">
+<html lang="en" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - Milklore</title>
+    <title>Supplier Login - Milklore</title>
     <link rel="icon" type="image/png" href="images/icon.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- Custom CSS -->
-    <link href="css/style.css" rel="stylesheet"/>
     <style>
         :root {
             --primary-color: #4e73df;
@@ -39,10 +36,6 @@
             color: white !important;
         }
 
-        .navbar-brand img {
-            filter: none;
-        }
-
         .nav-link {
             color: rgba(255, 255, 255, 0.9) !important;
             font-weight: 500;
@@ -50,11 +43,13 @@
             transition: all 0.3s ease;
         }
 
-        .nav-link:hover, .nav-link:focus {
+        .nav-link:hover {
             color: white !important;
             transform: translateY(-1px);
         }
 
+        /* Login Card */
+        /* Login Section */
         .login-section {
             flex: 1;
             display: flex;
@@ -70,27 +65,34 @@
             overflow: hidden;
             transition: all 0.3s ease;
             border: none;
+            max-width: 500px;
+            margin: 0 auto;
         }
 
         .login-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.15);
+            box-shadow: 0 0.5rem 2rem 0 rgba(58, 59, 69, 0.2);
         }
 
-        .login-header {
+        .login-card .card-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 2rem;
             text-align: center;
+            border: none;
         }
 
-        .login-header h2 {
+        .login-card .card-header h4 {
             margin: 0;
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .login-body {
+        .login-card .card-body {
             padding: 2.5rem;
+            background-color: #fff;
         }
 
         .form-control, .form-select {
@@ -98,6 +100,7 @@
             padding: 0.75rem 1rem;
             border: 1px solid #d1d3e2;
             transition: all 0.3s ease;
+            margin-bottom: 1rem;
         }
 
         .form-control:focus, .form-select:focus {
@@ -105,13 +108,19 @@
             box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
         }
 
-        .form-label {
-            font-weight: 600;
-            color: #5a5c69;
-            margin-bottom: 0.5rem;
+        .login-card .form-control:focus {
+            border-color: #b7b9cc;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
         }
 
-        .btn-login {
+        .login-card .btn {
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: 0.35rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             padding: 0.75rem 2rem;
@@ -124,22 +133,10 @@
             letter-spacing: 0.5px;
         }
 
-        .btn-login:hover {
+        .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
             color: white;
-        }
-
-        .btn-link {
-            color: #4e73df;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .btn-link:hover {
-            color: #2e59d9;
-            text-decoration: underline;
         }
 
         /* Footer */
@@ -151,21 +148,9 @@
         }
 
         .footer h5 {
-            font-weight: 700;
+            font-weight: 600;
             margin-bottom: 1.25rem;
             position: relative;
-            display: inline-block;
-        }
-
-        .footer h5::after {
-            content: '';
-            position: absolute;
-            width: 50px;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.3);
-            bottom: -10px;
-            left: 0;
-            border-radius: 2px;
         }
 
         .footer a {
@@ -216,10 +201,6 @@
             .login-section {
                 padding: 4rem 0;
             }
-
-            .login-body {
-                padding: 1.5rem;
-            }
         }
     </style>
 </head>
@@ -243,92 +224,88 @@
                 <li class="nav-item">
                     <a class="nav-link" href="index.jsp"><i class="bi bi-house-door me-1"></i> Home</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="bi bi-box-seam me-1"></i> Products</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="bi bi-info-circle me-1"></i> About</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="bi bi-telephone me-1"></i> Contact</a>
-                </li>
             </ul>
         </div>
     </div>
 </nav>
 
 <!-- Login Section -->
-<section class="login-section d-flex justify-content-center align-items-center" style="min-height:100vh;">
-    <div class="card login-card p-4" style="max-width:400px; width:100%;">
-        <div class="card-header bg-primary text-white text-center">
-            <h4><i class="bi bi-person-fill-gear me-2"></i>Supplier Login</h4>
+<section class="login-section d-flex justify-content-center align-items-center" style="min-height:100vh; padding: 0 15px;">
+    <div class="card login-card">
+        <div class="card-header text-white">
+            <h4 class="mb-0"><i class="bi bi-person-fill-gear me-2"></i>Supplier Login</h4>
         </div>
         <div class="card-body">
-            <!-- Show general error -->
+            <!-- Error Message -->
             <c:if test="${not empty errorMessage}">
-                <p class="text-danger text-center">${errorMessage}</p>
+                <div class="alert alert-danger" role="alert">
+                    ${errorMessage}
+                </div>
             </c:if>
 
-            <!-- Send OTP Form -->
-            <form action="sendOtp" method="post">
-                <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input type="email" name="email" value="${email}" class="form-control" placeholder="Enter your email" required>
+            <!-- Success Message -->
+            <c:if test="${not empty successMessage}">
+                <div class="alert alert-success" role="alert">
+                    ${successMessage}
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Send OTP</button>
+            </c:if>
+
+            <!-- OTP Form -->
+            <form action="sendOtp" method="post" id="otpForm">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        <input type="email" class="form-control" id="email" name="email" value="${email}"
+                               placeholder="Enter your email" required>
+                    </div>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-send me-2"></i>Send OTP
+                    </button>
+                    <div class="text-center mt-3">
+                        <a href="index.jsp" class="text-decoration-none">
+                            <i class="bi bi-arrow-left me-1"></i> Back to Home
+                        </a>
+                    </div>
+                </div>
             </form>
 
-            <!-- Optional message -->
-            <c:if test="${not empty message}">
-                <p class="text-center mt-3
-                    <c:choose>
-                        <c:when test="${otpSent}">text-success</c:when>
-                <c:otherwise>text-danger</c:otherwise>
-                </c:choose>">
-                ${message}
-                </p>
-            </c:if>
+            <!-- OTP Verification Modal -->
+            <div class="modal fade" id="otpModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                            <h5 class="modal-title"><i class="bi bi-shield-lock me-2"></i>Verify OTP</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="text-muted mb-4">Please enter the OTP sent to your email</p>
+                            <form action="verifyOtp" method="post" id="verifyOtpForm">
+                                <input type="hidden" name="email" value="${email}">
+                                <div class="mb-3">
+                                    <label for="otp" class="form-label">Enter OTP</label>
+                                    <input type="text" class="form-control form-control-lg" id="otp" name="otp"
+                                           placeholder="Enter 6-digit OTP" required>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-check-circle me-2"></i>Verify OTP
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                <a href="forgot-password.jsp" class="text-decoration-none">Forgot Password?</a>
+            </div>
         </div>
     </div>
 </section>
-
-<!-- OTP Modal -->
-<div class="modal fade" id="otpModal" tabindex="-1" aria-hidden="true" data-show="${showOtpModal}">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">Verify OTP</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <form action="verifyOtp" method="post">
-                <div class="modal-body">
-                    <input type="hidden" name="email" value="${email}">
-                    <div class="mb-3">
-                        <label class="form-label">Enter OTP</label>
-                        <input type="text" name="otp" class="form-control" placeholder="Enter 6-digit OTP" required>
-                    </div>
-                    <!-- Countdown Timer Placeholder -->
-                    <div id="otpTimer" class="text-center text-muted mt-2"></div>
-
-                    <!-- Optional message -->
-                    <c:if test="${not empty message}">
-                        <p class="text-center
-                            <c:choose>
-                                <c:when test="${otpSent}">text-success</c:when>
-                        <c:otherwise>text-danger</c:otherwise>
-                        </c:choose>">
-                        ${message}
-                        </p>
-                    </c:if>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success w-100">Verify OTP</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 
 <!-- Footer -->
 <footer class="footer">
@@ -375,7 +352,7 @@
                 <p class="text-white-50">Subscribe to our newsletter for the latest updates and offers.</p>
                 <form class="mb-3">
                     <div class="input-group">
-                        <input type="email" class="form-control" placeholder="Your email" aria-label="Your email" required>
+                        <input type="email" class="form-control" placeholder="Your email" required>
                         <button class="btn btn-light" type="submit">
                             <i class="bi bi-send"></i>
                         </button>
@@ -392,9 +369,9 @@
         </div>
     </div>
 </footer>
+
 <!-- Back to Top Button -->
-<a href="#" class="btn btn-primary btn-lg position-fixed bottom-0 end-0 m-4 rounded-circle shadow"
-   id="back-to-top" style="width: 50px; height: 50px; display: none; z-index: 99;">
+<a href="#" class="btn btn-primary btn-lg position-fixed bottom-0 end-0 m-4 rounded-circle shadow" id="back-to-top" style="width: 50px; height: 50px; display: none; z-index: 99;">
     <i class="bi bi-arrow-up"></i>
 </a>
 
@@ -403,7 +380,44 @@
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- Custom Scripts -->
-<script src="js/supplier-login.js"></script>
+<script>
+    // Handle OTP modal display
+    $(document).ready(function() {
+        // Initialize the modal
+        const otpModal = new bootstrap.Modal(document.getElementById('otpModal'));
+        
+        // Check if we should show the modal
+        const showModal = ${showOtpModal != null ? showOtpModal : false};
+        
+        if (showModal) {
+            // Show the modal using Bootstrap's method
+            otpModal.show();
+            
+            // Ensure modal is interactive
+            $('body').addClass('modal-open');
+            $('.modal-backdrop').css('opacity', '0.5');
+        }
+        
+        // Handle modal close button
+        $('.btn-close').on('click', function() {
+            otpModal.hide();
+        });
+
+        // Back to top button
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 300) {
+                $('#back-to-top').fadeIn('slow');
+            } else {
+                $('#back-to-top').fadeOut('slow');
+            }
+        });
+
+        $('#back-to-top').click(function(e) {
+            e.preventDefault();
+            $('html, body').animate({scrollTop: 0}, 800);
+            return false;
+        });
+    });
+</script>
 </body>
 </html>

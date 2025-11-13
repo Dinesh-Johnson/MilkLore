@@ -231,7 +231,7 @@ form input[type="file"] {
             <!-- Left: Import CSV -->
             <div class="col-lg-5 col-md-6 d-flex flex-wrap align-items-center">
                 <form action="importForSupplierRegister" method="post" enctype="multipart/form-data"
-                      class="d-flex align-items-center w-100">
+                      class="d-flex align-items-center">
                     <input type="hidden" name="email" value="${dto.email}">
                     <input type="file" name="file" id="fileInput"
                            class="form-control form-control-sm"
