@@ -1,7 +1,6 @@
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
+<%@ include file="/WEB-INF/views/includes/sessionCheck.jspf" %>
 <html lang="en" xmlns:c="">
 <head>
     <meta charset="UTF-8">

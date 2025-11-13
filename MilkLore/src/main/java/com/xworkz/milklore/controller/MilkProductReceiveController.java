@@ -49,8 +49,9 @@ public class MilkProductReceiveController {
     }
 
     @GetMapping("/redirectToCollectMilk")
-    public String getCollectMilkPage(@RequestParam String email, Model model){
+    public String getCollectMilkPage(HttpSession session, Model model){
         log.info("getCollectMilkPage in CollectMilkController");
+        String email = (String) session.getAttribute("adminEmail");
         AdminDTO adminDTO=adminService.viewAdminByEmail(email);
         model.addAttribute("dto",adminDTO);
         controllerHelper.addNotificationData(model,email);
@@ -58,8 +59,9 @@ public class MilkProductReceiveController {
     }
 
     @GetMapping("/redirectToGetCollectMilkList")
-    public String redirectToGetCollectMilkList(@RequestParam String email, Model model){
+    public String redirectToGetCollectMilkList(HttpSession session, Model model){
         log.info("redirectToGetCollectMilkList in CollectMilkController");
+        String email = (String) session.getAttribute("adminEmail");
         AdminDTO adminDTO=adminService.viewAdminByEmail(email);
         model.addAttribute("dto",adminDTO);
         return "ProductReceive";
@@ -68,7 +70,7 @@ public class MilkProductReceiveController {
     @PostMapping("addCollectMilk")
     public String getCollectedMilk(@Valid MilkProductReceiveDTO collectMilkDTO,
                                    BindingResult bindingResult,
-                                   @RequestParam String email, Model model)
+                                   HttpSession session, Model model)
     {
         log.info("===== Inside addCollectMilk POST method =====");
         if(bindingResult.hasErrors())
@@ -78,8 +80,10 @@ public class MilkProductReceiveController {
                     .forEach(log::error);
             model.addAttribute("error","Wrong details");
             model.addAttribute("milk",collectMilkDTO);
-            return getCollectMilkPage(email,model);
+
+            return getCollectMilkPage(session,model);
         }
+        String email = (String) session.getAttribute("adminEmail");
         if(collectMilkService.save(collectMilkDTO,email))
         {
             log.info("successfully saved");
@@ -99,7 +103,7 @@ public class MilkProductReceiveController {
     public String getCollectMilkList(
             @RequestParam(value = "collectedDate", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate collectedDate,
-            @RequestParam String email,
+            HttpSession session,
             Model model) {
 
         log.info("getCollectMilkList called with collectedDate={}", collectedDate);
@@ -109,7 +113,7 @@ public class MilkProductReceiveController {
         if (collectedDate != null) {
             collectMilkList = collectMilkService.getAllDetailsByDate(collectedDate);
         }
-
+        String email = (String) session.getAttribute("adminEmail");
         AdminDTO adminDTO = adminService.viewAdminByEmail(email);
         model.addAttribute("dto", adminDTO);
         controllerHelper.addNotificationData(model, email);
@@ -120,7 +124,8 @@ public class MilkProductReceiveController {
 
 
     @GetMapping("/getCollectMilkListBySupplierEmail")
-    public String getCollectMilkListBySupplierEmail(@RequestParam String email, Model model) {
+    public String getCollectMilkListBySupplierEmail(HttpSession session, Model model) {
+        String email = (String) session.getAttribute("adminEmail");
         log.info("Fetching milk collection for supplier email={}", email);
 
         // ✅ Fetch the supplier instead of admin

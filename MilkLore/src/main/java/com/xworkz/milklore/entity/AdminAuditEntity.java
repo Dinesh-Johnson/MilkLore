@@ -30,4 +30,10 @@ public class AdminAuditEntity {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private AdminEntity adminEntity;
+
+    @Column(name = "login_time")
+    private LocalDateTime loginTime;
+
+    @Column(name = "logout_time")
+    private LocalDateTime logoutTime;
 }

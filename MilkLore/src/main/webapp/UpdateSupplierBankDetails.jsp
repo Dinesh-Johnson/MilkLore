@@ -51,7 +51,7 @@
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto me-3">
                     <li class="nav-item">
-                        <a class="nav-link active" href="redirectToSupplierDashboard?email=${dto.email}">
+                        <a class="nav-link active" href="redirectToSupplierDashboard">
                             <i class="fa-solid fa-gauge-high me-2"></i>Dashboard
                         </a>
                     </li>
@@ -67,7 +67,7 @@
                             </c:choose>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                            <li><a class="dropdown-item text-danger" href="supplierLogout?email=${dto.email}">
+                            <li><a class="dropdown-item text-danger" href="supplierLogout">
                                 <i class="fa-solid fa-right-from-bracket me-2"></i>Logout
                             </a></li>
                         </ul>
@@ -141,7 +141,7 @@
                             </div>
 
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <a href="redirectToSupplierDashboard?email=${dto.email}" class="btn btn-outline-secondary me-md-2">
+                                <a href="redirectToSupplierDashboard" class="btn btn-outline-secondary me-md-2">
                                     <i class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard
                                 </a>
                                 <button id="submitBtn" type="submit" class="btn btn-milklore text-white">

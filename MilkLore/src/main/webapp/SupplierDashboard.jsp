@@ -102,22 +102,22 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link active" href="redirectToSupplierDashboard?email=${dto.email}">
+                    <a class="nav-link active" href="redirectToSupplierDashboard">
                         <i class="fas fa-tachometer-alt me-1"></i> Dashboard
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="redirectToMilkCollection?email=${dto.email}">
+                    <a class="nav-link" href="redirectToMilkCollection">
                         <i class="fas fa-fw fa-cow me-1"></i> Milk Collection
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="getCollectMilkListBySupplierEmail?email=${dto.email}">
+                    <a class="nav-link" href="getCollectMilkListBySupplierEmail">
                         <i class="fas fa-fw fa-cow me-1"></i> View Milk Collection
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="redirectToPaymentStatus?email=${dto.email}">
+                    <a class="nav-link" href="redirectToPaymentStatus">
                         <i class="fas fa-money-bill-wave me-1"></i> Payments
                     </a>
                 </li>
@@ -272,10 +272,10 @@
                     <h5 class="mb-0">Quick Actions</h5>
                 </div>
                 <div class="card-body">
-                    <a href="redirectToMilkCollection?email=${dto.email}" class="btn btn-outline-primary w-100 mb-3">
+                    <a href="redirectToMilkCollection" class="btn btn-outline-primary w-100 mb-3">
                         <i class="fas fa-plus-circle me-2"></i>Add Milk Collection
                     </a>
-                    <!--                    <a href="redirectToPaymentStatus?email=${dto.email}" class="btn btn-outline-success w-100 mb-3">-->
+                    <!--                    <a href="redirectToPaymentStatus" class="btn btn-outline-success w-100 mb-3">-->
                     <!--                        <i class="fas fa-history me-2"></i>View Payment History-->
                     <!--                    </a>-->
                     <a href="#" class="btn btn-outline-info w-100 mb-3" data-bs-toggle="modal" data-bs-target="#profileModal">
@@ -340,7 +340,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <a href="redirectToUpdateSupplierProfile?email=${dto.email}" class="btn btn-primary">
+                <a href="redirectToUpdateSupplierProfile" class="btn btn-primary">
                     <i class="fas fa-edit me-2"></i>Edit Profile
                 </a>
             </div>
@@ -404,7 +404,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <c:if test="${empty dto.supplierBankDetails}">
-                    <a href="redirectToUpdateSupplierBankDetails?email=${dto.email}" class="btn btn-primary">Fill Bank Details</a>
+                    <a href="redirectToUpdateSupplierBankDetails" class="btn btn-primary">Fill Bank Details</a>
                 </c:if>
             </div>
         </div>

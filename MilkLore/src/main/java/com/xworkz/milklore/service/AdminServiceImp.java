@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -141,6 +142,33 @@ public class AdminServiceImp implements AdminService{
 
         String encodedPassword = encoder.encode(password);
         return repo.setPasswordByEmail(email, encodedPassword, confirmPassword);
+    }
+    @Override
+    public boolean updateAdminLogoutTime(String email) {
+        log.info("updateAdminLogoutTime method in AdminServiceImpl");
+
+        AdminEntity adminEntity = repo.viewAdminByEmail(email);
+        if (adminEntity == null) {
+            log.warn("No admin found with email {}", email);
+            return false;
+        }
+        Optional<AdminAuditEntity> activeAuditOpt = auditRepo.findActiveSession(adminEntity.getAdminID());
+
+        if (activeAuditOpt.isPresent()) {
+            AdminAuditEntity lastAudit = activeAuditOpt.get();
+            lastAudit.setLogoutTime(LocalDateTime.now());
+
+            if (auditRepo.save(lastAudit)) {
+                log.info("Logout time updated for admin audit");
+                return true;
+            } else {
+                log.error("Logout time not changed");
+            }
+        } else {
+            log.warn("No active audit session found to update logout for {}", email);
+            return true;
+        }
+        return false;
     }
 
     @Override

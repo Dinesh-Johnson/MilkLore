@@ -41,5 +41,13 @@ public class AppController {
         return "SupplierRegister";
     }
 
+    @GetMapping("logout")
+    public String logout(HttpSession session) {
+        if (session != null) {
+            session.invalidate();
+        }
+        return "redirect:/toIndex?logout=success";
+    }
+
 
 }

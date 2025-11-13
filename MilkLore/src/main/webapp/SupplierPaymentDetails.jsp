@@ -299,17 +299,17 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="redirectToSupplierDashboard?email=${dto.email}">
+                    <a class="nav-link" href="redirectToSupplierDashboard">
                         <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="redirectToMilkCollection?email=${dto.email}">
+                    <a class="nav-link" href="redirectToMilkCollection">
                         <i class="fas fa-fw fa-tachometer-alt me-2"></i>Milk Collection
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="redirectToPaymentStatus?email=${dto.email}">
+                    <a class="nav-link active" href="redirectToPaymentStatus">
                         <i class="fas fa-rupee-sign me-2"></i>Payment Status
                     </a>
                 </li>
@@ -497,7 +497,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <a href="redirectToUpdateSupplierProfile?email=${dto.email}" class="btn btn-primary">
+                <a href="redirectToUpdateSupplierProfile" class="btn btn-primary">
                     <i class="fas fa-edit me-1"></i>Update Profile
                 </a>
             </div>
@@ -523,7 +523,7 @@
                             <i class="fas fa-exclamation-triangle me-2"></i>No bank details found. Please add your bank details.
                         </div>
                         <div class="text-center mt-3">
-                            <a href="redirectToAddBankDetails?email=${dto.email}" class="btn btn-primary">
+                            <a href="redirectToAddBankDetails" class="btn btn-primary">
                                 <i class="fas fa-plus-circle me-2"></i>Add Bank Details
                             </a>
                         </div>

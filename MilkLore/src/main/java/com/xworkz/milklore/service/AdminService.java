@@ -15,6 +15,7 @@ public interface AdminService {
     boolean checkEmailByEmail(String email);
     boolean sendMailToSetPassword(String email);
     boolean setPasswordByEmail(String email,String password,String confirmPassword);
+    boolean updateAdminLogoutTime(String email);
     int getSupplierCount();
 
 

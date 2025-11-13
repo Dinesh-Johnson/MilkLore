@@ -138,7 +138,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="redirectToSupplierDashboard?email=${dto.email}">
+                    <a class="nav-link" href="redirectToSupplierDashboard">
                         <i class="fas fa-tachometer-alt me-1"></i> Dashboard
                     </a>
                 </li>
@@ -162,7 +162,7 @@
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item text-danger" href="supplierLogout?email=${dto.email}">
+                            <a class="dropdown-item text-danger" href="supplierLogout">
                                 <i class="fas fa-sign-out-alt me-2"></i>Logout
                             </a>
                         </li>
@@ -179,7 +179,7 @@
         <div class="col-lg-8">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="mb-0">Update Profile</h2>
-                <a href="redirectToSupplierDashboard?email=${dto.email}" class="btn btn-outline-secondary">
+                <a href="redirectToSupplierDashboard" class="btn btn-outline-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
                 </a>
             </div>

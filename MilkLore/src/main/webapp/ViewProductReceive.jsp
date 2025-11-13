@@ -97,7 +97,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="redirectToSupplierDashboard?email=${dto.email}"><i class="fas fa-tachometer-alt me-1"></i> Dashboard</a>
+                    <a class="nav-link" href="redirectToSupplierDashboard"><i class="fas fa-tachometer-alt me-1"></i> Dashboard</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="viewProductReceive"><i class="fas fa-list me-1"></i> View Collections</a>
