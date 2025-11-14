@@ -161,7 +161,7 @@
                         </c:choose>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="profileDropdown">
-                        <li><a class="dropdown-item" href="viewProfile?email=${dto.email}"><i class="bi bi-speedometer me-1"></i> DashBoard</a></li>
+                        <li><a class="dropdown-item" href="viewProfile"><i class="bi bi-speedometer me-1"></i> DashBoard</a></li>
                         <li><a class="dropdown-item" href="logout"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
                     </ul>
                 </li>

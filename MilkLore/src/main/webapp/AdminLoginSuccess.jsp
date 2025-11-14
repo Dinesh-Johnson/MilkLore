@@ -78,29 +78,29 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item">
-                    <a class="nav-link" href="redirectToProductsPrice?email=${dto.email}"><i
+                    <a class="nav-link" href="redirectToProductsPrice"><i
                             class="fa-solid fa-tag me-2"></i> Products Price</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="redirectToAdminSuccess?email=${dto.email}&page=1&size=10"><i
+                    <a class="nav-link" href="redirectToAdminSuccess&page=1&size=10"><i
                             class="fa-solid fa-grip"></i> DashBoard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="redirectToCollectMilk?email=${dto.email}"><i
+                    <a class="nav-link" href="redirectToCollectMilk"><i
                             class="fa-solid fa-glass-water-droplet me-2"></i> Collect Milk</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="redirectToMilkSuppliersList?email=${dto.email}&page=1&size=10">
+                    <a class="nav-link active" href="redirectToMilkSuppliersList&page=1&size=10">
                         <i class="fa-solid fa-glass-water-droplet me-2"></i> Milk Supplier Details
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="redirectToGetCollectMilkList?email=${dto.email}">
+                    <a class="nav-link active" href="redirectToGetCollectMilkList">
                         <i class="fa-solid fa-glass-water-droplet me-2"></i> Milk Collect List
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="redirectToAdminPaymentHistory?email=${dto.email}&page=1&size=10"><i
+                    <a class="nav-link" href="redirectToAdminPaymentHistory?page=1&size=10"><i
                             class="fa-solid fa-money-bill-transfer me-2"></i> Payment History</a>
                 </li>
                 <li class="nav-item dropdown">
@@ -166,7 +166,7 @@
                         <hr class="dropdown-divider">
                     </li>
                     <li>
-                        <a class="dropdown-item text-danger" href="adminLogout?email=${dto.email}"><i
+                        <a class="dropdown-item text-danger" href="adminLogout"><i
                                 class="fa-solid fa-right-from-bracket me-2"></i> Logout</a>
                     </li>
                 </ul>
@@ -223,7 +223,7 @@
                     <i class="bi bi-cash-stack text-success" style="font-size:2rem;"></i>
                     <h5 class="mt-3 fw-bold">Payment History</h5>
                     <p class="text-muted" style="font-size:0.9rem;">Track all payments securely</p>
-                    <a href="redirectToAdminPaymentHistory?email=${dto.email}&page=1&size=10"
+                    <a href="redirectToAdminPaymentHistory?page=1&size=10"
                        class="btn btn-success btn-sm rounded-pill px-3">
                         <i class="bi bi-arrow-right"></i> View
                     </a>
@@ -238,7 +238,7 @@
                     <i class="bi bi-truck text-info" style="font-size:2rem;"></i>
                     <h5 class="mt-3">Suppliers</h5>
                     <p class="text-muted">Manage milk suppliers</p>
-                    <a href="redirectToMilkSuppliersList?email=${dto.email}&page=1&size=10" class="btn btn-info btn-sm">View</a>
+                    <a href="redirectToMilkSuppliersList?page=1&size=10" class="btn btn-info btn-sm">View</a>
                 </div>
             </div>
 
@@ -288,6 +288,7 @@
 </section>
 <!-- Modal for supplier invoice -->
 <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+    <input type="email" name="email" hidden value="${dto.email}">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">

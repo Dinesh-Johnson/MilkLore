@@ -73,33 +73,33 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="toSuppliersList?email=${dto.email}"><i class="fas fa-users me-1"></i>
+                    <a class="nav-link" href="toSuppliersList"><i class="fas fa-users me-1"></i>
                         Suppliers</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="redirectToAdminSuccess?email=${dto.email}">
+                    <a class="nav-link" href="redirectToAdminSuccess">
                         <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="toProductReceive?email=${dto.email}"><i
+                    <a class="nav-link active" href="toProductReceive"><i
                             class="fas fa-truck-loading me-1"></i> Product
                         Receive</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="toManageProducts?email=${dto.email}"><i class="fas fa-boxes me-1"></i>
+                    <a class="nav-link" href="toManageProducts"><i class="fas fa-boxes me-1"></i>
                         Products</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="redirectToAdminPaymentHistory?email=${dto.email}&page=1&size=10"><i
+                    <a class="nav-link" href="redirectToAdminPaymentHistory?page=1&size=10"><i
                             class="fa-solid fa-money-bill-transfer me-2"></i> Payment History</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="toProductsPrice?email=${dto.email}"><i class="fas fa-tags me-1"></i>
+                    <a class="nav-link" href="toProductsPrice"><i class="fas fa-tags me-1"></i>
                         Pricing</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="redirectToCollectMilk?email=${dto.email}"><i
+                    <a class="nav-link" href="redirectToCollectMilk"><i
                             class="fa-solid fa-glass-water-droplet me-2"></i> Collect Milk</a>
                 </li>
                 <!-- Notification Dropdown -->
@@ -155,7 +155,7 @@
                     <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="profileDropdown">
                         <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#adminProfileModal"><i class="bi bi-person-circle me-2"></i> View Profile</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="adminLogout?email=${dto.email}"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                        <li><a class="dropdown-item text-danger" href="adminLogout"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
                     </ul>
                 </li>
             </ul>
@@ -181,7 +181,7 @@
     <div class="card shadow-sm mb-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h1 class="mb-4">Collected Milk Details</h1>
-            <a href="redirectToExportAllMilkCollectData?email=${dto.email}" class="btn btn-primary">
+            <a href="redirectToExportAllMilkCollectData" class="btn btn-primary">
                 <i class="fa-solid fa-file-export me-2"></i>Export All Data
             </a>
         </div>

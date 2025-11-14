@@ -82,7 +82,7 @@ public class NotificationRepoImpl implements NotificationRepo {
     @Override
     public List<NotificationEntity> findByAdminOrderByCreatedAtDesc(Integer adminID) {
         log.info("findByAdminOrderByCreatedAtDesc method in notification repo");
-        log.error("admin id {}",adminID);
+        log.info("admin id {}",adminID);
         EntityManager entityManager = null;
         try {
             entityManager=entityManagerFactory.createEntityManager();

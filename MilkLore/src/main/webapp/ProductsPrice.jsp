@@ -119,12 +119,12 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="redirectToAdminSuccess?email=${dto.email}">
+                        <a class="nav-link" href="redirectToAdminSuccess">
                             <i class="fas fa-tachometer-alt me-1"></i> Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="redirectToProductsPrice?email=${dto.email}">
+                        <a class="nav-link" href="redirectToProductsPrice">
                             <i class="fa-solid fa-tag me-2"></i> Products Price
                         </a>
                     </li>
@@ -144,7 +144,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                             <li>
-                                <a class="dropdown-item" href="viewProfile?email=${dto.email}">
+                                <a class="dropdown-item" href="viewProfile">
                                     <i class="bi bi-person-circle me-2"></i> Profile
                                 </a>
                             </li>

@@ -41,12 +41,12 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item"><a class="nav-link" href="redirectToAdminSuccess?email=${dto.email}"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="redirectToAdminPaymentHistory?email=${dto.email}&page=1&size=10"><i class="fa-solid fa-money-bill-transfer me-2"></i>Payment History</a></li>
-                <li class="nav-item"><a class="nav-link" href="redirectToCollectMilk?email=${dto.email}"><i class="fa-solid fa-box me-2"></i>Manage Products</a></li>
-                <li class="nav-item"><a class="nav-link" href="redirectToProductsPrice?email=${dto.email}"><i class="fa-solid fa-tag me-2"></i>Products Price</a></li>
-                <li class="nav-item"><a class="nav-link" href="redirectToMilkSuppliersList?email=${dto.email}&page=1&size=10"><i class="fa-solid fa-bottle-droplet me-2"></i>Milk Suppliers</a></li>
-                <li class="nav-item"><a class="nav-link active" href="redirectToGetCollectMilkList?email=${dto.email}"><i class="fa-solid fa-glass-water-droplet me-2"></i>Milk Collect List</a></li>
+                <li class="nav-item"><a class="nav-link" href="redirectToAdminSuccess"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="redirectToAdminPaymentHistory?page=1&size=10"><i class="fa-solid fa-money-bill-transfer me-2"></i>Payment History</a></li>
+                <li class="nav-item"><a class="nav-link" href="redirectToCollectMilk"><i class="fa-solid fa-box me-2"></i>Manage Products</a></li>
+                <li class="nav-item"><a class="nav-link" href="redirectToProductsPrice"><i class="fa-solid fa-tag me-2"></i>Products Price</a></li>
+                <li class="nav-item"><a class="nav-link" href="redirectToMilkSuppliersList?page=1&size=10"><i class="fa-solid fa-bottle-droplet me-2"></i>Milk Suppliers</a></li>
+                <li class="nav-item"><a class="nav-link active" href="redirectToGetCollectMilkList"><i class="fa-solid fa-glass-water-droplet me-2"></i>Milk Collect List</a></li>
                 <li class="nav-item dropdown ms-3">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <c:choose>
@@ -61,7 +61,7 @@
                     <ul class="dropdown-menu dropdown-menu-end shadow">
                         <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#adminProfileModal"><i class="bi bi-person-circle me-2"></i>View Profile</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="adminLogout?email=${dto.email}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                        <li><a class="dropdown-item text-danger" href="adminLogout"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
                     </ul>
                 </li>
             </ul>

@@ -73,25 +73,25 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item">
-                    <a class="nav-link" href="redirectToProductsPrice?email=${dto.email}"><i
+                    <a class="nav-link" href="redirectToProductsPrice"><i
                             class="fa-solid fa-tag me-2"></i> Products Price</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="redirectToCollectMilk?email=${dto.email}"><i
+                    <a class="nav-link" href="redirectToCollectMilk"><i
                             class="fa-solid fa-glass-water-droplet me-2"></i> Collect Milk</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="redirectToMilkSuppliersList?email=${dto.email}&page=1&size=10">
+                    <a class="nav-link active" href="redirectToMilkSuppliersList?page=1&size=10">
                         <i class="fa-solid fa-glass-water-droplet me-2"></i> Milk Supplier Details
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="redirectToGetCollectMilkList?email=${dto.email}">
+                    <a class="nav-link active" href="redirectToGetCollectMilkList">
                         <i class="fa-solid fa-glass-water-droplet me-2"></i> Milk Product List
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="redirectToAdminSuccess?email=${dto.email}&page=1&size=10"><i
+                    <a class="nav-link" href="redirectToAdminSuccess?page=1&size=10"><i
                             class="fa-solid fa-grip"></i> DashBoard</a>
                 </li>
                 <li class="nav-item dropdown">
@@ -157,7 +157,7 @@
                         <hr class="dropdown-divider">
                     </li>
                     <li>
-                        <a class="dropdown-item text-danger" href="adminLogout?email=${dto.email}"><i
+                        <a class="dropdown-item text-danger" href="adminLogout"><i
                                 class="fa-solid fa-right-from-bracket me-2"></i> Logout</a>
                     </li>
                 </ul>
@@ -228,7 +228,7 @@
                 <div class="d-flex justify-content-center gap-3 mt-3">
                     <c:if test="${currentPage > 1}">
                         <a class="btn btn-outline-success"
-                           href="redirectToAdminPaymentHistory?email=${dto.email}&page=${currentPage - 1}&size=${pageSize}">
+                           href="redirectToAdminPaymentHistory?page=${currentPage - 1}&size=${pageSize}">
                             Previous
                         </a>
                     </c:if>
@@ -237,7 +237,7 @@
 
                     <c:if test="${currentPage < totalPages}">
                         <a class="btn btn-outline-success"
-                           href="redirectToAdminPaymentHistory?email=${dto.email}&page=${currentPage + 1}&size=${pageSize}">
+                           href="redirectToAdminPaymentHistory?page=${currentPage + 1}&size=${pageSize}">
                             Next
                         </a>
                     </c:if>

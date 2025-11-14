@@ -60,7 +60,7 @@
                         <span class="ms-2 d-none d-lg-inline">Admin</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li><a class="dropdown-item" href="redirectToAdminSuccess?email=${dto.email}"><i class="bi bi-person me-2"></i>DashBoard</a></li>
+                        <li><a class="dropdown-item" href="redirectToAdminSuccess"><i class="bi bi-person me-2"></i>DashBoard</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="logout"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
                     </ul>
