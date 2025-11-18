@@ -59,7 +59,7 @@
                         <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <c:choose>
                                 <c:when test="${empty dto.profilePath}">
-                                    <img src="images/default-profile.png" alt="Profile" class="rounded-circle" width="40" height="40" style="object-fit: cover; border: 2px solid #5d4037;">
+                                    <img src="images/default-avatar.png" alt="Profile" class="rounded-circle" width="40" height="40" style="object-fit: cover; border: 2px solid #5d4037;">
                                 </c:when>
                                 <c:otherwise>
                                     <img src="<c:url value='/uploads/${dto.profilePath}'/>" alt="Profile" class="rounded-circle" width="40" height="40" style="object-fit: cover; border: 2px solid #5d4037;">

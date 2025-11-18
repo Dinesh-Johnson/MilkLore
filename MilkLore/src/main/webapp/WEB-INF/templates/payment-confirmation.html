@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Confirmation</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f7f6; padding: 20px;">
+
+<div style="max-width: 600px; background: #ffffff; margin: auto; padding: 25px; border-radius: 10px; border: 1px solid #e2e8e5; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+
+    <!-- Logo -->
+    <div style="text-align: center; margin-bottom: 15px;">
+        <img src="cid:milkloreLogo" alt="Milklore Logo" style="width: 120px; height: auto;">
+    </div>
+
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px; border-radius: 8px; text-align: center; color: white; font-size: 22px; font-weight: bold; margin-bottom: 20px;">
+        Payment Confirmation
+    </div>
+
+    <p style="font-size: 15px; color: #333;">
+        Dear <span th:text="${firstName}"></span> <span th:text="${lastName}"></span>,
+    </p>
+
+    <p style="font-size: 15px; color: #333;">
+        We are pleased to inform you that the payment for your milk supply has been successfully processed.
+    </p>
+
+    <p style="font-weight: bold; font-size: 16px; color: #764ba2;">Payment Details:</p>
+
+    <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
+        <tr>
+            <td style="padding: 8px 0; font-weight: bold; color: #555;">Payment Date:</td>
+            <td style="padding: 8px 0; color: #333;" th:text="${paymentDate}"></td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; font-weight: bold; color: #555;">Amount Paid:</td>
+            <td style="padding: 8px 0; color: #333;">₹<span th:text="${amount}"></span></td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0; font-weight: bold; color: #555;">Supply Period:</td>
+            <td style="padding: 8px 0; color: #333;">
+                <span th:text="${periodStart}"></span>
+                to
+                <span th:text="${periodEnd}"></span>
+            </td>
+        </tr>
+    </table>
+
+    <p style="font-size: 15px; color: #333;">
+        This payment covers the milk supplied during the above period.
+    </p>
+
+    <p style="font-size: 15px; color: #333;">
+        For queries, contact
+        <a href="mailto:info@milklore.com" style="color: #764ba2; font-weight: bold;">info@milklore.com</a>.
+    </p>
+
+    <p style="font-size: 15px; color: #333;">
+        Warm regards,<br>
+        <strong>MilkLore Team</strong>
+    </p>
+
+</div>
+
+</body>
+</html>

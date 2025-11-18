@@ -153,7 +153,16 @@
                         </c:choose>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="profileDropdown">
-                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#adminProfileModal"><i class="bi bi-person-circle me-2"></i> View Profile</a></li>
+                        <li>
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#adminProfileModal">
+                                <i class="fa-solid fa-user me-2"></i> View Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#adminEditModal">
+                                <i class="fa-solid fa-pen me-2"></i> Edit Profile
+                            </a>
+                        </li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="adminLogout"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
                     </ul>
@@ -295,6 +304,94 @@
         </div>
     </div>
 </div>
+<!-- View Profile Modal -->
+<div class="modal fade" id="adminProfileModal" tabindex="-1" aria-labelledby="adminProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminProfileModalLabel">Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex gap-3 align-items-center">
+                    <div style="width:96px; height:96px;">
+                        <c:choose>
+                            <c:when test="${empty dto.profilePath}">
+                                <img src="${pageContext.request.contextPath}/images/dummy-profile.png" alt="Profile" class="rounded-circle" width="96" height="96" style="object-fit:cover;">
+                            </c:when>
+                            <c:otherwise>
+                                <img src="<c:url value='/uploads/${dto.profilePath}'/>" alt="Profile"
+                                     class="rounded-circle" width="96" height="96" style="object-fit:cover;">
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                    <div>
+                        <h5 class="mb-1">${dto.adminName}</h5>
+                        <p class="mb-0"><strong>Email:</strong> ${dto.email}</p>
+                        <p class="mb-0"><strong>Mobile:</strong> ${dto.mobileNumber}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!-- open edit modal from here -->
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#adminEditModal" data-bs-dismiss="modal">Edit</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="adminEditModal" tabindex="-1" aria-labelledby="adminEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form action="${pageContext.request.contextPath}/AdminEdit" method="post" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="adminEditModalLabel">Edit Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <div style="width:120px; height:120px; margin:0 auto;">
+                            <c:choose>
+                                <c:when test="${empty dto.profilePath}">
+                                    <img id="profilePreview" src="${pageContext.request.contextPath}/images/dummy-profile.png" alt="Profile" class="rounded-circle" width="120" height="120" style="object-fit:cover;">
+                                </c:when>
+                                <c:otherwise>
+                                    <img id="profilePreview" src="<c:url value='/uploads/${dto.profilePath}'/>" alt="Profile" class="rounded-circle" width="120" height="120" style="object-fit:cover;">
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="email" value="${dto.email}" />
+
+                    <div class="mb-3">
+                        <label for="adminName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="adminName" name="adminName" value="${dto.adminName}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="mobileNumber" class="form-label">Mobile Number</label>
+                        <input type="text" class="form-control" id="mobileNumber" name="mobileNumber" value="${dto.mobileNumber}" pattern="^[0-9]{10}$" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="profileImage" class="form-label">Change Profile Picture</label>
+                        <input class="form-control" type="file" id="profileImage" name="profileImage" accept="image/*">
+                        <small class="text-muted">Optional — leave blank to keep current picture.</small>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
 <!-- JavaScript Libraries -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -319,8 +416,23 @@
         }
       }
     });
+//Profile View Modal
+    (function(){
+      const fileInput = document.getElementById('profileImage');
+      const preview = document.getElementById('profilePreview');
+      if(fileInput && preview){
+        fileInput.addEventListener('change', function(e){
+          const file = e.target.files && e.target.files[0];
+          if(!file) return;
+          const reader = new FileReader();
+          reader.onload = function(ev){
+            preview.src = ev.target.result;
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+    })();
 </script>
-
 <script src="js/get-milk-product-receive.js"></script>
 <script src="js/admin-notification.js"></script>
 </body>

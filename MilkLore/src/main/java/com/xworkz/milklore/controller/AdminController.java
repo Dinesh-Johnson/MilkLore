@@ -2,7 +2,6 @@ package com.xworkz.milklore.controller;
 
 import com.xworkz.milklore.dto.AdminDTO;
 import com.xworkz.milklore.dto.PaymentDetailsDTO;
-import com.xworkz.milklore.entity.NotificationEntity;
 import com.xworkz.milklore.service.AdminService;
 import com.xworkz.milklore.service.MilkProductReceiveService;
 import com.xworkz.milklore.service.NotificationService;
@@ -12,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -244,20 +241,13 @@ public class AdminController {
         return "SupplierPayDetails";
     }
 
-//    @GetMapping("/supplierPaymentDetails/pdf")
-//    public ResponseEntity<byte[]> downloadPaymentReceipt(@RequestParam Long notificationId) {
-//        byte[] pdf = pdfService.generatePaymentReceipt(notificationId);
-//        return ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=PaymentReceipt.pdf")
-//                .contentType(MediaType.APPLICATION_PDF)
-//                .body(pdf);
-//    }
 
     @PostMapping("/payToSupplier")
     public String payToSupplier(HttpSession session,@RequestParam String supplierEmail,@RequestParam Long notificationId,
                                 Model model,HttpServletRequest request)
     {
         log.info("pay to supplier method in supplier controller");
+
         String email = (String) session.getAttribute("adminEmail");
         if(notificationService.markAsReadForPayment(notificationId,supplierEmail,email))
         {

@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -64,11 +66,12 @@ public class SupplierController {
 
     // List Suppliers
     @GetMapping("/redirectToMilkSuppliersList")
-    public String getMilkSupplierList(@RequestParam String email, @RequestParam(defaultValue = "1") int page,
+    public String getMilkSupplierList(HttpSession session, @RequestParam(defaultValue = "1") int page,
                                       @RequestParam(defaultValue = "10") int size, Model model) {
         log.info("getMilkSupplierList method in supplier controller");
 
         // Get admin DTO and add to model
+        String email = (String) session.getAttribute("adminEmail");
         AdminDTO adminDTO = adminService.viewAdminByEmail(email);
         if (adminDTO != null) {
             model.addAttribute("dto", adminDTO);
@@ -89,11 +92,12 @@ public class SupplierController {
     @PostMapping("/registerSupplier")
     public String addMilkSupplier(@Valid SupplierDTO supplierDTO,
                                   BindingResult bindingResult,
-                                  @RequestParam String adminEmail,
+                                  HttpSession session,
                                   Model model) {
         log.info("addMilkSupplier in supplierController");
         System.out.println(supplierDTO);
-        System.out.println("Admin Email :" + adminEmail);
+        String email = (String) session.getAttribute("adminEmail");
+        System.out.println("Admin Email :" + email);
         if (bindingResult.hasErrors()) {
             log.warn("fields has error");
             bindingResult.getFieldErrors()
@@ -101,27 +105,28 @@ public class SupplierController {
                     .forEach(System.out::println);
             model.addAttribute("supplier", supplierDTO);
             model.addAttribute("error", "Details not saved");
-            return getMilkSupplierList(adminEmail, 1, 10, model);
+            return getMilkSupplierList(session, 1, 10, model);
         }
-        if (supplierService.addSupplier(supplierDTO, adminEmail)) {
+        if (supplierService.addSupplier(supplierDTO, email)) {
             log.info("supplier added");
             model.addAttribute("success", "Supplier details saved");
         } else {
             log.warn("supplier not added");
             model.addAttribute("error", "Supplier details not saved");
         }
-        return getMilkSupplierList(adminEmail, 1, 10, model);
+        return getMilkSupplierList(session, 1, 10, model);
     }
 
     // Edit Supplier
     @PostMapping("/updateMilkSupplier")
     public String editSupplier(@Valid SupplierDTO supplierDTO,
                                BindingResult bindingResult,
-                               @RequestParam String adminEmail,
+                               HttpSession session,
                                Model model
                                 ) {
         log.info("editSupplier method in supplierController");
         System.out.println(supplierDTO);
+        String adminEmail = (String) session.getAttribute("adminEmail");
         System.out.println("Admin EMail Update :" + adminEmail);
         if (bindingResult.hasErrors()) {
             log.warn("fields has error");
@@ -130,7 +135,7 @@ public class SupplierController {
                     .forEach(System.out::println);
             model.addAttribute("supplier", supplierDTO);
             model.addAttribute("error", "Details not saved");
-            return getMilkSupplierList(adminEmail, 1, 10, model);
+            return getMilkSupplierList(session, 1, 10, model);
         }
         if (supplierService.editSupplierDetails(supplierDTO, adminEmail)) {
             log.info("supplier updated");
@@ -139,15 +144,16 @@ public class SupplierController {
             log.warn("supplier not updated");
             model.addAttribute("error", "Supplier details not updated");
         }
-        return getMilkSupplierList(adminEmail, 1, 10, model);
+        return getMilkSupplierList(session, 1, 10, model);
     }
 
     // Delete Supplier
     @GetMapping("/deleteMilkSupplier")
-    public String deleteSupplier(@RequestParam String email,
+    public String deleteSupplier(HttpSession session,
                                  @RequestParam(required = false) String adminEmail,
                                  Model model) {
         log.info("deleteSupplier in supplier controller");
+        String email = (String) session.getAttribute("adminEmail");
         if (supplierService.deleteSupplierDetails(email, adminEmail)) {
             log.info("supplier deleted");
             model.addAttribute("success", "Supplier details deleted");
@@ -155,7 +161,7 @@ public class SupplierController {
             log.warn("supplier not deleted");
             model.addAttribute("error", "Supplier details deleted");
         }
-        return getMilkSupplierList(adminEmail, 1, 10, model);
+        return getMilkSupplierList(session, 1, 10, model);
     }
 
     @GetMapping("/searchSuppliers")
@@ -201,7 +207,8 @@ public class SupplierController {
 
     // ---------------- VERIFY OTP ----------------
     @PostMapping("/verifyOtp")
-    public String checkOtpForSupplierLogin(@RequestParam String email, @RequestParam String otp, Model model, HttpSession session){
+    public String checkOtpForSupplierLogin(@RequestParam String email, @RequestParam String otp, Model model,
+                                           HttpSession session,HttpServletResponse response,HttpServletRequest request){
 
         email = email.trim();
         otp = otp.trim();
@@ -209,14 +216,20 @@ public class SupplierController {
 
         if (verified) {
             // ✅ Save supplier email in session
+            model.addAttribute("errorMessage", "successfully login");
+            model.addAttribute("success","success");
             session.setAttribute("supplierEmail", email);
+            Cookie cookie = new Cookie("supplierEmail", email);
+            cookie.setMaxAge(7 * 24 * 60 * 60);
+            cookie.setPath("/");
+            response.addCookie(cookie);
 
             SupplierDTO dto = supplierService.getSupplierDetailsByEmail(email);
             if (dto != null) {
                 model.addAttribute("dto", dto);
             }
             session.setAttribute("userRole", "SUPPLIER");
-            return "redirect:/redirectToSupplierDashboard?email="+email; // Go to dashboard
+            return getSupplierDashboardPage(session,request,model);
         } else {
             model.addAttribute("email", email);
             model.addAttribute("otpSent", true);
@@ -227,12 +240,11 @@ public class SupplierController {
     }
 
     @GetMapping("/redirectToSupplierDashboard")
-    public String getSupplierDashboardPage(@RequestParam(required = false) String email,
-                                           Model model,
-                                           HttpSession session) {
+    public String getSupplierDashboardPage(HttpSession session, HttpServletRequest request, Model model) {
         log.info("getSupplierDashboardPage method in supplier controller");
 
         // ✅ Use session email if not provided
+        String email = (String) session.getAttribute("supplierEmail");
         if (email == null || email.trim().isEmpty()) {
             email = (String) session.getAttribute("supplierEmail");
             log.info("Email fetched from session: {}", email);
@@ -296,7 +308,8 @@ public class SupplierController {
 
 
     @PostMapping("updateSupplierProfile")
-    public String updateSupplierProfile(@Valid SupplierDTO supplierDTO, BindingResult bindingResult, @RequestParam(required = false)MultipartFile profilePicture, Model model,HttpSession session)
+    public String updateSupplierProfile(@Valid SupplierDTO supplierDTO, BindingResult bindingResult, @RequestParam(required = false)MultipartFile profilePicture,
+                                        Model model,HttpSession session,HttpServletRequest request)
     {
         log.info("updateSupplierProfile method in supplier controller");
         if(bindingResult.hasErrors())
@@ -323,7 +336,7 @@ public class SupplierController {
         }
         if(supplierService.updateSupplierDetailsBySupplier(supplierDTO))
         {
-            return getSupplierDashboardPage(supplierDTO.getEmail(),model,session);
+            return getSupplierDashboardPage(session,request,model);
         }else {
             model.addAttribute("errorMessage","Details not updated");
             model.addAttribute("dto",supplierDTO);
@@ -340,18 +353,21 @@ public class SupplierController {
     }
 
     @GetMapping("redirectToUpdateSupplierBankDetails")
-    public String redirectToUpdateSupplierBankDetailsPage(@RequestParam String email,Model model)
+    public String redirectToUpdateSupplierBankDetailsPage(HttpSession session,Model model)
     {
         log.info("redirectToUpdateSupplierBankDetailsPage method in supplier controller");
+        String email = (String) session.getAttribute("email");
         model.addAttribute("dto",supplierService.getSupplierDetailsByEmail(email));
         return "UpdateSupplierBankDetails";
     }
 
 
     @PostMapping("/updateBankDetails")
-    public String supplierUpdateBankDetails(@Valid SupplierBankDetailsDTO supplierBankDetailsDTO, BindingResult bindingResult, @RequestParam String email, Model model,HttpSession session)
+    public String supplierUpdateBankDetails(@Valid SupplierBankDetailsDTO supplierBankDetailsDTO, BindingResult bindingResult,
+                                            HttpSession session, Model model, HttpServletRequest request)
     {
         log.info("supplierUpdateBankDetailsPage method in supplier controller");
+        String email = (String) session.getAttribute("supplierEmail");
         if(bindingResult.hasErrors())
         {
             log.error("fields has error");
@@ -364,27 +380,28 @@ public class SupplierController {
         if(supplierService.updateSupplierBankDetails(supplierBankDetailsDTO,email))
         {
             log.info("bank details updated");
-            return getSupplierDashboardPage(email,model,session);
+            return getSupplierDashboardPage(session,request,model);
         }else {
             model.addAttribute("bank",supplierBankDetailsDTO);
             model.addAttribute("dto.email",email);
         }
         return "UpdateSupplierBankDetails";
-
     }
 
+    //admin
     @PostMapping("/updateSupplierBankDetailsByAdmin")
     public String updateSupplierBankDetailsByAdmin(@Valid SupplierBankDetailsDTO supplierBankDetailsDTO,BindingResult bindingResult,
-                                                   @RequestParam String adminEmail,@RequestParam String email,Model model)
+                                                   HttpSession session,@RequestParam String email,Model model)
     {
         log.info("updateSupplierBankDetailsByAdmin method in supplier controller");
+        String adminEmail = (String) session.getAttribute("adminEmail");
         if(bindingResult.hasErrors())
         {
             log.error("fields has error");
             bindingResult.getFieldErrors().stream().map(e->e.getField()+" -> "+e.getDefaultMessage())
                     .forEach(System.out::println);
             model.addAttribute("error","Bank details not updated");
-            return getMilkSupplierList(adminEmail,1,10,model);
+            return getMilkSupplierList(session,1,10,model);
         }
         if(supplierService.updateSupplierBankDetailsByAdmin(supplierBankDetailsDTO,email,adminEmail))
         {
@@ -392,39 +409,40 @@ public class SupplierController {
         }else {
             model.addAttribute("error","Bank details not updated");
         }
-        model.addAttribute("email", email);
-        return getMilkSupplierList(adminEmail,1,10,model);
+        return getMilkSupplierList(session,1,10,model);
     }
 
+
     @GetMapping("/redirectToPaymentStatus")
-    public String getPaymentStatus(@RequestParam String email,Model model)
+    public String getPaymentStatus(HttpSession session,Model model)
     {
         log.info("getPayment status in supplier controller");
+        String email = (String) session.getAttribute("supplierEmail");
         SupplierDTO supplierDTO=supplierService.getSupplierDetailsByEmail(email);
         List<PaymentDetailsDTO> list=paymentNotificationService.getPaymentDetailsForSupplier(supplierDTO);
         model.addAttribute("dto",supplierDTO);
         model.addAttribute("paymentList",list);
-        return "SupplierPaymentDetails";
+        return "SupplierPaymentStatus";
     }
 
 
     @GetMapping("/generateInvoiceForSupplier")
     public void getInvoiceForSupplier(@RequestParam String periodStart, @RequestParam String periodEnd,
-                                      @RequestParam String paymentDate, @RequestParam Integer supplierId, HttpServletResponse response)
+                                      @RequestParam String paymentDate, @RequestParam Integer supplierId, HttpServletResponse response,HttpSession session)
     {
         log.info("getInvoiceForSupplier method in supplier controller");
         supplierService.downloadInvoicePdf(supplierId, LocalDate.parse(periodStart), LocalDate.parse(periodEnd), LocalDate.parse(paymentDate), response);
     }
 
     @PostMapping("/importForSupplierRegister")
-    public String uploadFile(@RequestParam("file") MultipartFile file,@RequestParam String email, Model model) {
+    public String uploadFile(@RequestParam("file") MultipartFile file,@RequestParam String email, Model model,HttpSession session) {
         log.info("uploadFile method in SupplierController");
         AdminDTO adminDTO = adminService.viewAdminByEmail(email);
         model.addAttribute("dto", adminDTO);
         try {
             if (file.isEmpty()) {
                 model.addAttribute("error", "Please choose a file to upload.");
-                return getMilkSupplierList(email,1,10,model);
+                return getMilkSupplierList(session,1,10,model);
             }
 
             File directory = new File(uploadPath);
@@ -440,7 +458,7 @@ public class SupplierController {
             if(invalidRows.isEmpty())
             {
                 model.addAttribute("success", "All records are saved");
-                return getMilkSupplierList(email,1,10,model);
+                return getMilkSupplierList(session,1,10,model);
             }else{
                 model.addAttribute("invalidRows",invalidRows);
                 model.addAttribute("error",invalidRows.size()+" records are not saved");

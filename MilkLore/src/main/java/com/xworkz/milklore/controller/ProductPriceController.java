@@ -62,7 +62,8 @@ public class ProductPriceController {
             model.addAttribute("error", "Details not saved");
             return getProductPricePage(session, model);
         }
-        if (productPriceService.saveProduct(productPriceDTO, String.valueOf(session)))
+        String email = (String) session.getAttribute("adminEmail");
+        if (productPriceService.saveProduct(productPriceDTO,email))
             model.addAttribute("success", "Product Details saved");
         else
             model.addAttribute("error", "Product details not saved");
@@ -82,7 +83,8 @@ public class ProductPriceController {
             model.addAttribute("error", "Details has error");
             return getProductPricePage(session, model);
         }
-        if (productPriceService.updateProduct(productPriceDTO, String.valueOf(session)))
+        String email = (String) session.getAttribute("adminEmail");
+        if (productPriceService.updateProduct(productPriceDTO, email))
             model.addAttribute("success", "Product updated");
         else
             model.addAttribute("error", "product details not updated");

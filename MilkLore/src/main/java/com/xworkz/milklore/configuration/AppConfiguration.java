@@ -17,6 +17,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 
 import javax.sql.DataSource;
 import javax.validation.Validation;
@@ -60,10 +62,10 @@ public class AppConfiguration implements WebMvcConfigurer {
         registry.addResourceHandler("/js/**").addResourceLocations("/js/");
         registry.addResourceHandler("/json/**").addResourceLocations("/json/");
         registry.addResourceHandler("swagger-ui.html")
-                .addResourceLocations("classpath:/META-INF/resources/");
+                .addResourceLocations(environment.getProperty("swagger.resource.location"));
 
         registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+                .addResourceLocations(environment.getProperty("swagger.webjars.location"));
 
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:" + environment.getProperty("file.upload-dir") + "/");
@@ -111,5 +113,24 @@ public class AppConfiguration implements WebMvcConfigurer {
     public javax.validation.Validator validator() {
         return Validation.buildDefaultValidatorFactory().getValidator();
     }
+
+
+    @Bean
+    public SpringResourceTemplateResolver emailTemplateResolver() {
+        SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
+        templateResolver.setPrefix(environment.getProperty("email.template.prefix"));
+        templateResolver.setSuffix(environment.getProperty("email.template.suffix"));
+        templateResolver.setTemplateMode(environment.getProperty("email.template.mode"));
+        templateResolver.setCharacterEncoding(environment.getProperty("email.template.encoding"));
+        return templateResolver;
+    }
+
+    @Bean
+    public SpringTemplateEngine emailTemplateEngine() {
+        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+        templateEngine.setTemplateResolver(emailTemplateResolver());
+        return templateEngine;
+    }
+
 
 }

@@ -39,11 +39,11 @@ public class PaymentDetailsEntity {
     private String paymentStatus;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     @PrePersist
     public void prePersist() {
-        if (createdAt == null) createdAt = LocalDateTime.now();
+        if (createdAt == null) createdAt = LocalDate.now();
         if (paymentStatus == null) paymentStatus = "PENDING";
     }
 }

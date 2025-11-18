@@ -131,6 +131,11 @@
         .card-header.bg-secondary {
             background: var(--secondary-color);
         }
+         .footer { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2.5rem 0 1.5rem; margin-top: auto; }
+        .footer h5::after { content: ''; position: absolute; width: 50px; height: 3px; background: rgba(255,255,255,0.3); bottom: -10px; left: 0; border-radius: 2px; }
+        .social-links { display: flex; gap: 1rem; margin-top: 1.5rem; }
+        .social-links a { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; color: white; font-size: 1.25rem; transition: all 0.3s ease; }
+        .social-links a:hover { background: white; color: #764ba2; transform: translateY(-3px); }
     </style>
 </head>
 <body>
@@ -149,6 +154,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item"><a class="nav-link" href="redirectToAdminSuccess"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
                 <li class="nav-item dropdown ms-3">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <c:choose>
@@ -161,8 +167,16 @@
                         </c:choose>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="profileDropdown">
-                        <li><a class="dropdown-item" href="viewProfile"><i class="bi bi-speedometer me-1"></i> DashBoard</a></li>
-                        <li><a class="dropdown-item" href="logout"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                        <li>
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#adminProfileModal">
+                                <i class="fa-solid fa-user me-2"></i> View Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#adminEditModal">
+                                <i class="fa-solid fa-pen me-2"></i> Edit Profile
+                            </a>
+                        </li>                        <li><a class="dropdown-item" href="logout"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
                     </ul>
                 </li>
             </ul>
@@ -275,10 +289,160 @@
         </div>
     </div>
 </template>
+<!-- View Profile Modal -->
+<div class="modal fade" id="adminProfileModal" tabindex="-1" aria-labelledby="adminProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminProfileModalLabel">Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex gap-3 align-items-center">
+                    <div style="width:96px; height:96px;">
+                        <c:choose>
+                            <c:when test="${empty dto.profilePath}">
+                                <img src="${pageContext.request.contextPath}/images/dummy-profile.png" alt="Profile" class="rounded-circle" width="96" height="96" style="object-fit:cover;">
+                            </c:when>
+                            <c:otherwise>
+                                <img src="<c:url value='/uploads/${dto.profilePath}'/>" alt="Profile"
+                                     class="rounded-circle" width="96" height="96" style="object-fit:cover;">
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                    <div>
+                        <h5 class="mb-1">${dto.adminName}</h5>
+                        <p class="mb-0"><strong>Email:</strong> ${dto.email}</p>
+                        <p class="mb-0"><strong>Mobile:</strong> ${dto.mobileNumber}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!-- open edit modal from here -->
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#adminEditModal" data-bs-dismiss="modal">Edit</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="adminEditModal" tabindex="-1" aria-labelledby="adminEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form action="${pageContext.request.contextPath}/AdminEdit" method="post" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="adminEditModalLabel">Edit Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <div style="width:120px; height:120px; margin:0 auto;">
+                            <c:choose>
+                                <c:when test="${empty dto.profilePath}">
+                                    <img id="profilePreview" src="${pageContext.request.contextPath}/images/dummy-profile.png" alt="Profile" class="rounded-circle" width="120" height="120" style="object-fit:cover;">
+                                </c:when>
+                                <c:otherwise>
+                                    <img id="profilePreview" src="<c:url value='/uploads/${dto.profilePath}'/>" alt="Profile" class="rounded-circle" width="120" height="120" style="object-fit:cover;">
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="email" value="${dto.email}" />
+
+                    <div class="mb-3">
+                        <label for="adminName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="adminName" name="adminName" value="${dto.adminName}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="mobileNumber" class="form-label">Mobile Number</label>
+                        <input type="text" class="form-control" id="mobileNumber" name="mobileNumber" value="${dto.mobileNumber}" pattern="^[0-9]{10}$" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="profileImage" class="form-label">Change Profile Picture</label>
+                        <input class="form-control" type="file" id="profileImage" name="profileImage" accept="image/*">
+                        <small class="text-muted">Optional — leave blank to keep current picture.</small>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Footer -->
+<footer class="footer mt-auto py-4 text-white">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <h5>Milklore</h5>
+                <p>Tales and Taste of Tradition. Finest dairy products with a touch of heritage.</p>
+                <div class="social-links">
+                    <a href="#"><i class="bi bi-facebook"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#"><i class="bi bi-youtube"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="toIndex" class="text-white">Home</a></li>
+                    <li><a href="#" class="text-white">Products</a></li>
+                    <li><a href="#" class="text-white">About</a></li>
+                    <li><a href="#" class="text-white">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <h5>Contact Us</h5>
+                <ul class="list-unstyled">
+                    <li>Chennai, India</li>
+                    <li>+91 44 1234 5678</li>
+                    <li>customercare@milklore.coop</li>
+                </ul>
+            </div>
+            <div class="col-lg-3">
+                <h5>Newsletter</h5>
+                <form>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Your email" required>
+                        <button class="btn btn-light" type="submit"><i class="bi bi-send"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom text-center mt-4">
+            &copy; 2025 Milklore. All rights reserved.
+        </div>
+    </div>
+</footer>
 
 <!-- Bootstrap JS Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Custom JS -->
 <script src="js/manageProducts.js"></script>
+<script>
+    (function(){
+      const fileInput = document.getElementById('profileImage');
+      const preview = document.getElementById('profilePreview');
+      if(fileInput && preview){
+        fileInput.addEventListener('change', function(e){
+          const file = e.target.files && e.target.files[0];
+          if(!file) return;
+          const reader = new FileReader();
+          reader.onload = function(ev){
+            preview.src = ev.target.result;
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+    })();
+</script>
 </body>
 </html>

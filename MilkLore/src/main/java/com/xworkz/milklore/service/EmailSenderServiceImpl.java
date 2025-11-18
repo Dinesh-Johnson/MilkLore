@@ -12,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.internet.MimeMessage;
 import java.io.File;
@@ -29,8 +32,21 @@ public class EmailSenderServiceImpl implements EmailSenderService {
     @Autowired
     private AdminRepo adminRepository;
 
+    @Autowired
+    private SpringTemplateEngine emailTemplateEngine;
+
     public EmailSenderServiceImpl() {
         log.info("Admin EmailSenderServiceImpl constructor");
+    }
+
+    private MimeMessageHelper getHtmlMessageHelper(String to, String subject) throws Exception {
+        MimeMessage mimeMessage = emailConfig.mailSender().createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+        helper.setTo(to);
+        helper.setSubject(subject);
+
+        return helper;
     }
 
     @Override
@@ -62,7 +78,8 @@ public class EmailSenderServiceImpl implements EmailSenderService {
     }
 
     @Override
-    public boolean mailForSupplierRegisterSuccess(String email, String supplierName, String qrCodePath) {
+    @Async
+    public void mailForSupplierRegisterSuccess(String email, String supplierName, String qrCodePath) {
         log.info("mailForSupplierRegisterSuccess method");
 
         try {
@@ -89,11 +106,9 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 
             emailConfig.mailSender().send(mimeMessage);
             log.info("Registration email with QR sent to: {}", email);
-            return true;
 
         } catch (Exception e) {
             log.error("Error while sending registration success email: {}", e.getMessage(), e);
-            return false;
         }
     }
 
@@ -129,7 +144,8 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 
 
     @Override
-    public boolean mailForSupplierBankDetails(String email, SupplierBankDetailsEntity bankDetails) {
+    @Async
+    public void mailForSupplierBankDetails(String email, SupplierBankDetailsEntity bankDetails) {
         log.info("Entered mailForSupplierBankDetails() in EmailSender for email: {}", email);
         try {
             String subject = "MilkLore - Bank Details Updated Successfully";
@@ -155,49 +171,47 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 
             emailConfig.mailSender().send(simpleMailMessage);
             log.info("Successfully sent bank details update email to: {}", email);
-            return true;
         } catch (Exception e) {
             log.error("Failed to send bank details update email to {}. Error: {}", email, e.getMessage());
-            return false;
         }
     }
 
     @Override
-    public boolean mailForSupplierPayment(SupplierEntity supplier, PaymentDetailsEntity paymentDetails) {
-        log.info("mailForSupplierPayment method in email sender");
+    @Async
+    public void mailForSupplierPayment(SupplierEntity supplier, PaymentDetailsEntity paymentDetails) {
+        log.info("Sending payment email to supplier: {}", supplier.getEmail());
+
         try {
-            String subject = "MilkLore - Milk Supply Payment Confirmation";
+            String subject = "MilkLore - Payment Confirmation";
 
-            String messageBody = "Dear " + supplier.getFirstName()+" "+supplier.getLastName() + ",\n\n"
-                    + "We are pleased to inform you that the payment for your milk supply has been successfully processed.\n\n"
-                    + "Below are the payment details:\n"
-                    + "---------------------------------------\n"
-                    + "Payment Date: " + paymentDetails.getPaymentDate() + "\n"
-                    + "Amount Paid: ₹" + paymentDetails.getTotalAmount() + "\n"
-                    + "Supply Period: " + paymentDetails.getPeriodStart() + " to " + paymentDetails.getPeriodEnd() + "\n"
-                    + "---------------------------------------\n\n"
-                    + "This payment covers the total amount for the milk supplied during the above period.\n\n"
-                    + "If you have any questions or concerns regarding this payment, please contact our accounts team at info@milklore.com.\n\n"
-                    + "Thank you for your consistent and quality milk supply.\n\n"
-                    + "Warm regards,\n"
-                    + "MilkLore Team";
+            Context context = new Context();
+            context.setVariable("firstName", supplier.getFirstName());
+            context.setVariable("lastName", supplier.getLastName());
+            context.setVariable("paymentDate", paymentDetails.getPaymentDate());
+            context.setVariable("amount", paymentDetails.getTotalAmount());
+            context.setVariable("periodStart", paymentDetails.getPeriodStart());
+            context.setVariable("periodEnd", paymentDetails.getPeriodEnd());
 
-            SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-            simpleMailMessage.setTo(supplier.getEmail());
-            simpleMailMessage.setSubject(subject);
-            simpleMailMessage.setText(messageBody);
+            String htmlContent = emailTemplateEngine.process("payment-confirmation", context);
 
-            emailConfig.mailSender().send(simpleMailMessage);
-            log.info("Payment confirmation mail sent successfully to: {}", supplier.getEmail());
-            return true;
+            MimeMessageHelper helper = getHtmlMessageHelper(supplier.getEmail(), subject);
+            helper.setText(htmlContent, true);
+            FileSystemResource logo = new FileSystemResource(new File("src/main/webapp/images/milklore.png"));
+            helper.addInline("milkloreLogo", logo);
+
+
+
+            emailConfig.mailSender().send(helper.getMimeMessage());
+
+            log.info("Payment email sent to supplier");
+
         } catch (Exception e) {
-            log.error("Error while sending payment confirmation email: {}", e.getMessage());
-            return false;
+            log.error("Error sending payment email: {}", e.getMessage());
         }
     }
-
     @Override
-    public boolean mailForBankDetailsRequest(SupplierEntity supplier) {
+    @Async
+    public void mailForBankDetailsRequest(SupplierEntity supplier) {
         log.info("mailForBankDetailsRequest method in EmailSender");
 
         try {
@@ -221,16 +235,15 @@ public class EmailSenderServiceImpl implements EmailSenderService {
             emailConfig.mailSender().send(message);
 
             log.info("Bank details reminder email sent successfully to {}", supplier.getEmail());
-            return true;
 
         } catch (Exception e) {
             log.error("Error while sending bank details reminder email to {}", supplier.getEmail(), e);
-            return false;
         }
     }
 
     @Override
-    public boolean mailForAdminPaymentSummary(List<PaymentDetailsDTO> payments) {
+    @Async
+    public void mailForAdminPaymentSummary(List<PaymentDetailsDTO> payments) {
         log.info("mailForAdminPaymentSummary method in EmailSender");
 
         try {
@@ -269,10 +282,8 @@ public class EmailSenderServiceImpl implements EmailSenderService {
                     log.info("Payment summary email sent to admin: {}", admin.getEmail());
                 }
             }
-            return true;
         } catch (Exception e) {
             log.error("Error while sending admin payment summary email: {}", e.getMessage(), e);
         }
-        return false;
     }
 }
