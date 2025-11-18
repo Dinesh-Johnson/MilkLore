@@ -255,14 +255,15 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public boolean getPaymentDetailsForAdminEmailSummary() {
         log.info("getPaymentDetailsForAdminEmailSummary method in payment service");
-        List<PaymentDetailsDTO> list=new ArrayList<>();
-        List<PaymentDetailsEntity> paymentDetailsEntities=paymentDetailsRepository.getPaymentDetailsForAdminSummaryEmail();
+        List<PaymentDetailsDTO> list = new ArrayList<>();
+        List<PaymentDetailsEntity> paymentDetailsEntities = paymentDetailsRepository.getPaymentDetailsForAdminSummaryEmail();
         paymentDetailsEntities.forEach(paymentDetailsEntity -> {
-            PaymentDetailsDTO paymentDetailsDTO=new PaymentDetailsDTO();
-            BeanUtils.copyProperties(paymentDetailsEntity,paymentDetailsDTO);
+            PaymentDetailsDTO paymentDetailsDTO = new PaymentDetailsDTO();
+            BeanUtils.copyProperties(paymentDetailsEntity, paymentDetailsDTO);
             list.add(paymentDetailsDTO);
         });
-        return emailSender.mailForAdminPaymentSummary(list);
+        emailSender.mailForAdminPaymentSummary(list);
+        return true;
     }
 
     @Override
