@@ -210,6 +210,7 @@ public class SupplierController {
     public String checkOtpForSupplierLogin(@RequestParam String email, @RequestParam String otp, Model model,
                                            HttpSession session,HttpServletResponse response,HttpServletRequest request){
 
+
         email = email.trim();
         otp = otp.trim();
         boolean verified = supplierService.verifyOtp(email, otp);
@@ -428,10 +429,10 @@ public class SupplierController {
 
     @GetMapping("/generateInvoiceForSupplier")
     public void getInvoiceForSupplier(@RequestParam String periodStart, @RequestParam String periodEnd,
-                                      @RequestParam String paymentDate, @RequestParam Integer supplierId, HttpServletResponse response,HttpSession session)
+                                      @RequestParam String paymentDate, @RequestParam Integer supplierId,@RequestParam Integer paymentId, HttpServletResponse response)
     {
         log.info("getInvoiceForSupplier method in supplier controller");
-        supplierService.downloadInvoicePdf(supplierId, LocalDate.parse(periodStart), LocalDate.parse(periodEnd), LocalDate.parse(paymentDate), response);
+        supplierService.downloadInvoicePdf(supplierId,paymentId, LocalDate.parse(periodStart), LocalDate.parse(periodEnd), LocalDate.parse(paymentDate), response);
     }
 
     @PostMapping("/importForSupplierRegister")

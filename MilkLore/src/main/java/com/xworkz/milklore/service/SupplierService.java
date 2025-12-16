@@ -37,5 +37,5 @@ public interface SupplierService {
     boolean updateSupplierBankDetailsByAdmin(SupplierBankDetailsDTO supplierBankDetailsDTO,String email,String adminEmail);
     SupplierDTO getSupplierDetailsByNotificationId(Long notificationId);
     boolean requestForSupplierBankDetails(String supplierEmail);
-    void downloadInvoicePdf(Integer supplierId, LocalDate start, LocalDate end, LocalDate paymentDate, HttpServletResponse response);
+    void downloadInvoicePdf(Integer supplierId,Integer paymentId, LocalDate start, LocalDate end, LocalDate paymentDate, HttpServletResponse response);
 }

@@ -94,10 +94,8 @@ public class SupplierServiceImpl implements SupplierService{
             log.info("supplier details saved");
             SupplierEntity supplier=supplierRepo.getSupplierByEmail(supplierEntity.getEmail());
             String qrcode= qrGeneratorService.generateSupplierQR(supplier.getSupplierId(),supplier.getEmail(),supplier.getPhoneNumber());
-            if(emailSender.mailForSupplierRegisterSuccess(supplierEntity.getEmail(),supplierEntity.getFirstName()+supplierEntity.getLastName(),qrcode)){
-                log.info("Mail sent to supplier");
-                return true;
-            }
+            emailSender.mailForSupplierRegisterSuccess(supplierEntity.getEmail(),supplierEntity.getFirstName()+supplierEntity.getLastName(),qrcode);
+            return true;
         } else {
             log.error("Supplier details not saved");
         }
@@ -396,7 +394,8 @@ public class SupplierServiceImpl implements SupplierService{
         log.info("Exiting updateSupplierBankDetails() in SupplierService");
         if(isUpdated)
         {
-            return emailSender.mailForSupplierBankDetails(supplierEntity.getEmail(), supplierBankDetailsEntity);
+            emailSender.mailForSupplierBankDetails(supplierEntity.getEmail(), supplierBankDetailsEntity);
+            return true;
         }
         return false;
     }
@@ -434,7 +433,8 @@ public class SupplierServiceImpl implements SupplierService{
 
         if(supplierRepo.updateSupplierDetailsBySupplier(supplierEntity))
         {
-            return emailSender.mailForSupplierBankDetails(supplierEntity.getEmail(), supplierBankDetailsEntity);
+            emailSender.mailForSupplierBankDetails(supplierEntity.getEmail(), supplierBankDetailsEntity);
+            return true;
         }
         return false;
     }
@@ -450,16 +450,17 @@ public class SupplierServiceImpl implements SupplierService{
     public boolean requestForSupplierBankDetails(String supplierEmail) {
         log.info("requestForSupplierBankDetails method in supplier service");
         SupplierEntity supplierEntity=supplierRepo.getSupplierByEmail(supplierEmail);
-        return emailSender.mailForBankDetailsRequest(supplierEntity);
+        emailSender.mailForBankDetailsRequest(supplierEntity);
+        return true;
     }
 
     @Override
-    public void downloadInvoicePdf(Integer supplierId, LocalDate start, LocalDate end, LocalDate paymentDate, HttpServletResponse response) {
+    public void downloadInvoicePdf(Integer supplierId,Integer paymentId, LocalDate start, LocalDate end, LocalDate paymentDate, HttpServletResponse response) {
         log.info("Generating MilkLore invoice (Letterhead + Watermark) for supplierId {}", supplierId);
 
         try {
             // === Fetch data ===
-            PaymentDetailsEntity payment = paymentDetailsRepository.getEntityBySupplierIdAndPaymentDate(paymentDate, supplierId);
+            PaymentDetailsEntity payment = paymentDetailsRepository.getPaymentDetailsById(paymentId);
             List<MilkProductReceiveEntity> milkList = milkProductReceiveRepo.getCollectMilkDetailsForSupplierById(supplierId, start, end);
             SupplierEntity supplier = supplierRepo.getSupplierDetailsAndBankById(supplierId);
 

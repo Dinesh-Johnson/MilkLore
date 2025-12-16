@@ -15,4 +15,8 @@ public interface PaymentDetailsRepository {
     List<PaymentDetailsEntity> getPaymentDetailsForAdminSummaryEmail();
     List<PaymentDetailsEntity> getAllPaymentDetailsForAdminHistory(int page,int size);
     Integer getTotalCount();
+    PaymentDetailsEntity getPaymentDetailsById(Integer id);
+    Double getTotalPaymentsThisMonth();
+    List<PaymentDetailsEntity> getRecentPayments();
+    Double totalPendingAmount();
 }
