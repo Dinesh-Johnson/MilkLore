@@ -1,56 +1,86 @@
-# 🥛 MilkLore - Dairy Supply Chain Management System
+# MilkLore
 
-[![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)](https://www.java.com/)
-[![Spring](https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/)
-[![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
-[![Hibernate](https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=Hibernate&logoColor=white)](https://hibernate.org/)
+MilkLore is a Java-based application for managing milk-related operations, including supplier management and payment processing.
 
-## 📋 Table of Contents
-- [Project Overview](#-project-overview)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Prerequisites](#-prerequisites)
-- [Installation](#-installation)
-- [Configuration](#-configuration)
-- [API Documentation](#-api-documentation)
-- [Project Structure](#-project-structure)
-- [Screenshots](#-screenshots)
-- [Contributing](#-contributing)
-- [License](#-license)
+## 🚀 Features
 
-## 🚀 Project Overview
-MilkLore is a comprehensive web-based Dairy Supply Chain Management System that streamlines the entire dairy supply chain process from milk collection to distribution. This project was developed as part of my Full Stack Java Development training to demonstrate proficiency in enterprise application development.
+- Supplier Management
+- Payment Processing
+- Admin Dashboard
+- QR Code Generation for Suppliers
+- Excel Import/Export Functionality
 
-## ✨ Features
-- **Supplier Management**: Add, view, update, and manage supplier information
-- **Product Tracking**: QR code-based product tracking system
-- **Inventory Management**: Real-time tracking of dairy products
-- **Payment Processing**: Secure payment handling and invoice generation
-- **Data Export**: Export functionality to Excel
-- **User Authentication**: Secure login and role-based access control
+## 🛠️ Technologies Used
 
-## 🛠 Tech Stack
-- **Backend**: Java 8+, Spring MVC, Hibernate ORM
-- **Frontend**: JSP, JSTL, HTML5, CSS3, JavaScript
-- **Database**: MySQL 8.0+
+- **Backend**: Java 8+
 - **Build Tool**: Maven
-- **APIs**: RESTful Web Services
-- **Libraries**:
-  - ZXing for QR code generation
-  - Apache POI for Excel operations
-  - Lombok for reducing boilerplate code
-  - SLF4J for logging
-  - Swagger for API documentation
+- **Framework**: Spring Boot
+- **Database**: (To be specified - appears to be using JPA/Repository pattern)
+- **Testing**: JUnit
 
-## 📋 Prerequisites
+## 📦 Prerequisites
+
 - Java JDK 8 or higher
-- Apache Maven 3.6.0 or higher
-- MySQL Server 8.0 or higher
-- Tomcat 9.0 or higher
-- Git
+- Maven 3.6.0 or higher
+- (Add any database requirements if applicable)
 
-## 🚀 Installation
-1. Clone the repository:
+## 🚀 Getting Started
+
+1. **Clone the repository**
    ```bash
-   git clone [https://github.com/your-username/MilkLore.git](https://github.com/your-username/MilkLore.git)
-   cd MilkLore
+   git clone https://github.com/Dinesh-Johnson/MilkLore.git
+   cd MilkLore/MilkLore
+   ```
+
+2. **Build the project**
+   ```bash
+   mvn clean install
+   ```
+
+3. **Run the application**
+   ```bash
+   mvn spring-boot:run
+   ```
+
+## 📂 Project Structure
+
+```
+src/
+├── main/
+│   ├── java/
+│   │   └── com/xworkz/milklore/
+│   │       ├── controller/    # Spring MVC Controllers
+│   │       ├── repository/    # Data access layer
+│   │       └── ...
+│   └── resources/            # Configuration files
+└── test/                     # Test files
+```
+
+## 📝 API Documentation
+
+(Add API documentation or link to Swagger/OpenAPI if available)
+
+## 🧪 Testing
+
+Run tests using:
+```bash
+mvn test
+```
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🤝 Contributing
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📫 Contact
+
+Dinesh Johnson - [https://www.linkedin.com/in/dinesh-johnson](https://www.linkedin.com/in/dinesh-johnson/)
+
+Project Link: [https://github.com/Dinesh-Johnson/MilkLore](https://github.com/Dinesh-Johnson/MilkLore)
